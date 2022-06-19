@@ -1,38 +1,58 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;1,600&display=swap" rel="stylesheet');
+
+.default-mode{
+    /*----------- Color values  ------------*/
+    --primary-color: #ffffff;
+
+    --secondary-color-type-1: #000000;
+    --secondary-color-type-2: #F5F2EA;
+
+    --button-color-type-1: #FDC886;
+
+    /*----------- Spacing values  ------------*/
+    --side-bar-half-width: 50px;
+    --side-bar-half-width--desktop: 70px;
+    --side-bar-full-width: 150px;
+    --side-bar-full-width--desktop: 200px;
+    --icon-size: 35px;
+    --icon-size--desktop: 50px;
+
+    /*---------- Font and typography --------*/
+    /* defined font family */
+    --body-font: 'Open Sans';
+    --banner-font: 'Montserrat';
+    --default-font: sans-serif;
+
+    /* Font weight */
+    --extra-light: 200;
+    --light: 300;
+    --regular: 400;
+    --medium: 500;
+    --semi-bold: 600;
+    --bold: 700;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+a {
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+img {
+    max-width: 100%;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+ul {
+    list-style-type: none;
 }
 
-.App-link {
-  color: #61dafb;
-}
+html,
+body {
+    margin: 0;
+    padding: 0;
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    font-family: var(--body-font), var(--default-font);
+    background-color: var(--primary-color);
+    
+    scroll-behavior: smooth;
 }

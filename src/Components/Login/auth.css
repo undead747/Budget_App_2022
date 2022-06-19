@@ -1,0 +1,33 @@
+.auth__background{
+    background-color: var(--secondary-color-type-2);
+}
+
+.auth__container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.auth__card{
+    max-width: 400px;
+    width: 100vw;
+
+    border: none !important;
+    border-radius: 10px !important;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.auth__card-body{
+    padding: 1rem 1.5rem !important;
+}
+
+.auth__title{
+    margin: 1.5rem 0 1.5rem 0;
+}
+
+.auth__submit{
+    width: 100%;
+    margin: 2rem 0 1.5rem 0;
+    font-weight: var(--semi-bold) !important;
+}

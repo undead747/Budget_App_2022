@@ -1,0 +1,26 @@
+.btn.btn--custom{
+    background-color: var(--button-color-type-1);
+    opacity: .9;
+    color: var(--secondary-color-type-1);
+    font-weight: var(--regular);
+    transition: all .2s ease ;
+}
+
+.btn.btn--custom:hover{
+    color: var(--secondary-color-type-1);
+    background-color: var(--button-color-type-1);
+}
+
+@media only screen and (min-width: 992px) {
+    .btn.btn--custom:hover{
+        opacity: 1;
+    }
+}
+
+.btn--custom > * + *{
+    margin-left: .2em;
+}
+
+.btn__icon{
+    line-height: 0;
+}
