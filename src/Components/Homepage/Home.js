@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { useAuth } from '../../Auth/authContext';
-import Button from '../CommonComponents/Button/Button';
+import { Button } from '../CommonComponents/Button/Button';
 import Navigator from './Navigator/Navigator';
+import Sidebar from './Sidebar/Sidebar';
 import TasksByCalendar from './TasksByCalendar/TasksByCalendar';
 import TasksByDays from './TasksByDays/TasksByDays';
 import TasksByMonths from './TasksByMonths/TasksByMonths';
@@ -27,6 +28,7 @@ export default function Home() {
   return (
     <>
       <Navigator />
+      <Sidebar />
       <Switch>
           <Route path={'/days/:date?'} component={TasksByDays} />
           <Route path={'/calendar/:date?'} component={TasksByCalendar} />
@@ -36,7 +38,7 @@ export default function Home() {
           <Redirect to={'/days/20220619'} />
       </Switch>
 
-      <Button callback={handleLogout} title={"Sign-out"} />
+      <Button callback={handleLogout}>Sign out</Button>
     </>
   )
 }

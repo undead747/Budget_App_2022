@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react'
 import './auth.css'
-import Button from '../CommonComponents/Button/Button'
 import { Link, useHistory } from 'react-router-dom'
 import { useAuth } from '../../Auth/authContext';
 import { useHomeController } from '../HomeContext';
+import { Button } from '../CommonComponents/Button/Button';
 
 export default function Login() {
   const emailRef = useRef();
@@ -46,7 +46,7 @@ export default function Login() {
                         <label htmlFor="password-label" className='form-label'>Password</label>
                         <input autoComplete='new-password' type={'password'} className='form-control' ref={passRef} required />
                     </div>
-                    <Button title={"Submit"} customClass={"auth__submit"} disabled={loading} />
+                    <Button customClass={"auth__submit"} disabled={loading}>Login</Button>
                 </form>
                 <p className='text-center'>Don't have an account ? <Link to={'/signup'}><strong>Sign up here</strong></Link></p>
             </div>

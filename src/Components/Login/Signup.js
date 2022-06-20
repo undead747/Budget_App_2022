@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import Button from '../CommonComponents/Button/Button'
 import {useAuth} from '../../Auth/authContext'
+import { Button } from '../CommonComponents/Button/Button';
 import { useHomeController } from '../HomeContext';
 
 export default function Signup() {
@@ -56,7 +56,7 @@ export default function Signup() {
                       <label htmlFor="password-confim-label" className='form-label'>Password Confirmation</label>
                       <input autoComplete='new-password' type={'password'} className='form-control' ref={passConfirmRef} required />
                   </div>
-                  <Button title={"Submit"} customClass={"auth__submit"} disabled={loading}/>
+                  <Button customClass={"auth__submit"} disabled={loading}>Sign up</Button>
               </form>
               <p className='text-center'>Already have an account ? <Link to={'/login'}><strong>Login here</strong></Link></p>
           </div>

@@ -1,0 +1,11 @@
+.navigator{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.navigator__title{
+    margin: 0;
+    font-size: 1rem;
+}

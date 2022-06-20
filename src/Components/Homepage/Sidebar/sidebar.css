@@ -1,0 +1,29 @@
+.nav-bar{
+    display: flex;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    border-bottom: 1px var(--secondary-color-type-2) solid;
+}
+
+.nav-bar__item{
+    flex-grow: 1;
+    text-align: center;
+    position: initial;
+    padding-bottom: 0.5rem;
+}
+
+.nav-bar__item.active{
+    position: relative;
+}
+
+.nav-bar__item.active::after{
+    content: '';
+    width: 100%;
+    height: 2px;
+    background-color: var(--button-color-type-1);
+
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
