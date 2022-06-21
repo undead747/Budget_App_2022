@@ -35,7 +35,7 @@ export default function Login() {
             <div className='card-body auth__card-body'>
                 <h2 className='text-center auth__title'>Login</h2>
                 <div className='mb-2 mt-2'>
-                  {errors && errors.map(err => <div className='alert-danger p-1'>{err}</div>)}
+                  {errors && errors.map(err => <div className='alert-danger p-1' key={err}>{err}</div>)}
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className='mb-3'>

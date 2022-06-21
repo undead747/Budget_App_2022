@@ -1,14 +1,28 @@
 import React from 'react';
-import './sidebar.css'
+import { Link, useHistory } from 'react-router-dom';
+import './sidebar.css';
+import { useHomeController } from '../../HomeContext';
+import { sidebarData } from './SidebarData';
+
 
 function Sidebar(props) {
+    const {selectedTab, setSelectTab} = useHomeController();
+    const history = useHistory();
+
+    const handleSelectedTab = (tab) => {
+        setSelectTab(tab.id);
+        history.push(tab.path);
+    }
+    
     return (
         <ul className='nav-bar'>
-            <li className='nav-bar__item active'>Daily</li>
-            <li className='nav-bar__item'>Calendar</li>
-            <li className='nav-bar__item'>Weekly</li>
-            <li className='nav-bar__item'>Monthly</li>
-            <li className='nav-bar__item'>Summary</li>
+            {
+                sidebarData.map(tab => {
+                    return <li className={`nav-bar__item ${ selectedTab === tab.id ? 'active' : '' }`} key={tab.id}>
+                    <Link to={tab.path} className='nav-bar__link' onClick={() => handleSelectedTab(tab)}>{tab.title}</Link>
+                </li>
+                })
+            }
         </ul>
     );
 }

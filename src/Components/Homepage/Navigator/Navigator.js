@@ -1,16 +1,35 @@
-import React from 'react'
-import { getFormatDate } from '../../../Helpers/DateHelper';
+import React, { useEffect, useState } from 'react'
+import { matchPath, useHistory, useLocation, useParams } from 'react-router-dom';
+import { getFormatDateTitle } from '../../../Helpers/DateHelper';
 import { Button } from '../../CommonComponents/Button/Button';
-import './navigator.css'
+import { useHomeController } from '../../HomeContext';
+import '../Sidebar/SidebarData'
+import './navigator.css';
 
 export default function Navigator() {
-  const date = new Date();
+  const {selectedTab} = useHomeController();
+  const [title, setTitle] = useState();
+  const param = useParams();
+  const history = useHistory();
+  const {pathname} = useLocation();
+
+  useEffect(() => {
+    const dateParam =  matchPath(pathname, { path:"/daily/:date" }) ? matchPath(pathname, { path:"/daily/:date" }).params.date : null;
+    
+    if(selectedTab === 0 && dateParam){
+      let selectedDate = new Date(dateParam);
+       setTitle(getFormatDateTitle(selectedDate));
+     }
+  })
+
+  const preDate = () => {
+  }
 
   return (
     <div className='navigator'>
-        <Button><i class="fas fa-angle-left"></i></Button>
-        <h5 className='navigator__title'>{getFormatDate()}</h5>
-        <Button><i class="fas fa-angle-right"></i></Button>
+        <Button><i className="fas fa-angle-left"></i></Button>
+        <h5 className='navigator__title'>{title}</h5>
+        <Button><i className="fas fa-angle-right"></i></Button>
     </div>
   )
 }

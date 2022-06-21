@@ -24,6 +24,10 @@ export function getDayInEnglish(day = new Date().getDate()){
     return weekday[day];
 }
 
-export function getFormatDate(date = new Date()){
+export function getFormatDateTitle(date = new Date()){
     return `${getDayInEnglish(date.getDay())} ${date.toLocaleDateString()}`
+}
+
+export function getFormatDateParam(date = new Date()){
+    return `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`
 }

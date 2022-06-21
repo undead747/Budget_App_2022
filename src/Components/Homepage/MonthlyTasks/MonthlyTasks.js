@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function TasksByMonths() {
+export default function MonthlyTasks() {
   return (
     <div>TasksByMonths</div>
   )
