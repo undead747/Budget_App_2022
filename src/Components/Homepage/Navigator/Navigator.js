@@ -9,16 +9,18 @@ import './navigator.css';
 export default function Navigator() {
   const {selectedTab} = useHomeController();
   const [title, setTitle] = useState();
-  const param = useParams();
   const history = useHistory();
   const {pathname} = useLocation();
 
+  const getDateParam = () => {
+     let dateParam =  matchPath(pathname, { path:"/:mode/:date?" });
+     return dateParam ? dateParam.params.date : dateParam;
+  }
+
   useEffect(() => {
-    const dateParam =  matchPath(pathname, { path:"/daily/:date" }) ? matchPath(pathname, { path:"/daily/:date" }).params.date : null;
-    
+    let dateParam = getDateParam();
     if(selectedTab === 0 && dateParam){
-      let selectedDate = new Date(dateParam);
-       setTitle(getFormatDateTitle(selectedDate));
+       setTitle(getFormatDateTitle(new Date(dateParam)));
      }
   })
 
