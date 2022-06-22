@@ -21,8 +21,7 @@ export function useAuth() {
 export function AuthProvider({children}){
   const [currentUser, setCurrentUser] = useState();
   const [getUserFlag, setGetUserFlag] = useState(true);
-  const {setLoading} = useHomeController();
-
+  
   // Update everytime current user are changed in sever
   useEffect(()=>{
     const unsubscriber = onAuthStateChanged(auth, user => {

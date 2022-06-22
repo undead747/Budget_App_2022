@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { matchPath, useHistory, useLocation, useParams } from 'react-router-dom';
-import { getFormatDateTitle } from '../../../Helpers/DateHelper';
+import { matchPath, useHistory, useLocation } from 'react-router-dom';
+import { getFormatDateParam, getFormatDateTitle, getNextDate, getPreDate } from '../../../Helpers/DateHelper';
 import { Button } from '../../CommonComponents/Button/Button';
 import { useHomeController } from '../../HomeContext';
 import '../Sidebar/SidebarData'
@@ -25,13 +25,28 @@ export default function Navigator() {
   })
 
   const preDate = () => {
+    let dateParam = getDateParam();
+    
+    if(selectedTab === 0 && dateParam){
+      let preDate = getPreDate(new Date(dateParam));
+      history.push(`/daily/${getFormatDateParam(preDate)}`);
+    }
+  }
+
+  const nextDate = () => {
+    let dateParam = getDateParam();
+    
+    if(selectedTab === 0 && dateParam){
+      let nextDate = getNextDate(new Date(dateParam));
+      history.push(`/daily/${getFormatDateParam(nextDate)}`);
+    }
   }
 
   return (
     <div className='navigator'>
-        <Button><i className="fas fa-angle-left"></i></Button>
+        <Button callback={() => preDate()}><i className="fas fa-angle-left"></i></Button>
         <h5 className='navigator__title'>{title}</h5>
-        <Button><i className="fas fa-angle-right"></i></Button>
+        <Button callback={() => nextDate()}><i className="fas fa-angle-right"></i></Button>
     </div>
   )
 }

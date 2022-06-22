@@ -1,11 +1,13 @@
 import React from "react";
+import { useAuth } from "../../../Auth/authContext";
 import { useHomeController } from "../../HomeContext";
 import "./loading.css";
 
 export default function Loading() {
   const { loading } = useHomeController();
+  const {currentUser} = useAuth();
 
-  if (loading)
+  if (loading && !currentUser)
     return (
       <>
         <div className="page-loading">
