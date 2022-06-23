@@ -9,3 +9,7 @@
     margin: 0;
     font-size: 1rem;
 }
+
+.navigator__date-picker{
+    display: none;
+}

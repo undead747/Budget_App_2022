@@ -43,7 +43,9 @@ export default function Navigator() {
   return (
     <div className='navigator'>
         <Button callback={() => preDate()} disabled={!!!title}><i className="fas fa-angle-left"></i></Button>
-        <ReactDatePicker selected={new Date(title)} />
+        <div className='navigator__date-picker'>
+          <ReactDatePicker selected={new Date(title)}  />
+        </div>
         <h5 className='navigator__title'>{title}</h5>
         <Button callback={() => nextDate()} disabled={!!!title}><i className="fas fa-angle-right"></i></Button>
     </div>
