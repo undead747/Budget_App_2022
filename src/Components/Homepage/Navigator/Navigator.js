@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactDatePicker from 'react-datepicker';
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import { getFormatDateParam, getFormatDateTitle, getNextDate, getPreDate } from '../../../Helpers/DateHelper';
 import { Button } from '../../CommonComponents/Button/Button';
@@ -9,44 +10,42 @@ import './navigator.css';
 export default function Navigator() {
   const {selectedTab} = useHomeController();
   const [title, setTitle] = useState();
+  let currDate = null;
   const history = useHistory();
   const {pathname} = useLocation();
 
-  const getDateParam = () => {
+  const getCurrDate = () => {
      let dateParam =  matchPath(pathname, { path:"/:mode/:date?" });
-     return dateParam ? dateParam.params.date : dateParam;
+     return dateParam ? new Date(dateParam.params.date) : dateParam;
   }
 
   useEffect(() => {
-    let dateParam = getDateParam();
-    if(selectedTab === 0 && dateParam){
-       setTitle(getFormatDateTitle(new Date(dateParam)));
+    currDate = getCurrDate();
+    if(selectedTab === 0 && currDate){
+       setTitle(getFormatDateTitle(currDate));
      }
   })
 
   const preDate = () => {
-    let dateParam = getDateParam();
-    
-    if(selectedTab === 0 && dateParam){
-      let preDate = getPreDate(new Date(dateParam));
+    if(selectedTab === 0 && currDate){
+      let preDate = getPreDate(currDate);
       history.push(`/daily/${getFormatDateParam(preDate)}`);
     }
   }
 
   const nextDate = () => {
-    let dateParam = getDateParam();
-    
-    if(selectedTab === 0 && dateParam){
-      let nextDate = getNextDate(new Date(dateParam));
+    if(selectedTab === 0 && currDate){
+      let nextDate = getNextDate(currDate);
       history.push(`/daily/${getFormatDateParam(nextDate)}`);
     }
   }
 
   return (
     <div className='navigator'>
-        <Button callback={() => preDate()}><i className="fas fa-angle-left"></i></Button>
+        <Button callback={() => preDate()} disabled={!!!title}><i className="fas fa-angle-left"></i></Button>
+        <ReactDatePicker selected={new Date(title)} />
         <h5 className='navigator__title'>{title}</h5>
-        <Button callback={() => nextDate()}><i className="fas fa-angle-right"></i></Button>
+        <Button callback={() => nextDate()} disabled={!!!title}><i className="fas fa-angle-right"></i></Button>
     </div>
   )
 }
