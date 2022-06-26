@@ -1,6 +1,6 @@
 export function getDateByMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
     const firstDay = new Date(year, month, 1).getDay();
-    const dayCnt = 0 - firstDay;
+    let dayCnt = 0 - firstDay;
 
     return new Array(5).fill([]).map(row => {
         return row[7].fill(null).map(element => {
@@ -24,8 +24,14 @@ export function getDayInEnglish(day = new Date().getDate()){
     return weekday[day];
 }
 
-export function getFormatDateTitle(date = new Date()){
-    return `${getDayInEnglish(date.getDay())} ${date.toLocaleDateString()}`
+export function getFormatDateForDatePicker(date = new Date()){
+    let currMonth = date.getMonth() + 1;
+    let currDate = date.getDate();
+    if(currMonth < 10) currMonth = `0${currMonth}`;
+    if(currDate < 10) currDate = `0${currDate}`;
+
+
+    return `${date.getFullYear()}-${currMonth}-${currDate}`
 }
 
 export function getFormatDateParam(date = new Date()){

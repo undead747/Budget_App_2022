@@ -9,12 +9,13 @@ import Sidebar from './Sidebar/Sidebar';
 import TasksByCalendar from './TasksByCalendar/TasksByCalendar';
 import TasksByYears from './TasksByYears/TasksByYears';
 import WeeklyTasks from './WeeklyTasks/WeeklyTasks';
+import "./home.css";
 
 
 export default function Home() {
 
   const [errors, setErrors] = useState()
-  const {currentUser, logout} = useAuth()
+  const {logout} = useAuth()
   const history = useHistory()
 
   async function handleLogout(){
@@ -29,8 +30,11 @@ export default function Home() {
 
   return (
     <>
+    <div className='header'>
       <Navigator />
       <Sidebar />
+    </div>
+
       <Switch>
           <Route path={'/daily/:date?'} component={DailyTasks} />
           <Route path={'/weekly/:date?'} component={WeeklyTasks} />

@@ -9,7 +9,7 @@
     --secondary-color-type-2: #F5F2EA;
 
     --button-color-type-1: #FFae49;
-    --button-color-type-2: 
+    --border-color: #dddddd;
 
     /*----------- Spacing values  ------------*/
     --side-bar-half-width: 50px;
@@ -32,6 +32,9 @@
     --medium: 500;
     --semi-bold: 600;
     --bold: 700;
+
+    min-height: 100vh;
+    background-color: #F3F3F3;
 }
 
 a {
@@ -53,7 +56,6 @@ body {
     padding: 0;
 
     font-family: var(--body-font), var(--default-font);
-    background-color: var(--primary-color);
     
     scroll-behavior: smooth;
 }

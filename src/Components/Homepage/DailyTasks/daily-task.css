@@ -1,0 +1,29 @@
+.task-table{
+    background-color: var(--primary-color);
+    box-shadow: 0px 0px 3px rgb(0 0 0 / 15%);
+    overflow-x: auto;
+}
+
+.task-table__header-title > *:first-child{
+    margin-right: .1em;
+}
+
+.task-table__row{
+    cursor: pointer;
+    padding: .5em 0;
+}
+.task-table__row > *{
+    vertical-align: middle !important;
+}
+
+.task-table__header{
+    font-size: 1.1rem;
+}
+
+.daily__btn{
+    position: fixed;
+    bottom: 10%;
+    right: 7%;
+    
+    font-size: 2rem;
+}

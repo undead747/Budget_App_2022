@@ -6,6 +6,14 @@
     transition: all .2s ease ;
 }
 
+.btn--eclipse{
+    border-radius: 50% !important;
+    width: 4.5rem;
+    height: 4.5rem;
+    box-shadow: 1px 3px 6px rgb(0 0 0 / 30%);
+    font-size: 1.7rem;  
+}
+
 .btn.btn--custom:hover{
     color: var(--secondary-color-type-1);
     background-color: var(--button-color-type-1);

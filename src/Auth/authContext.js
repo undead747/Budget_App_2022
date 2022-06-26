@@ -8,9 +8,7 @@ import {
   signOut,
   updateCurrentUser
 } from "firebase/auth";
-
-import {auth} from './firebaseInitialize';
-import { useHomeController } from "../Components/HomeContext";
+import { auth } from "../Database/firebaseInitialize";
 
 const AuthContext = React.createContext();
 
@@ -20,13 +18,11 @@ export function useAuth() {
 
 export function AuthProvider({children}){
   const [currentUser, setCurrentUser] = useState();
-  const [getUserFlag, setGetUserFlag] = useState(true);
   
   // Update everytime current user are changed in sever
   useEffect(()=>{
     const unsubscriber = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
-      setGetUserFlag(false);
     })
 
     return unsubscriber;
@@ -54,6 +50,6 @@ export function AuthProvider({children}){
   };
 
   return <AuthContext.Provider value={value}>
-  {!getUserFlag && children}
+  {children}
 </AuthContext.Provider>
 }

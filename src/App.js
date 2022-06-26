@@ -19,13 +19,14 @@ function App() {
       <Router>
         <AuthProvider>
           <HomeProvider>
-           <Loading />
-            <Switch>
-              <Route path={"/signup"} component={Signup} />
-              <Route path={"/login"} component={Login} />
-              <PrivateRoute path="/" component={Home} />
-              <Redirect to={"/"} />
-            </Switch>
+           <Loading>
+              <Switch>
+                <Route path={"/signup"} component={Signup} />
+                <Route path={"/login"} component={Login} />
+                <PrivateRoute path="/" component={Home} />
+                <Redirect to={"/"} />
+              </Switch>
+           </Loading>
           </HomeProvider>
         </AuthProvider>
       </Router>

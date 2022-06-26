@@ -8,8 +8,24 @@
 .navigator__title{
     margin: 0;
     font-size: 1rem;
+    cursor: pointer;
 }
 
 .navigator__date-picker{
-    display: none;
+    max-width: 150px;
 }
+
+input.navigator__date-picker[type="date"] {
+    position: relative;
+  }
+  
+  input.navigator__date-picker[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    color: transparent;
+    background: transparent;
+  }
