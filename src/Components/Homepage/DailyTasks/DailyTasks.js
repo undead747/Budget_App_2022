@@ -27,13 +27,13 @@ export default function DailyTasks() {
           <tbody>
               <tr className='task-table__row'>
                 <td className='text-start'>Salary</td>
-                <td className='text-center'>Cash</td>
-                <td className='text-end'>200.00</td>
+                <td className='text-start'>Cash</td>
+                <td className='text-end fw-bolder'>+ 200.00</td>
               </tr>
               <tr className='task-table__row'>
                 <td className='text-start'>Salary</td>
-                <td className='text-center'>Cash</td>
-                <td className='text-end'>200.00</td>
+                <td className='text-start'>Cash</td>
+                <td className='text-end fw-bolder'>+ 200.00</td>
               </tr>
           </tbody>
       </table>

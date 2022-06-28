@@ -2,7 +2,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: .7em;
+    margin: 1.5em .7em;
 
     overflow-x: auto;
 }

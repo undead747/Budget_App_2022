@@ -4,16 +4,22 @@
     overflow-x: auto;
 }
 
+.task-table__header > *{
+    border-bottom: transparent;
+    padding-top: 0.8em !important;
+    padding-bottom: 0.8em !important;
+}
+
 .task-table__header-title > *:first-child{
     margin-right: .1em;
 }
 
 .task-table__row{
     cursor: pointer;
-    padding: .5em 0;
 }
 .task-table__row > *{
     vertical-align: middle !important;
+    border-top: 1px rgb(222, 226, 230) solid;
 }
 
 .task-table__header{
