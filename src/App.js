@@ -7,7 +7,7 @@ import {
 import "./App.css";
 import { AuthProvider } from "./Auth/authContext";
 import PrivateRoute from "./Auth/PrivateRoute";
-import Loading from "./Components/CommonComponents/Loading/Loading";
+import TaskForm from "./Components/Form/TaskForm/TaskForm";
 import HomeProvider from "./Components/HomeContext";
 import Home from "./Components/Homepage/Home";
 import Login from "./Components/Login/Login";
@@ -17,18 +17,17 @@ function App() {
   return (
     <div className="default-mode">
       <Router>
-        <AuthProvider>
-          <HomeProvider>
-           <Loading>
-              <Switch>
-                <Route path={"/signup"} component={Signup} />
-                <Route path={"/login"} component={Login} />
-                <PrivateRoute path="/" component={Home} />
-                <Redirect to={"/"} />
-              </Switch>
-           </Loading>
-          </HomeProvider>
-        </AuthProvider>
+        <HomeProvider>
+          <AuthProvider>
+            <Switch>
+              <Route path={"/signup"} component={Signup} />
+              <Route path={"/login"} component={Login} />
+              <PrivateRoute path={'/task/:mode/:param?'} component={TaskForm} />
+              <PrivateRoute path="/" component={Home} />
+              <Redirect to={"/"} />
+            </Switch>
+          </AuthProvider>
+        </HomeProvider>
       </Router>
     </div>
   );

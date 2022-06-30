@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
 import { getFormatDateForDatePicker, getFormatDateParam, getNextDate, getPreDate } from '../../../Helpers/DateHelper';
-import { Button } from '../../CommonComponents/Button/Button';
+import { CustomButton } from '../../CommonComponents/Button/Button';
 import { useHomeController } from '../../HomeContext';
 import '../Sidebar/SidebarData'
 import './navigator.css';
@@ -49,9 +49,9 @@ export default function Navigator(tabId) {
 
     return (
     <div className='navigator'>
-        <Button callback={() => preDate()} disabled={!!!currDate}><i className="fas fa-angle-left"></i></Button>
+        <CustomButton callback={() => preDate()} disabled={!!!currDate}><i className="fas fa-angle-left"></i></CustomButton>
         <input className='form-control navigator__date-picker' type={'date'} ref={datePickerRef} onChange={handleDatePicker} />
-        <Button callback={() => nextDate()} disabled={!!!currDate}><i className="fas fa-angle-right"></i></Button>
+        <CustomButton callback={() => nextDate()} disabled={!!!currDate}><i className="fas fa-angle-right"></i></CustomButton>
     </div>
   )
 }

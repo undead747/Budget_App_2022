@@ -3,14 +3,14 @@ import './auth.css'
 import { Link, useHistory } from 'react-router-dom'
 import { useAuth } from '../../Auth/authContext';
 import { useHomeController } from '../HomeContext';
-import { Button } from '../CommonComponents/Button/Button';
+import { CustomButton } from '../CommonComponents/Button/Button';
 
 export default function Login() {
   const emailRef = useRef();
   const passRef = useRef();
   const {login} = useAuth();
   const [errors, setErrors] = useState();
-  const {loading, setLoading} = useHomeController();
+  const {setLoading} = useHomeController();
   const history = useHistory();
 
   const handleSubmit = async(e) => {
@@ -23,7 +23,6 @@ export default function Login() {
       history.push('/');
     } catch (error) {
       setErrors([error.message]);
-      setLoading(false);
     }
   } 
 
@@ -46,7 +45,7 @@ export default function Login() {
                         <label htmlFor="password-label" className='form-label'>Password</label>
                         <input autoComplete='new-password' type={'password'} className='form-control' ref={passRef} required />
                     </div>
-                    <Button customClass={"auth__submit"} disabled={loading}>Login</Button>
+                    <CustomButton customClass={"auth__submit"} type={"submit"}>Login</CustomButton>
                 </form>
                 <p className='text-center'>Don't have an account ? <Link to={'/signup'}><strong>Sign up here</strong></Link></p>
             </div>

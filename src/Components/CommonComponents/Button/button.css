@@ -3,6 +3,7 @@
     opacity: .9;
     color: var(--secondary-color-type-1);
     font-weight: var(--regular);
+    border: transparent;
     transition: all .2s ease ;
 }
 
@@ -14,9 +15,13 @@
     font-size: 1.7rem;  
 }
 
-.btn.btn--custom:hover{
+.btn.btn--custom:hover,
+.btn.btn--custom:focus{
     color: var(--secondary-color-type-1);
     background-color: var(--button-color-type-1);
+    border: transparent;
+    outline: none !important;
+    box-shadow:none !important;
 }
 
 @media only screen and (min-width: 992px) {

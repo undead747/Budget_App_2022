@@ -9,6 +9,7 @@ import {
   updateCurrentUser
 } from "firebase/auth";
 import { auth } from "../Database/firebaseInitialize";
+import { useHomeController } from "../Components/HomeContext";
 
 const AuthContext = React.createContext();
 
@@ -16,17 +17,22 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-export function AuthProvider({children}){
+export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
-  
+  const [completeAuthProcess, setCompleteAuthProcess] = useState(false);
+  const {loading, setLoading} = useHomeController();
+
   // Update everytime current user are changed in sever
-  useEffect(()=>{
+  useEffect(() => {
+    setLoading(true);
     const unsubscriber = onAuthStateChanged(auth, user => {
-      setCurrentUser(user);
+      setCompleteAuthProcess(true);
+      setLoading(false);
+      if (user) setCurrentUser(user);
     })
 
     return unsubscriber;
-},[])
+  }, [])
 
   const login = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
@@ -50,6 +56,6 @@ export function AuthProvider({children}){
   };
 
   return <AuthContext.Provider value={value}>
-  {children}
-</AuthContext.Provider>
+    {completeAuthProcess && children}
+  </AuthContext.Provider>
 }

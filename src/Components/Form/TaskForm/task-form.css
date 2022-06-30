@@ -1,0 +1,11 @@
+.task-form{
+    background: var(--primary-color);
+}
+
+.task-form__button-group{
+    width: 100%;
+}
+
+.task-form__form-content{
+    padding: 1em .5em;
+}

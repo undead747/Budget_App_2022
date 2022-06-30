@@ -5,13 +5,17 @@
 }
 
 .task-table__header > *{
-    border-bottom: transparent;
+    border-bottom: transparent !important;
     padding-top: 0.8em !important;
     padding-bottom: 0.8em !important;
 }
 
 .task-table__header-title > *:first-child{
     margin-right: .1em;
+}
+
+.task-table tbody{
+    border-top: transparent !important;
 }
 
 .task-table__row{

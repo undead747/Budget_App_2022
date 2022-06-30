@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { useAuth } from '../../Auth/authContext';
-import { Button } from '../CommonComponents/Button/Button';
+import { CustomButton } from '../CommonComponents/Button/Button';
 import DailyTasks from './DailyTasks/DailyTasks';
 import MonthlyTasks from './MonthlyTasks/MonthlyTasks';
 import Navigator from './Navigator/Navigator';
@@ -15,37 +15,36 @@ import "./home.css";
 export default function Home() {
 
   const [errors, setErrors] = useState()
-  const {logout} = useAuth()
+  const { logout } = useAuth()
   const history = useHistory()
 
-  async function handleLogout(){
+  async function handleLogout() {
     setErrors('');
     try {
       await logout();
       history.push('/login');
     } catch (error) {
-        setErrors(error.message)
+      setErrors(error.message)
     }
   }
 
   return (
     <>
-    <div className='header'>
-      <Navigator />
-      <Sidebar />
-    </div>
+      <div className='header'>
+        <Navigator />
+        <Sidebar />
+      </div>
 
       <Switch>
-          <Route path={'/daily/:date?'} component={DailyTasks} />
-          <Route path={'/weekly/:date?'} component={WeeklyTasks} />
-          <Route path={'/monthly/:date?'} component={MonthlyTasks} />
-          <Route path={'/years/:date?'} component={TasksByYears} />
-          <Route path={'/calendar/:date?'} component={TasksByCalendar} />
+        <Route path={'/daily/:date?'} component={DailyTasks} />
+        <Route path={'/weekly/:date?'} component={WeeklyTasks} />
+        <Route path={'/monthly/:date?'} component={MonthlyTasks} />
+        <Route path={'/years/:date?'} component={TasksByYears} />
+        <Route path={'/calendar/:date?'} component={TasksByCalendar} />
 
-          <Redirect to={'/daily'} />
-          
-          <Button callback={handleLogout}>Sign out</Button>
+        <Redirect to={'/daily'} />
       </Switch>
+      <CustomButton callback={handleLogout}>Sign out</CustomButton>
 
     </>
   )
