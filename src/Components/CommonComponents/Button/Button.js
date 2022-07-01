@@ -2,9 +2,9 @@ import React from 'react'
 import { Button} from 'react-bootstrap'
 import './button.css'
 
-export function CustomButton({children, type, customClass, backgroundColor, color, callback, disabled, ...rest}){
+export function CustomButton({children, type = "button", customClass = "", backgroundColor, color, callback, disabled, border="none", ...rest}){
   return (
-    <Button type={rest.type ? rest.type : "button"} className={`btn btn--custom d-flex align-items-center justify-content-center ${rest.customClass && rest.customClass}`} style={{backgroundColor: rest.backgroundColor, color: rest.color}} onClick={rest.callback} disabled={rest.disabled}>
+    <Button type={type} className={`btn btn--custom d-flex align-items-center justify-content-center ${customClass}`} style={{backgroundColor: backgroundColor, color: color, border: border}} onClick={callback} disabled={disabled} {...rest}>
     {
       children
     } 

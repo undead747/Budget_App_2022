@@ -6,6 +6,26 @@
     width: 100%;
 }
 
+.task-form__button-group > button{
+    border-radius: 0;
+}
+
+.task-form__header{
+    margin: .5rem 0 1rem 0;
+    position: relative;
+}
+
+.task-form__header > button{
+    position: absolute;
+    top: -1px;
+    left: 0;
+}
+
+.task-form__title{
+    line-height: inherit;
+    text-align: center;
+}
+
 .task-form__form-content{
-    padding: 1em .5em;
+    padding: 2em .5em;
 }
