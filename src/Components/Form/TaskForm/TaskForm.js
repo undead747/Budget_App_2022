@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ButtonGroup, Form } from 'react-bootstrap';
+import BorderButton from '../../CommonComponents/Button/BorderButton';
 import { CustomButton } from '../../CommonComponents/Button/Button';
 import GobackButton from '../../CommonComponents/Button/GobackButton';
 import './task-form.css';
 
 function TaskForm(props) {
+    const taskModeList = [
+        {
+            id: 0,
+            name: "Income"
+        },
+        {
+            id: 1,
+            name: "Expense"
+        },
+    ]
+
+    const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0].id);
+
+    const handleSelectMode = (modeId) => setSelectedTaskMode(modeId);
+
     return (
         <div className="task-form">
             <div className='task-form__header'>
@@ -13,8 +29,13 @@ function TaskForm(props) {
             </div>
 
             <ButtonGroup className="task-form__button-group">
-                <CustomButton>Income</CustomButton>
-                <CustomButton backgroundColor={"transparent"} border={"2px var(--button-color-type-1) solid"}>Expense</CustomButton>
+                {
+                    taskModeList.map(mode => {
+                        if(mode.id === selectedTaskMode) return <CustomButton callback={() => handleSelectMode(mode.id)} key={mode.id}>{mode.name}</CustomButton>
+            
+                        return <BorderButton border={{size: 1}} backgroundColor={"transparent"} callback={() => handleSelectMode(mode.id)} key={mode.id}>{mode.name}</BorderButton>
+                    })
+                }
             </ButtonGroup>
 
             <div className="task-form__form-content">
