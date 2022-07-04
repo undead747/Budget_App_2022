@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ButtonGroup, Form } from 'react-bootstrap';
 import BorderButton from '../../CommonComponents/Button/BorderButton';
 import { CustomButton } from '../../CommonComponents/Button/Button';
@@ -17,52 +17,62 @@ function TaskForm(props) {
         },
     ]
 
-    const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0].id);
+    const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0]);
+    const {titleRef, dateRef, accountCategoryRef, taskCategoryRef, amountRef, noteRef} = useRef();
 
-    const handleSelectMode = (modeId) => setSelectedTaskMode(modeId);
+    const handleSelectMode = (mode) => setSelectedTaskMode(mode);
+
+    const handleSubmit = (event) => {
+
+    }
 
     return (
         <div className="task-form">
             <div className='task-form__header'>
                 <GobackButton backgroundColor={"transparent"}>Go back</GobackButton>
-                <h5 className="task-form__title">Income</h5>
+                <h5 className="task-form__title">{selectedTaskMode.name}</h5>
             </div>
 
             <ButtonGroup className="task-form__button-group">
                 {
                     taskModeList.map(mode => {
-                        if(mode.id === selectedTaskMode) return <CustomButton callback={() => handleSelectMode(mode.id)} key={mode.id}>{mode.name}</CustomButton>
+                        if(mode.id === selectedTaskMode.id) return <CustomButton callback={() => handleSelectMode(mode)} key={mode.id}>{mode.name}</CustomButton>
             
-                        return <BorderButton border={{size: 1}} backgroundColor={"transparent"} callback={() => handleSelectMode(mode.id)} key={mode.id}>{mode.name}</BorderButton>
+                        return <BorderButton border={{size: 2}} backgroundColor={"transparent"} callback={() => handleSelectMode(mode)} key={mode.id}>{mode.name}</BorderButton>
                     })
                 }
             </ButtonGroup>
 
             <div className="task-form__form-content">
-                <Form>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group className="mb-3" controlId="formDate">
                         <Form.Label>Date</Form.Label>
-                        <Form.Control type="date" />
+                        <Form.Control type="date" ref={dateRef} required  />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Group className="mb-3" controlId="formAccountCategory">
                         <Form.Label>Account</Form.Label>
-                        <Form.Control type="text" />
+                        <Form.Control type="text" ref={accountCategoryRef} required />
                     </Form.Group>
                  
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Group className="mb-3" controlId="formTaskCategory">
                         <Form.Label>Category</Form.Label>
-                        <Form.Control type="text" />
+                        <Form.Control type="text" ref={taskCategoryRef} required />
                     </Form.Group>
                     
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Group className="mb-3" controlId="formAmount">
                         <Form.Label>Amount</Form.Label>
-                        <Form.Control type="text" />
+                        <Form.Control type="number" ref={amountRef} required />
                     </Form.Group>
           
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                    <Form.Group className="mb-3" controlId="formAccountTitle">
+                        <Form.Label>Title</Form.Label>
+                        <Form.Control type="text" ref={titleRef} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formTitle">
                         <Form.Label>Note</Form.Label>
-                        <Form.Control as="textarea" rows="3" name="address" />
+                        <Form.Control as="textarea" rows="3" name="address" ref={noteRef} />
                     </Form.Group>
                     <div className="d-grid gap-2">
                     <CustomButton type="submit">

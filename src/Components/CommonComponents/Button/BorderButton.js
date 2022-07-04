@@ -1,10 +1,11 @@
-import React from 'react'
+import React from 'react';
 import { CustomButton } from './Button';
 
-export default function BorderButton({border = {size: 1, style: 'solid', color: 'var(--button-color-type-1)'}, ...rest}) {
-    const padding = `calc(0.375rem - ${border.size}px) calc(0.75rem - ${border.size}px);`
-   
+function BorderButton({ border, ...rest }) {
+    border = {size: 1, color: 'var(--button-color-type-1)', style: 'solid', ...border};
     return (
-      <CustomButton padding={padding} {...rest} />
-    )
+        <CustomButton border = {border} {...rest} />
+    );
 }
+
+export default BorderButton;
