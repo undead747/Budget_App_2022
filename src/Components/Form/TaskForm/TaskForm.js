@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ButtonGroup, Form } from 'react-bootstrap';
+import { getFormatDateForDatePicker } from '../../../Helpers/DateHelper';
 import BorderButton from '../../CommonComponents/Button/BorderButton';
 import { CustomButton } from '../../CommonComponents/Button/Button';
 import GobackButton from '../../CommonComponents/Button/GobackButton';
@@ -18,13 +19,22 @@ function TaskForm(props) {
     ]
 
     const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0]);
-    const {titleRef, dateRef, accountCategoryRef, taskCategoryRef, amountRef, noteRef} = useRef();
+    const titleRef = useRef(),
+          dateRef = useRef(),
+          accountCategoryRef = useRef(),
+          taskCategoryRef = useRef(),
+          amountRef = useRef(),
+          noteRef = useRef();
 
     const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
     const handleSubmit = (event) => {
-
+        
     }
+
+    useEffect(() => {
+        dateRef.current.value = getFormatDateForDatePicker();
+    })
 
     return (
         <div className="task-form">

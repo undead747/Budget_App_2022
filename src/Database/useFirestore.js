@@ -16,22 +16,32 @@ export const Pagination = {
 }
 
 export const useFirestore = (collectionName) => {
-    const [currDoc, setCurrDoc] = useState();
-
-    const addDocument = document => {
+    const addDocument = async document => {
         return await setDoc(collection(fireStoreInst, collectionName), {...document, create_at: serverTimestamp()});
     }
 
-    const updateDocument = document => {
+    const updateDocument = async document => {
         return await updateDoc(doc(fireStoreInst, collectionName, document.id), {...document.data, update_at: serverTimestamp()});
     }
 
-    const deleteDocument = docId => {
+    const deleteDocument = async docId => {
         return await deleteDoc(doc(fireStoreInst, collectionName, docId));
     }
 
-    const getDocument = (pagination) => {
+    const getDocuments = async () => {
+        return await getDocs(collection(fireStoreInst, collectionName));
+    }
+
+    const getDocumentsByPagination = async (pagination) => {
         const query = query(collection(fireStoreInst, collectionName), orderBy(pagination.orderBy, pagination.orderType), limit(pagination.size));
         return await getDocs(query);
+    }
+
+    return {
+        addDocument,
+        updateDocument,
+        deleteDocument,
+        getDocuments,
+        getDocumentsByPagination
     }
 }

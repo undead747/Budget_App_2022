@@ -1,4 +1,6 @@
 import React, { useContext, useState } from 'react'
+import { useEffect } from 'react';
+import { DatabaseCollections, useFirestore } from '../Database/useFirestore';
 import { sidebarData } from './Homepage/Sidebar/SidebarData';
 
 const HomeControllerContext = React.createContext();
@@ -9,17 +11,27 @@ export function useHomeController(){
 
 export default function HomeProvider({children}) {
     const [loading, setLoading] = useState(false);
+    const [accountCategory, setAccountCategory] = useState();
+    const [expenseCategory, setExpenseCategory] = useState();
+    const [incomeCategory, setIncomeCategory] = useState();
     const [selectedTab, setSelectTab] = useState(sidebarData[0].id);
-    const [selectedDate, setSelectDate] = useState();
+
+    const accountCateInst = useFirestore(DatabaseCollections.AccountCategory);
+    const expenseCateInst = useFirestore(DatabaseCollections.ExpenseCategory);
+    const incomeCateInst = useFirestore(DatabaseCollections.IncomeCategory);
 
     const value = {
         loading,
         setLoading,
         selectedTab,
-        setSelectTab,
-        selectedDate,
-        setSelectDate
+        setSelectTab
     }
+
+    useEffect(() => {
+        accountCateInst.getDocuments().then((res) => {
+          setAccountCategory(res);
+        });
+    }, [])
 
     return (
     <HomeControllerContext.Provider value={value}>
