@@ -4,6 +4,7 @@ import { getFormatDateForDatePicker } from '../../../Helpers/DateHelper';
 import BorderButton from '../../CommonComponents/Button/BorderButton';
 import { CustomButton } from '../../CommonComponents/Button/Button';
 import GobackButton from '../../CommonComponents/Button/GobackButton';
+import useModal from '../../CommonComponents/Modal/modal';
 import { useHomeController } from '../../HomeContext';
 import './task-form.css';
 
@@ -21,6 +22,8 @@ function TaskForm(props) {
 
     const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0]);
     const {accountCategory, incomeCategory, expenseCategory} = useHomeController();
+    const {handleClose, handleShow, setTitle: setModalTitle, setContent, modalComponent} = useModal();
+
     const titleRef = useRef(),
           dateRef = useRef(),
           accountCategoryRef = useRef(),
@@ -32,6 +35,11 @@ function TaskForm(props) {
 
     const handleSubmit = (event) => {
         
+    }
+
+    const handleSelectAccountCategory = () => {
+        setModalTitle("Account Category");
+        handleShow();
     }
 
     useEffect(() => {
@@ -64,7 +72,7 @@ function TaskForm(props) {
 
                     <Form.Group className="mb-3" controlId="formAccountCategory">
                         <Form.Label>Account</Form.Label>
-                        <Form.Control type="text" ref={accountCategoryRef} required />
+                        <Form.Control onClick={() => handleSelectAccountCategory} type="text" ref={accountCategoryRef} required />
                     </Form.Group>
                  
                     <Form.Group className="mb-3" controlId="formTaskCategory">
@@ -93,6 +101,8 @@ function TaskForm(props) {
                     </div>
                 </Form>
             </div>
+
+            {modalComponent()}
         </div>
     );
 }

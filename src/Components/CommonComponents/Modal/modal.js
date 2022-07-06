@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { CustomButton } from '../Button/Button';
 
-function modal({title, content, ...rest}) {
+function useModal() {
     const [show, setShow] = useState(false);
+    const [title, setTitle] = useState();
+    const [content, setContent] = useState();
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -15,7 +17,7 @@ function modal({title, content, ...rest}) {
                     <Modal.Header closeButton>
                         <Modal.Title>{title}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>{cotent}</Modal.Body>
+                    <Modal.Body>{content}</Modal.Body>
                     <Modal.Footer>
                         <CustomButton onClick={handleClose}>
                             Close
@@ -32,9 +34,11 @@ function modal({title, content, ...rest}) {
     return {
         handleClose,
         handleShow,
+        setTitle,
+        setContent,
         modalComponent    
     }
 
 }
 
-export default modal;
+export default useModal;
