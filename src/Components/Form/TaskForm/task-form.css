@@ -29,3 +29,18 @@
 .task-form__form-content{
     padding: 2em .5em;
 }
+
+input.task-form__date-input[type="date"]{
+    position: relative;
+}
+
+input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    color: transparent;
+    background: transparent;
+  }

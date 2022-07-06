@@ -4,6 +4,7 @@ import { getFormatDateForDatePicker } from '../../../Helpers/DateHelper';
 import BorderButton from '../../CommonComponents/Button/BorderButton';
 import { CustomButton } from '../../CommonComponents/Button/Button';
 import GobackButton from '../../CommonComponents/Button/GobackButton';
+import { useHomeController } from '../../HomeContext';
 import './task-form.css';
 
 function TaskForm(props) {
@@ -19,6 +20,7 @@ function TaskForm(props) {
     ]
 
     const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0]);
+    const {accountCategory, incomeCategory, expenseCategory} = useHomeController();
     const titleRef = useRef(),
           dateRef = useRef(),
           accountCategoryRef = useRef(),
@@ -57,7 +59,7 @@ function TaskForm(props) {
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3" controlId="formDate">
                         <Form.Label>Date</Form.Label>
-                        <Form.Control type="date" ref={dateRef} required  />
+                        <Form.Control className="task-form__date-input" type="date" ref={dateRef} required  />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formAccountCategory">

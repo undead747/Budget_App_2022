@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { doc, setDoc, serverTimestamp, collection, updateDoc, deleteDoc, getDocs, query, orderBy, limit  } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { doc, setDoc, serverTimestamp, collection, updateDoc, deleteDoc, getDocs, orderBy, limit, onSnapshot, query  } from 'firebase/firestore'
 import { fireStoreInst } from './firebaseInitialize'
 
 export const DatabaseCollections = {
@@ -33,8 +33,8 @@ export const useFirestore = (collectionName) => {
     }
 
     const getDocumentsByPagination = async (pagination) => {
-        const query = query(collection(fireStoreInst, collectionName), orderBy(pagination.orderBy, pagination.orderType), limit(pagination.size));
-        return await getDocs(query);
+        const q = query(collection(fireStoreInst, collectionName), orderBy(pagination.orderBy, pagination.orderType), limit(pagination.size));
+        return await getDocs(q);
     }
 
     return {
@@ -44,4 +44,25 @@ export const useFirestore = (collectionName) => {
         getDocuments,
         getDocumentsByPagination
     }
+}
+
+export const useFirestoreRealtime = (collectionName) => {
+    const [currentDocs, setCurrentDocs] = useState();
+
+    useEffect(() => {
+          const q = query(collection(fireStoreInst, collectionName));
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                const results = [];
+
+                querySnapshot.forEach(doc => {
+                    results.push(doc.data());                    
+                })
+
+                setCurrentDocs(results);
+          }) 
+
+          return () => unsubscribe();
+    },[collectionName])
+
+    return currentDocs;
 }
