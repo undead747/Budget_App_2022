@@ -13,25 +13,18 @@ function useModal() {
     const modalComponent = () => {
         return (
             <>
-                <Modal show={show} onHide={handleClose}>
+                <Modal show={show} onHide={handleClose} centered={true} size={"lg"}>
                     <Modal.Header closeButton>
                         <Modal.Title>{title}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>{content}</Modal.Body>
-                    <Modal.Footer>
-                        <CustomButton onClick={handleClose}>
-                            Close
-                        </CustomButton>
-                        <CustomButton onClick={handleClose}>
-                            Save Changes
-                        </CustomButton>
-                    </Modal.Footer>
                 </Modal>
             </>
         );
     }
 
     return {
+        show,
         handleClose,
         handleShow,
         setTitle,

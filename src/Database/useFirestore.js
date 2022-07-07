@@ -73,7 +73,7 @@ export const useFirestoreRealtime = (collectionName) => {
 
   useEffect(() => {
     if (collectionName) {
-      const q = query(collection(fireStoreInst, collectionName));
+      const q = query(collection(fireStoreInst, collectionName), orderBy("Name"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const results = [];
 

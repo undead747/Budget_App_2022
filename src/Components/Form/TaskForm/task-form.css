@@ -30,6 +30,14 @@
     padding: 2em .5em;
 }
 
+.category-group{
+    margin: 2em 0 .7em 0;
+}
+
+.category-group > * + *{
+    margin-left: .7em;
+}
+
 input.task-form__date-input[type="date"]{
     position: relative;
 }

@@ -11,18 +11,18 @@ export function useHomeController(){
 export default function HomeProvider({children}) {
     const [loading, setLoading] = useState(false);
     const [selectedTab, setSelectTab] = useState(sidebarData[0].id);
-    const accountCategory = useFirestoreRealtime(DatabaseCollections.AccountCategory);
-    const incomeCategory = useFirestoreRealtime(DatabaseCollections.IncomeCategory);
-    const expenseCategory = useFirestoreRealtime(DatabaseCollections.ExpenseCategory);
+    const accountCategories = useFirestoreRealtime(DatabaseCollections.AccountCategory);
+    const incomeCategories = useFirestoreRealtime(DatabaseCollections.IncomeCategory);
+    const expenseCategories = useFirestoreRealtime(DatabaseCollections.ExpenseCategory);
 
     const value = {
         loading,
         setLoading,
         selectedTab,
         setSelectTab,
-        accountCategory,
-        incomeCategory,
-        expenseCategory
+        accountCategories,
+        incomeCategories,
+        expenseCategories
     }
 
     return (

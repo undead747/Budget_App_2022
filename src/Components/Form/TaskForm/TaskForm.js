@@ -21,8 +21,8 @@ function TaskForm(props) {
     ]
 
     const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0]);
-    const {accountCategory, incomeCategory, expenseCategory} = useHomeController();
-    const {handleClose, handleShow, setTitle: setModalTitle, setContent, modalComponent} = useModal();
+    const {accountCategories, incomeCategories, expenseCategories} = useHomeController();
+    const {show: modalShow , handleClose, handleShow, setTitle: setModalTitle, setContent: setModalContent, modalComponent} = useModal();
 
     const titleRef = useRef(),
           dateRef = useRef(),
@@ -39,12 +39,28 @@ function TaskForm(props) {
 
     const handleSelectAccountCategory = () => {
         setModalTitle("Account Category");
+        setModalContent(<div className='d-flex category-group'>
+             {
+                accountCategories &&
+                accountCategories.map(cate => <BorderButton key={cate.create_at.seconds} border={{size: 2, color: "#FFae49"}} 
+                                                                                 backgroundColor={"transparent"}>
+                                                                            {cate.Name}
+                                                                    </BorderButton>)}        
+        </div>);
+
         handleShow();
     }
 
     useEffect(() => {
         dateRef.current.value = getFormatDateForDatePicker();
     })
+
+    useEffect(() => {
+        if(modalShow === false){
+            console.log(accountCategoryRef.current);
+            accountCategoryRef.current.blur();
+        } 
+    },[modalShow])
 
     return (
         <div className="task-form">
@@ -72,7 +88,7 @@ function TaskForm(props) {
 
                     <Form.Group className="mb-3" controlId="formAccountCategory">
                         <Form.Label>Account</Form.Label>
-                        <Form.Control onClick={() => handleSelectAccountCategory} type="text" ref={accountCategoryRef} required />
+                        <Form.Control onClick={handleSelectAccountCategory} type="text" ref={accountCategoryRef} required />
                     </Form.Group>
                  
                     <Form.Group className="mb-3" controlId="formTaskCategory">
