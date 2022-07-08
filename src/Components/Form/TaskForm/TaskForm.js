@@ -9,58 +9,106 @@ import { useHomeController } from '../../HomeContext';
 import './task-form.css';
 
 function TaskForm(props) {
-    const taskModeList = [
-        {
-            id: 0,
-            name: "Income"
-        },
-        {
-            id: 1,
-            name: "Expense"
-        },
-    ]
+    const taskModes = {
+        Expense: {id: 0, name: 'Expense'},
+        Income: {id: 1, name: 'Income'}
+    }
 
-    const [selectedTaskMode, setSelectedTaskMode] = useState(taskModeList[0]);
-    const {accountCategories, incomeCategories, expenseCategories} = useHomeController();
-    const {show: modalShow , handleClose, handleShow, setTitle: setModalTitle, setContent: setModalContent, modalComponent} = useModal();
+    const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
+    const { accountCategories, incomeCategories, expenseCategories } = useHomeController();
+    const {handleClose, handleShow, setTitle: setModalTitle, setContent: setModalContent, modalComponent } = useModal();
+    const [selectedTask, setSelectedTask] = useState({
+        title: null,
+        date: null,
+        accountCategory: null,
+        taskCategory: null,
+        amount: null,
+        note: null
+    });
 
     const titleRef = useRef(),
-          dateRef = useRef(),
-          accountCategoryRef = useRef(),
-          taskCategoryRef = useRef(),
-          amountRef = useRef(),
-          noteRef = useRef();
+        dateRef = useRef(),
+        accountCategoryRef = useRef(),
+        taskCategoryRef = useRef(),
+        amountRef = useRef(),
+        noteRef = useRef();
 
     const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
     const handleSubmit = (event) => {
-        
+
     }
 
-    const handleSelectAccountCategory = () => {
-        setModalTitle("Account Category");
-        setModalContent(<div className='d-flex category-group'>
-             {
-                accountCategories &&
-                accountCategories.map(cate => <BorderButton key={cate.create_at.seconds} border={{size: 2, color: "#FFae49"}} 
-                                                                                 backgroundColor={"transparent"}>
-                                                                            {cate.Name}
-                                                                    </BorderButton>)}        
+    const handleDisplayAccountCategoryModal = () => {
+        accountCategoryRef.current.blur();
+
+        setModalTitle("Account category");
+        setModalContent(<div className="category-group">
+            {
+               accountCategories && accountCategories.map((category) => <BorderButton key={category.id} 
+                                                                                      backgroundColor={"transparent"} 
+                                                                                      border={{size: 2, color: "#ffae49"}}
+                                                                                      onClick={() => handleSelectAccountCateogory(category)}>
+                                                                                    { category.name }
+                                                                        </BorderButton>)
+            }
         </div>);
 
         handleShow();
     }
 
+    const handleSelectAccountCateogory = (accountCategory) => {
+        accountCategoryRef.current.value = accountCategory.name;
+        setSelectedTask({...selectedTask, accountCategory: accountCategory});
+
+        handleClose();
+    }
+
+    const handleDisplayTaskCategoryModal = () => {
+        taskCategoryRef.current.blur();
+
+        let title = null;
+        let categories = null;
+
+        if(selectedTaskMode.id === taskModes.Income.id){
+            title = "Income category";
+            categories = incomeCategories;
+        }
+
+        if(selectedTaskMode.id === taskModes.Expense.id){
+            title = "Expense category";
+            categories = expenseCategories;
+        }
+
+        setModalTitle(title);
+        setModalContent(<div className="category-group">
+            {
+               categories && categories.map((category) => <BorderButton key={category.id} 
+                                                                                      backgroundColor={"transparent"} 
+                                                                                      border={{size: 2, color: "#ffae49"}}
+                                                                                      onClick={() => handleSelectTaskCateogory(category)}>
+                                                                                    { category.name }
+                                                                        </BorderButton>)
+            }
+        </div>);
+
+        handleShow();
+    }
+    
+    const handleSelectTaskCateogory = (taskCategory) => {
+        taskCategoryRef.current.value = taskCategory.name;
+        setSelectedTask({...selectedTask, taskCategory: taskCategory});
+
+        handleClose();
+    }
+
     useEffect(() => {
         dateRef.current.value = getFormatDateForDatePicker();
     })
-
+    
     useEffect(() => {
-        if(modalShow === false){
-            console.log(accountCategoryRef.current);
-            accountCategoryRef.current.blur();
-        } 
-    },[modalShow])
+        console.log(incomeCategories)
+    }, [incomeCategories])
 
     return (
         <div className="task-form">
@@ -71,49 +119,50 @@ function TaskForm(props) {
 
             <ButtonGroup className="task-form__button-group">
                 {
-                    taskModeList.map(mode => {
-                        if(mode.id === selectedTaskMode.id) return <CustomButton callback={() => handleSelectMode(mode)} key={mode.id}>{mode.name}</CustomButton>
-            
-                        return <BorderButton border={{size: 2}} backgroundColor={"transparent"} callback={() => handleSelectMode(mode)} key={mode.id}>{mode.name}</BorderButton>
+                    Object.keys(taskModes).map(key => {
+                        if (taskModes[key].id === selectedTaskMode.id) return <CustomButton key={key}>{taskModes[key].name}</CustomButton>
+
+                        return <BorderButton border={{ size: 2 }} backgroundColor={"transparent"} callback={() => handleSelectMode(taskModes[key])} key={key}>{taskModes[key].name}</BorderButton>
                     })
                 }
             </ButtonGroup>
 
             <div className="task-form__form-content">
                 <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="formDate">
-                        <Form.Label>Date</Form.Label>
-                        <Form.Control className="task-form__date-input" type="date" ref={dateRef} required  />
-                    </Form.Group>
+                    <div className="mb-3">
+                        <label htmlFor="task-date" className="form-label">Date</label>
+                        <input className="form-control task-form__date-input" type="date" ref={dateRef} required />
+                    </div>
 
-                    <Form.Group className="mb-3" controlId="formAccountCategory">
-                        <Form.Label>Account</Form.Label>
-                        <Form.Control onClick={handleSelectAccountCategory} type="text" ref={accountCategoryRef} required />
-                    </Form.Group>
-                 
-                    <Form.Group className="mb-3" controlId="formTaskCategory">
-                        <Form.Label>Category</Form.Label>
-                        <Form.Control type="text" ref={taskCategoryRef} required />
-                    </Form.Group>
-                    
-                    <Form.Group className="mb-3" controlId="formAmount">
-                        <Form.Label>Amount</Form.Label>
-                        <Form.Control type="number" ref={amountRef} required />
-                    </Form.Group>
-          
-                    <Form.Group className="mb-3" controlId="formAccountTitle">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control type="text" ref={titleRef} />
-                    </Form.Group>
+                    <div className="mb-3">
+                        <label htmlFor="account-category" className="form-label">Account</label>
+                        <input className="form-control" onClick={handleDisplayAccountCategoryModal} type="text" ref={accountCategoryRef} required />
+                    </div>
+                   
+                    <div className="mb-3">
+                        <label htmlFor="task-category" className="form-label">Category</label>
+                        <input className="form-control" onClick={handleDisplayTaskCategoryModal} type="text" ref={taskCategoryRef} required />
+                    </div>
+                  
+                    <div className="mb-3">
+                        <label htmlFor="amount" className="form-label">Amount</label>
+                        <input className="form-control" type="number" ref={amountRef} required />
+                    </div>
+         
+                    <div className="mb-3">
+                        <label htmlFor="title" className="form-label">Title</label>
+                        <input className="form-control" type="text" ref={titleRef} />
+                    </div>
+                  
+                    <div className="mb-3">
+                        <label htmlFor="note" className="form-label">Note</label>
+                        <textarea className="form-control" ref={noteRef} rows="3"></textarea>
+                    </div>
 
-                    <Form.Group className="mb-3" controlId="formTitle">
-                        <Form.Label>Note</Form.Label>
-                        <Form.Control as="textarea" rows="3" name="address" ref={noteRef} />
-                    </Form.Group>
                     <div className="d-grid gap-2">
-                    <CustomButton type="submit">
-                        Submit
-                    </CustomButton>
+                        <CustomButton type="submit">
+                            Submit
+                        </CustomButton>
                     </div>
                 </Form>
             </div>

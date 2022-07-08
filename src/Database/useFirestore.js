@@ -13,6 +13,7 @@ import {
   query,
 } from "firebase/firestore";
 import { fireStoreInst } from "./firebaseInitialize";
+import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
 
 export const DatabaseCollections = {
   AccountCategory: "Account category",
@@ -78,7 +79,8 @@ export const useFirestoreRealtime = (collectionName) => {
         const results = [];
 
         querySnapshot.forEach((doc) => {
-          results.push(doc.data());
+          let data = lowercaseObjectPropKeys(doc.data());
+          results.push({...data, id: doc.id});
         });
 
         setCurrentDocs(results);

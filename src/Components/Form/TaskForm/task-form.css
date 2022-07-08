@@ -31,7 +31,12 @@
 }
 
 .category-group{
-    margin: 2em 0 .7em 0;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.category-group > *{
+    margin-top: .5em;
 }
 
 .category-group > * + *{
