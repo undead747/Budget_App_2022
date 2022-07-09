@@ -1,5 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {DatabaseCollections, useFirestoreRealtime } from '../Database/useFirestore';
+import { getLocalCountryInfo } from '../Helpers/CountryHelper';
+import { getCurrencyInfoByCode, getCurrencyRateByCode } from '../Helpers/CurrencyHelper';
 import { sidebarData } from './Homepage/Sidebar/SidebarData';
 
 const HomeControllerContext = React.createContext();
@@ -11,15 +13,32 @@ export function useHomeController(){
 export default function HomeProvider({children}) {
     const [loading, setLoading] = useState(false);
     const [selectedTab, setSelectTab] = useState(sidebarData[0].id);
+    const [localCountryInfo, setLocalCountryInfo] = useState();
     const accountCategories = useFirestoreRealtime(DatabaseCollections.AccountCategory);
     const incomeCategories = useFirestoreRealtime(DatabaseCollections.IncomeCategory);
     const expenseCategories = useFirestoreRealtime(DatabaseCollections.ExpenseCategory);
+
+    const initLocalCountryInfo = async () => {
+        let currentCountry = await getLocalCountryInfo();
+        let currencyInfo = getCurrencyInfoByCode(currentCountry.countryCode);
+        let currencyExchangeRate = await getCurrencyRateByCode(currencyInfo.currency);
+        currencyExchangeRate = currencyExchangeRate.conversion_rates;
+        
+        currencyInfo.currencyExchangeRate = currencyExchangeRate;
+        console.log(currencyInfo);
+        setLocalCountryInfo(currencyInfo);
+    }
+
+    useEffect(() => {
+        initLocalCountryInfo();
+    },[])
 
     const value = {
         loading,
         setLoading,
         selectedTab,
         setSelectTab,
+        localCountryInfo,
         accountCategories,
         incomeCategories,
         expenseCategories

@@ -30,6 +30,28 @@
     padding: 2em .5em;
 }
 
+.task-form__amount-input{
+    position: relative;
+}
+
+.task-form__amount-input input{
+    padding-left: 3rem;
+}
+
+.task-form__amount-input-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 1.2rem;
+    width: 1rem;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: var(--border-color);
+    border-right: 1px #b2b2b2 solid;
+}
+
 .category-group{
     display: flex;
     flex-wrap: wrap;
@@ -57,3 +79,4 @@ input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
     color: transparent;
     background: transparent;
   }
+

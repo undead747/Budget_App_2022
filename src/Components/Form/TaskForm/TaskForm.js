@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ButtonGroup, Form } from 'react-bootstrap';
+import { convertNumberToCurrency } from '../../../Helpers/CurrencyHelper';
 import { getFormatDateForDatePicker } from '../../../Helpers/DateHelper';
 import BorderButton from '../../CommonComponents/Button/BorderButton';
 import { CustomButton } from '../../CommonComponents/Button/Button';
@@ -15,7 +16,7 @@ function TaskForm(props) {
     }
 
     const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
-    const { accountCategories, incomeCategories, expenseCategories } = useHomeController();
+    const { localCountryInfo, accountCategories, incomeCategories, expenseCategories } = useHomeController();
     const {handleClose, handleShow, setTitle: setModalTitle, setContent: setModalContent, modalComponent } = useModal();
     const [selectedTask, setSelectedTask] = useState({
         title: null,
@@ -102,13 +103,23 @@ function TaskForm(props) {
         handleClose();
     }
 
+    const handleCurrencyInputEvent = (event) => {
+            let currentValue = amountRef.current.value;
+
+            if(localCountryInfo.iso && currentValue){
+                  let convertedCurrency = convertNumberToCurrency(localCountryInfo.iso, currentValue);  
+                  if(isNaN(parseFloat(convertedCurrency))){
+                      amountRef.current.value = 0;
+                      return
+                  }
+
+                  amountRef.current.value = convertedCurrency;
+            }
+    }
+
     useEffect(() => {
         dateRef.current.value = getFormatDateForDatePicker();
     })
-    
-    useEffect(() => {
-        console.log(incomeCategories)
-    }, [incomeCategories])
 
     return (
         <div className="task-form">
@@ -146,7 +157,10 @@ function TaskForm(props) {
                   
                     <div className="mb-3">
                         <label htmlFor="amount" className="form-label">Amount</label>
-                        <input className="form-control" type="number" ref={amountRef} required />
+                        <div className='task-form__amount-input'>
+                            <span className='task-form__amount-input-icon'>{localCountryInfo && localCountryInfo.symbol}</span>
+                            <input className="form-control" type="text" ref={amountRef} onChange={handleCurrencyInputEvent} required></input>
+                        </div>
                     </div>
          
                     <div className="mb-3">
