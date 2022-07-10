@@ -3,32 +3,57 @@ import { Modal } from 'react-bootstrap';
 
 function useModal() {
     const [show, setShow] = useState(false);
-    const [title, setTitle] = useState();
-    const [content, setContent] = useState();
-
-    const handleClose = () => setShow(false);
+    const [modalStates, setModalStates] = useState({
+        size : "lg", 
+        centered : true, 
+        fullscreen : false, 
+        content : '', 
+        title : ''
+    });
+    const handleClose = () =>{
+        // for prevent modal lagging when closing (causing by reset Modal state)
+        const minimumDelay = 100;
+        setShow(false);
+        setTimeout(() => {
+            setModalStates({
+                size : "lg", 
+                centered : true, 
+                fullscreen : false, 
+                content : '', 
+                title : ''
+            });
+        }, minimumDelay);
+    } 
     const handleShow = () => setShow(true);
 
-    const modalComponent = () => {
+    const setIModalStates = (props) => {
+        const states = {size: "lg", centered: true, fullscreen: false, content : '', title : '', ...props};
+        setModalStates(states);
+    }
+
+    const setModalComponent = () => {
         return (
             <>
-                <Modal show={show} onHide={handleClose} centered={true} size={"lg"}>
+                <Modal 
+                        show={show} 
+                        onHide={handleClose} 
+                        centered={modalStates.centered} 
+                        size={modalStates.size}
+                        fullscreen={modalStates.fullscreen}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{title}</Modal.Title>
+                        <Modal.Title>{modalStates.title}</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>{content}</Modal.Body>
+                    <Modal.Body>{modalStates.content}</Modal.Body>
                 </Modal>
             </>
         );
     }
 
     return {
-        show,
         handleClose,
         handleShow,
-        setTitle,
-        setContent,
-        modalComponent    
+        setIModalStates,
+        setModalComponent    
     }
 
 }
