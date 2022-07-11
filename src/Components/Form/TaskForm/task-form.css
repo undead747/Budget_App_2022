@@ -82,3 +82,15 @@ input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
     background: transparent;
   }
 
+.task-form__currency-table-wrapper{
+    padding-bottom: 2em;
+}
+
+.task-form__currency-table td{
+    padding-top: .8em;
+    padding-bottom: .8em;
+}
+
+.currency--active{
+    background-color: var(--button-color-type-1) !important;
+}

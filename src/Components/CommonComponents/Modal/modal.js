@@ -31,7 +31,7 @@ function useModal() {
         setModalStates(states);
     }
 
-    const setModalComponent = () => {
+    const ModalComponent = () => {
         return (
             <>
                 <Modal 
@@ -39,7 +39,8 @@ function useModal() {
                         onHide={handleClose} 
                         centered={modalStates.centered} 
                         size={modalStates.size}
-                        fullscreen={modalStates.fullscreen}>
+                        fullscreen={modalStates.fullscreen}
+                        className={"default-mode"}>
                     <Modal.Header closeButton>
                         <Modal.Title>{modalStates.title}</Modal.Title>
                     </Modal.Header>
@@ -53,7 +54,7 @@ function useModal() {
         handleClose,
         handleShow,
         setIModalStates,
-        setModalComponent    
+        ModalComponent    
     }
 
 }

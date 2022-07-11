@@ -29,7 +29,7 @@ function TaskForm(props) {
     handleClose,
     handleShow,
     setIModalStates,
-    setModalComponent    
+    ModalComponent    
   } = useModal();
   
   const [selectedTask, setSelectedTask] = useState({
@@ -145,15 +145,18 @@ function TaskForm(props) {
 
   const handleCurrencyInputExchange = () => {
     let modalContent = (
-      <div>
-        <table className="table">
+      <div className="table task-form__currency-table-wrapper">
+        <table className="table task-form__currency-table">
           <tbody>
             {
-
+               localCountryInfo && 
+               localCountryInfo.currencyExchangeRate && 
+               Object.keys(localCountryInfo.currencyExchangeRate).map(key => <tr key={key} 
+                                                                            className={key === localCountryInfo.currency ? "currency--active" : ''}>
+                    <td>{key}</td>
+                    <td className="text-end">{localCountryInfo.currencyExchangeRate[key]}</td>
+               </tr>) 
             }
-            <tr>
-              <td>Mark</td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -284,7 +287,7 @@ function TaskForm(props) {
         </Form>
       </div>
 
-      {setModalComponent()}
+      <ModalComponent />
     </div>
   );
 }
