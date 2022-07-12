@@ -15,7 +15,7 @@ import Signup from "./Components/Login/Signup";
 
 function App() {
   return (
-    <div className="default-mode">
+    <div className="app default-mode">
       <Router>
         <HomeProvider>
           <AuthProvider>

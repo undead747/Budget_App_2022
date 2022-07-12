@@ -82,13 +82,28 @@ input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
     background: transparent;
   }
 
-.task-form__currency-table-wrapper{
-    padding-bottom: 2em;
+.task-form_currency-search{
+    margin-bottom: .7em;
+}  
+
+.task-form__currency-table-warapper{
+    height: 70vh;
+    overflow-x: auto;
 }
 
 .task-form__currency-table td{
     padding-top: .8em;
     padding-bottom: .8em;
+}
+
+.task-form__curency-submits{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.task-form__curency-submits > * + * {
+    margin-top: .3em;
 }
 
 .currency--active{

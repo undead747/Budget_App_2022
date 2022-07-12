@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
 import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
+import { isEmptyOrSpaces } from "../../../Helpers/StringHelper";
 import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import GobackButton from "../../CommonComponents/Button/GobackButton";
@@ -17,6 +18,8 @@ function TaskForm(props) {
 
   const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
   const [selectedCurrency, setSelectedCurrency] = useState(); 
+  const [filteredCurrencies, setFilterCurrencies] = useState();
+  const [currencies, setCurrencies] = useState();
 
   const {
     localCountryInfo,
@@ -126,6 +129,15 @@ function TaskForm(props) {
     handleClose();
   };
 
+  const handleCurrencySearch = (event) => {
+      let searchStr = event.target.value;
+
+      if(isEmptyOrSpaces(searchStr)){
+        setFilterCurrencies(currencies);
+        return
+      } 
+  }
+
   const handleCurrencyInputEvent = (event) => {
     let currentValue = amountRef.current.value;
 
@@ -145,24 +157,33 @@ function TaskForm(props) {
 
   const handleCurrencyInputExchange = () => {
     let modalContent = (
-      <div className="table task-form__currency-table-wrapper">
-        <table className="table task-form__currency-table">
-          <tbody>
-            {
-               localCountryInfo && 
-               localCountryInfo.currencyExchangeRate && 
-               Object.keys(localCountryInfo.currencyExchangeRate).map(key => <tr key={key} 
-                                                                            className={key === localCountryInfo.currency ? "currency--active" : ''}>
-                    <td>{key}</td>
-                    <td className="text-end">{localCountryInfo.currencyExchangeRate[key]}</td>
-               </tr>) 
-            }
-          </tbody>
-        </table>
+      <div>
+        <input type="text" className="form-control task-form_currency-search" id="task-form_currency-search" onChange={handleCurrencySearch} placeholder="currency code" />
+        <div className="task-form__currency-table-warapper">
+          <table className="table task-form__currency-table">
+            <tbody>
+              {
+                filteredCurrencies && 
+                filteredCurrencies.map(currency => <tr key={currency.name} 
+                                                    className={currency.name === localCountryInfo.currency ? "currency--active" : ''}>
+                      <td>{currency.name}</td>
+                      <td className="text-end">{currency.rate}</td>
+                </tr>) 
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
     );
+    
+    let modalFooter = (
+      <div className="task-form__curency-submits">
+        <CustomButton>Exchange</CustomButton>
+        <CustomButton>Select</CustomButton>
+      </div>
+    )
 
-    setIModalStates({content: modalContent, title: "Currency Setting", fullscreen: true});
+    setIModalStates({content: modalContent, title: "Currency Setting", footer: modalFooter, fullscreen: true});
     handleShow();
   };
 
@@ -173,6 +194,16 @@ function TaskForm(props) {
   useEffect(() => {
         if(localCountryInfo && !selectedCurrency){
             setSelectedCurrency(localCountryInfo.currency);
+        }
+
+        if(localCountryInfo && localCountryInfo.currencyExchangeRate){
+          let currencyArr = [];
+          Object.keys(localCountryInfo.currencyExchangeRate).forEach(key => {
+              currencyArr.push({name: key, rate: localCountryInfo.currencyExchangeRate[key]});
+          })
+
+          setCurrencies(currencyArr);
+          setFilterCurrencies(currencyArr);
         }
   }, [localCountryInfo])
 

@@ -20,3 +20,4 @@ export function convertNumberToCurrency(countryCode, inputString) {
 export function getCurrencyInfoByCode(countryCode){
     return getAllInfoByISO(countryCode);
 }
+

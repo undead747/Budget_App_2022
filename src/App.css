@@ -10,6 +10,7 @@
 
     --button-color-type-1: #FFae49;
     --border-color: #dddddd;
+    --background-color: #F3F3F3;
 
     /*----------- Spacing values  ------------*/
     --side-bar-half-width: 50px;
@@ -32,9 +33,6 @@
     --medium: 500;
     --semi-bold: 600;
     --bold: 700;
-
-    min-height: 100vh;
-    background-color: #F3F3F3;
 }
 
 a {
@@ -54,8 +52,12 @@ html,
 body {
     margin: 0;
     padding: 0;
-
-    font-family: var(--body-font), var(--default-font);
-    
     scroll-behavior: smooth;
+}
+
+
+.app{
+    background-color: var(--background-color);
+    font-family: var(--body-font), var(--default-font);
+    min-height: 100vh;
 }

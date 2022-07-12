@@ -45,6 +45,7 @@ function useModal() {
                         <Modal.Title>{modalStates.title}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>{modalStates.content}</Modal.Body>
+                    <Modal.Footer>{modalStates.footer && modalStates.footer}</Modal.Footer>
                 </Modal>
             </>
         );
