@@ -21,11 +21,6 @@ export default function HomeProvider({children}) {
     const initLocalCountryInfo = async () => {
         let currentCountry = await getLocalCountryInfo();
         let currencyInfo = getCurrencyInfoByCode(currentCountry.countryCode);
-        let currencyExchangeRate = await getCurrencyRateByCode(currencyInfo.currency);
-        currencyExchangeRate = currencyExchangeRate.conversion_rates;
-        
-        currencyInfo.currencyExchangeRate = currencyExchangeRate;
-        console.log(currencyInfo);
         setLocalCountryInfo(currencyInfo);
     }
 

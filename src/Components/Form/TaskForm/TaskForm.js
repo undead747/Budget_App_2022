@@ -1,26 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
-import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
+import { taskModes } from "../../../Constants/TaskConstaints";
+import { convertNumberToCurrency, currencyParams, searchCurrencyByParam } from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
-import { isEmptyOrSpaces } from "../../../Helpers/StringHelper";
 import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import GobackButton from "../../CommonComponents/Button/GobackButton";
 import useModal from "../../CommonComponents/Modal/modal";
 import { useHomeController } from "../../HomeContext";
+import { AccountCategoryModal, TaskCategoryModal } from "./CategoryModal";
+import setCurrencyModal from "./CurrencyModal";
 import "./task-form.css";
 
 function TaskForm(props) {
-  const taskModes = {
-    Expense: { id: 0, name: "Expense" },
-    Income: { id: 1, name: "Income" },
-  };
+  // Singleton modal
+  const {
+    handleClose,
+    handleShow,
+    setIModalStates,
+    ModalComponent
+  } = useModal();
 
   const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
-  const [selectedCurrency, setSelectedCurrency] = useState(); 
-  const [filteredCurrencies, setFilterCurrencies] = useState();
-  const [currencies, setCurrencies] = useState();
+  const [selectedCurrency, setSelectedCurrency] = useState();
 
+  // State data from home controller
   const {
     localCountryInfo,
     accountCategories,
@@ -28,22 +32,7 @@ function TaskForm(props) {
     expenseCategories,
   } = useHomeController();
 
-  const {
-    handleClose,
-    handleShow,
-    setIModalStates,
-    ModalComponent    
-  } = useModal();
-  
-  const [selectedTask, setSelectedTask] = useState({
-    title: null,
-    date: null,
-    accountCategory: null,
-    taskCategory: null,
-    amount: null,
-    note: null,
-  });
-
+  // Define form refs
   const titleRef = useRef(),
     dateRef = useRef(),
     accountCategoryRef = useRef(),
@@ -53,91 +42,27 @@ function TaskForm(props) {
 
   const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
-  const handleSubmit = (event) => {};
+  const handleSubmit = (event) => { };
 
+  // Handle Display Modals
   const handleDisplayAccountCategoryModal = () => {
     accountCategoryRef.current.blur();
-
-    let content = (
-      <div className="category-group">
-        {accountCategories &&
-          accountCategories.map((category) => (
-            <BorderButton
-              key={category.id}
-              backgroundColor={"transparent"}
-              border={{ size: 2, color: "#ffae49" }}
-              onClick={() => handleSelectAccountCateogory(category)}
-            >
-              {category.name}
-            </BorderButton>
-          ))}
-      </div>
-    );
-
-    setIModalStates({content: content, title: "Account category"});
+    AccountCategoryModal({ accountCategories, handleClose, setIModalStates, accountCategoryRef });
     handleShow();
-  };
-
-  const handleSelectAccountCateogory = (accountCategory) => {
-    accountCategoryRef.current.value = accountCategory.name;
-    setSelectedTask({ ...selectedTask, accountCategory: accountCategory });
-
-    handleClose();
   };
 
   const handleDisplayTaskCategoryModal = () => {
     taskCategoryRef.current.blur();
 
-    let title = null;
-    let categories = null;
-
-    if (selectedTaskMode.id === taskModes.Income.id) {
-      title = "Income category";
-      categories = incomeCategories;
-    }
-
-    if (selectedTaskMode.id === taskModes.Expense.id) {
-      title = "Expense category";
-      categories = expenseCategories;
-    }
-
-    let content = (
-      <div className="category-group">
-        {categories &&
-          categories.map((category) => (
-            <BorderButton
-              key={category.id}
-              backgroundColor={"transparent"}
-              border={{ size: 2, color: "#ffae49" }}
-              onClick={() => handleSelectTaskCateogory(category)}
-            >
-              {category.name}
-            </BorderButton>
-          ))}
-      </div>
-    );
-
-    setIModalStates({ content: content, title: title });
-
+    TaskCategoryModal({ selectedTaskMode, incomeCategories, expenseCategories, handleClose, setIModalStates, taskCategoryRef })
     handleShow();
   };
 
-  const handleSelectTaskCateogory = (taskCategory) => {
-    taskCategoryRef.current.value = taskCategory.name;
-    setSelectedTask({ ...selectedTask, taskCategory: taskCategory });
-
-    handleClose();
-  };
-
-  const handleCurrencySearch = (event) => {
-      let searchStr = event.target.value;
-
-      if(isEmptyOrSpaces(searchStr)){
-        setFilterCurrencies(currencies);
-        return
-      } 
+  const handleDisplayCurrencyModal = () => {
+    setCurrencyModal({ setIModalStates });
   }
 
+  // Format money real-time when user input money
   const handleCurrencyInputEvent = (event) => {
     let currentValue = amountRef.current.value;
 
@@ -155,56 +80,16 @@ function TaskForm(props) {
     }
   };
 
-  const handleCurrencyInputExchange = () => {
-    let modalContent = (
-      <div>
-        <input type="text" className="form-control task-form_currency-search" id="task-form_currency-search" onChange={handleCurrencySearch} placeholder="currency code" />
-        <div className="task-form__currency-table-warapper">
-          <table className="table task-form__currency-table">
-            <tbody>
-              {
-                filteredCurrencies && 
-                filteredCurrencies.map(currency => <tr key={currency.name} 
-                                                    className={currency.name === localCountryInfo.currency ? "currency--active" : ''}>
-                      <td>{currency.name}</td>
-                      <td className="text-end">{currency.rate}</td>
-                </tr>) 
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-    
-    let modalFooter = (
-      <div className="task-form__curency-submits">
-        <CustomButton>Exchange</CustomButton>
-        <CustomButton>Select</CustomButton>
-      </div>
-    )
-
-    setIModalStates({content: modalContent, title: "Currency Setting", footer: modalFooter, fullscreen: true});
-    handleShow();
-  };
 
   useEffect(() => {
     dateRef.current.value = getFormatDateForDatePicker();
   });
 
+  // Set Default currency base by local informations
   useEffect(() => {
-        if(localCountryInfo && !selectedCurrency){
-            setSelectedCurrency(localCountryInfo.currency);
-        }
-
-        if(localCountryInfo && localCountryInfo.currencyExchangeRate){
-          let currencyArr = [];
-          Object.keys(localCountryInfo.currencyExchangeRate).forEach(key => {
-              currencyArr.push({name: key, rate: localCountryInfo.currencyExchangeRate[key]});
-          })
-
-          setCurrencies(currencyArr);
-          setFilterCurrencies(currencyArr);
-        }
+    if (localCountryInfo && !selectedCurrency) {
+      setSelectedCurrency(localCountryInfo.currency);
+    }
   }, [localCountryInfo])
 
   return (
@@ -277,10 +162,7 @@ function TaskForm(props) {
               Amount
             </label>
             <div className="task-form__amount-input">
-              <span
-                className="task-form__amount-input-icon"
-                onClick={handleCurrencyInputExchange}
-              >
+              <span className="task-form__amount-input-icon" onChange={handleDisplayCurrencyModal}>
                 {localCountryInfo && localCountryInfo.symbol}
               </span>
               <input
