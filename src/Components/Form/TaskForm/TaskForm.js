@@ -1,36 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
 import { taskModes } from "../../../Constants/TaskConstaints";
-import { convertNumberToCurrency, currencyParams, searchCurrencyByParam } from "../../../Helpers/CurrencyHelper";
+import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
 import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import GobackButton from "../../CommonComponents/Button/GobackButton";
-import useModal from "../../CommonComponents/Modal/modal";
 import { useHomeController } from "../../HomeContext";
-import { AccountCategoryModal, TaskCategoryModal } from "./CategoryModal";
-import setCurrencyModal from "./CurrencyModal";
 import "./task-form.css";
 
 function TaskForm(props) {
-  // Singleton modal
-  const {
-    handleClose,
-    handleShow,
-    setIModalStates,
-    ModalComponent
-  } = useModal();
-
   const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
   const [selectedCurrency, setSelectedCurrency] = useState();
 
   // State data from home controller
-  const {
-    localCountryInfo,
-    accountCategories,
-    incomeCategories,
-    expenseCategories,
-  } = useHomeController();
+  const { localCountryInfo } = useHomeController();
 
   // Define form refs
   const titleRef = useRef(),
@@ -42,25 +26,18 @@ function TaskForm(props) {
 
   const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
-  const handleSubmit = (event) => { };
+  const handleSubmit = (event) => {};
 
   // Handle Display Modals
   const handleDisplayAccountCategoryModal = () => {
     accountCategoryRef.current.blur();
-    AccountCategoryModal({ accountCategories, handleClose, setIModalStates, accountCategoryRef });
-    handleShow();
   };
 
   const handleDisplayTaskCategoryModal = () => {
     taskCategoryRef.current.blur();
-
-    TaskCategoryModal({ selectedTaskMode, incomeCategories, expenseCategories, handleClose, setIModalStates, taskCategoryRef })
-    handleShow();
   };
 
-  const handleDisplayCurrencyModal = () => {
-    setCurrencyModal({ setIModalStates });
-  }
+  const handleDisplayCurrencyModal = () => {};
 
   // Format money real-time when user input money
   const handleCurrencyInputEvent = (event) => {
@@ -71,6 +48,7 @@ function TaskForm(props) {
         localCountryInfo.iso,
         currentValue
       );
+
       if (isNaN(parseFloat(convertedCurrency))) {
         amountRef.current.value = 0;
         return;
@@ -80,7 +58,7 @@ function TaskForm(props) {
     }
   };
 
-
+  // Set Default task date by current local date
   useEffect(() => {
     dateRef.current.value = getFormatDateForDatePicker();
   });
@@ -90,7 +68,7 @@ function TaskForm(props) {
     if (localCountryInfo && !selectedCurrency) {
       setSelectedCurrency(localCountryInfo.currency);
     }
-  }, [localCountryInfo])
+  }, [localCountryInfo]);
 
   return (
     <div className="task-form">
@@ -162,7 +140,10 @@ function TaskForm(props) {
               Amount
             </label>
             <div className="task-form__amount-input">
-              <span className="task-form__amount-input-icon" onChange={handleDisplayCurrencyModal}>
+              <span
+                className="task-form__amount-input-icon"
+                onClick={handleDisplayCurrencyModal}
+              >
                 {localCountryInfo && localCountryInfo.symbol}
               </span>
               <input
@@ -199,8 +180,6 @@ function TaskForm(props) {
           </div>
         </Form>
       </div>
-
-      <ModalComponent />
     </div>
   );
 }
