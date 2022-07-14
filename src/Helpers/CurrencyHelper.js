@@ -1,4 +1,4 @@
-import { getAllInfoByISO, getParamByParam } from "iso-country-currency";
+import { getAllInfoByISO, getAllISOCodes, getParamByParam } from "iso-country-currency";
 import { sendRequest } from "./APIHelper";
 
 export const currencyParams = {
@@ -29,14 +29,5 @@ export function getCurrencyInfoByCode(countryCode){
     return getAllInfoByISO(countryCode);
 }
 
-export function searchCurrencyByParam(params){
-    let results = [];
+export const getAllCurrenciesInfo = () => getAllISOCodes();
 
-    Object.keys(params).forEach(key => {
-        if(params[key]){
-           results.push(getParamByParam(key, params[key], 'currency'));
-        }
-    })
-
-    return results;
-}

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { taskModes } from "../../../Constants/TaskConstaints";
+import React, { useEffect, useState } from "react";
+import { Modal } from "react-bootstrap";
 import BorderButton from "../../CommonComponents/Button/BorderButton";
+import { useHomeController } from "../../HomeContext";
+import { taskModes } from "../../../Constants/TaskConstaints";
 
 export function useAccountCategoryModal() {
   const [show, setShow] = useState(false);
@@ -9,10 +11,12 @@ export function useAccountCategoryModal() {
 
   const handleClose = () => setShow(false);
 
-  AccountCategoryModal = ({ accountCategories, callback, ...rest }) => {
-    handleSubmit = (category) => {
+  const AccountCategoryModal = ({ callback, ...rest }) => {
+    const {accountCategories} = useHomeController();
+
+    const handleSubmit = (category) => {
       handleClose();
-      callback(category);
+      if(callback) callback(category);
     };
 
     return (
@@ -52,48 +56,75 @@ export function useAccountCategoryModal() {
   }
 }
 
-// export function TaskCategoryModal({
-//   incomeCategories,
-//   expenseCategories,
-//   selectedTaskMode,
-//   handleClose,
-//   setIModalStates,
-//   taskCategoryRef,
-//   ...rest
-// }) {
-//   const handleSubmit = (taskCategory) => {
-//     taskCategoryRef.current.value = taskCategory.name;
-//     handleClose();
-//   };
 
-//   let title = null;
-//   let categories = null;
+export function useTaskCategoryModal() {
+  const [show, setShow] = useState(false);
 
-//   if (selectedTaskMode.id === taskModes.Income.id) {
-//     title = "Income category";
-//     categories = incomeCategories;
-//   }
+  const handleShow = () => setShow(true);
 
-//   if (selectedTaskMode.id === taskModes.Expense.id) {
-//     title = "Expense category";
-//     categories = expenseCategories;
-//   }
+  const handleClose = () => setShow(false);
 
-//   let content = (
-//     <div className="category-group">
-//       {categories &&
-//         categories.map((category) => (
-//           <BorderButton
-//             key={category.id}
-//             backgroundColor={"transparent"}
-//             border={{ size: 2, color: "#ffae49" }}
-//             onClick={() => handleSubmit(category)}
-//           >
-//             {category.name}
-//           </BorderButton>
-//         ))}
-//     </div>
-//   );
+  const TaskCategoryModal = ({ callback, selectedTaskMode, ...rest }) => {
+    const {incomeCategories, expenseCategories} = useHomeController();
+    const [categories, setCategories] = useState();
 
-//   setIModalStates({ content: content, title: title });
-// }
+    const displayModalTitle = () => {
+        if(selectedTaskMode.id === taskModes.Expense.id) return "Expense Categories";
+        if(selectedTaskMode.id === taskModes.Income.id) return "Income Categories";
+    }
+
+    useEffect(() => {
+        if(incomeCategories && expenseCategories){
+          if(selectedTaskMode.id === taskModes.Expense.id){
+            setCategories(expenseCategories);
+            return
+          } 
+
+          if(selectedTaskMode.id === taskModes.Income.id){
+            setCategories(incomeCategories);
+            return
+          }        
+        }
+    }, [incomeCategories, expenseCategories])
+
+    const handleSubmit = (category) => {
+      handleClose();
+      if(callback) callback(category);
+    };
+
+    return (
+      <Modal
+        show={show}
+        onHide={handleClose}
+        centered={true}
+        size={"lg"}
+        className={"default-mode"}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>{displayModalTitle()}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="category-group">
+            {categories &&
+              categories.map((category) => (
+                <BorderButton
+                  key={category.id}
+                  backgroundColor={"transparent"}
+                  border={{ size: 2, color: "#ffae49" }}
+                  onClick={() => handleSubmit(category)}
+                >
+                  {category.name}
+                </BorderButton>
+              ))}
+          </div>
+        </Modal.Body>
+      </Modal>
+    );
+  };
+
+  return {
+      handleShow,
+      handleClose,
+      TaskCategoryModal
+  }
+}

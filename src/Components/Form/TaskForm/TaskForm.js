@@ -7,11 +7,21 @@ import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import GobackButton from "../../CommonComponents/Button/GobackButton";
 import { useHomeController } from "../../HomeContext";
+import { useAccountCategoryModal, useTaskCategoryModal } from "./CategoryModal";
+import { useCurrencyModal } from "./CurrencyModal";
 import "./task-form.css";
 
 function TaskForm(props) {
   const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
   const [selectedCurrency, setSelectedCurrency] = useState();
+  const selectedTask = {
+    date: null,
+    accountCate: {},
+    taskCate: {},
+    amount: null,
+    title: null,
+    note: null
+  };
 
   // State data from home controller
   const { localCountryInfo } = useHomeController();
@@ -24,20 +34,39 @@ function TaskForm(props) {
     amountRef = useRef(),
     noteRef = useRef();
 
+  const {handleShow: handleAccountCateShow, AccountCategoryModal} = useAccountCategoryModal();
+  const {handleShow: handleTaskCateShow, TaskCategoryModal} = useTaskCategoryModal();
+  const {handleShow: handleCurrencyShow, CurrencyModal} = useCurrencyModal();
+
   const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
   const handleSubmit = (event) => {};
 
-  // Handle Display Modals
+  // Handle Account Categories Modal
   const handleDisplayAccountCategoryModal = () => {
     accountCategoryRef.current.blur();
+    handleAccountCateShow();
   };
 
+  const handleSelectAccountCategory = (category) => {
+      selectedTask.accountCate = category;
+      accountCategoryRef.current.value = category.name;
+  }
+  
+  //Handle Task Cateogries Modal 
   const handleDisplayTaskCategoryModal = () => {
     taskCategoryRef.current.blur();
+    handleTaskCateShow();
   };
+ 
+  const handleSelectTaskCategory = (category) => {
+      selectedTask.taskCate = category;
+      taskCategoryRef.current.value = category.name;
+  }
 
-  const handleDisplayCurrencyModal = () => {};
+  const handleDisplayCurrencyModal = () => {
+      handleCurrencyShow();
+  };
 
   // Format money real-time when user input money
   const handleCurrencyInputEvent = (event) => {
@@ -180,6 +209,10 @@ function TaskForm(props) {
           </div>
         </Form>
       </div>
+
+      <AccountCategoryModal callback={handleSelectAccountCategory} />
+      <TaskCategoryModal callback={handleSelectTaskCategory} selectedTaskMode={selectedTaskMode} />
+      <CurrencyModal selectedCurrency={selectedCurrency} />
     </div>
   );
 }
