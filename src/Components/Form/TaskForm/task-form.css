@@ -87,7 +87,7 @@ input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
 }  
 
 .task-form__currency-table-warapper{
-    height: 70vh;
+    height: 60vh;
     overflow-x: auto;
 }
 
