@@ -1,0 +1,14 @@
+.modal-body__content{
+    display: flex;
+    align-items: center;
+}
+
+.modal-body__icon{
+    font-size: 2rem;
+}
+
+.modal-body__p{
+    margin-left: .7em;
+    margin-bottom: 0;
+    font-size: 1.2rem;
+}

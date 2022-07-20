@@ -86,6 +86,17 @@ input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
     margin-bottom: .7em;
 }  
 
+.task-form__currency-exchange{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+.task-form__currency-exchange > p{
+    margin-bottom: 0;
+}
+
 .task-form__currency-table-warapper{
     height: 60vh;
     overflow-x: auto;

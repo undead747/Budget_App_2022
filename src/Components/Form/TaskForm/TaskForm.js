@@ -1,7 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 import { taskModes } from "../../../Constants/TaskConstaints";
-import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
+import { DatabaseCollections, useFirestore } from "../../../Database/useFirestore";
+import {
+  convertNumberToCurrency,
+  getSymbolByCurrency,
+} from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
 import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { CustomButton } from "../../CommonComponents/Button/Button";
@@ -13,18 +18,19 @@ import "./task-form.css";
 
 function TaskForm(props) {
   const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
-  const [selectedCurrency, setSelectedCurrency] = useState();
-  const selectedTask = {
+  const [selectedTask, setSelectedTask] = useState({
     date: null,
     accountCate: {},
     taskCate: {},
-    amount: null,
+    amount: 0,
+    currency: null,
     title: null,
-    note: null
-  };
+    note: null,
+  });
 
   // State data from home controller
-  const { localCountryInfo } = useHomeController();
+  const {setLoading, localCountryInfo, handleSuccessShow, setSucessModalContent } = useHomeController();
+  const {addDocument} = useFirestore(DatabaseCollections.Tasks);
 
   // Define form refs
   const titleRef = useRef(),
@@ -34,13 +40,44 @@ function TaskForm(props) {
     amountRef = useRef(),
     noteRef = useRef();
 
-  const {handleShow: handleAccountCateShow, AccountCategoryModal} = useAccountCategoryModal();
-  const {handleShow: handleTaskCateShow, TaskCategoryModal} = useTaskCategoryModal();
-  const {handleShow: handleCurrencyShow, CurrencyModal} = useCurrencyModal();
+  const {
+    show: accountModalShow,
+    handleShow: handleAccountCateShow,
+    AccountCategoryModal,
+  } = useAccountCategoryModal();
+  const {
+    show: taskModalShow,
+    handleShow: handleTaskCateShow,
+    TaskCategoryModal,
+  } = useTaskCategoryModal();
+  const {
+    show: CurrencyModalShow,
+    handleShow: handleCurrencyShow,
+    CurrencyModal,
+  } = useCurrencyModal();
+
+  const history = useHistory();
 
   const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
-  const handleSubmit = (event) => {};
+  const handleSubmit = async(event) => {
+    try {
+      event.preventDefault();
+      let task = {
+        ...selectedTask,
+        date: dateRef.current.value,
+        note: noteRef.current.value,
+        title: titleRef.current.value,
+      };
+      
+      setLoading(true);
+      await addDocument(JSON.parse(JSON.stringify(task)));
+      setLoading(false);
+      history.push('/');
+    } catch (error) {
+      console.log(error)      
+    }
+  };
 
   // Handle Account Categories Modal
   const handleDisplayAccountCategoryModal = () => {
@@ -49,41 +86,54 @@ function TaskForm(props) {
   };
 
   const handleSelectAccountCategory = (category) => {
-      selectedTask.accountCate = category;
-      accountCategoryRef.current.value = category.name;
-  }
-  
-  //Handle Task Cateogries Modal 
+    setSelectedTask({ ...selectedTask, accountCate: category });
+    accountCategoryRef.current.value = category.name;
+  };
+
+  //Handle Task Cateogries Modal
   const handleDisplayTaskCategoryModal = () => {
     taskCategoryRef.current.blur();
     handleTaskCateShow();
   };
- 
+
   const handleSelectTaskCategory = (category) => {
-      selectedTask.taskCate = category;
-      taskCategoryRef.current.value = category.name;
-  }
+    setSelectedTask({ ...selectedTask, taskCate: category });
+    taskCategoryRef.current.value = category.name;
+  };
 
   const handleDisplayCurrencyModal = () => {
-      handleCurrencyShow();
+    handleCurrencyShow();
   };
 
   // Format money real-time when user input money
   const handleCurrencyInputEvent = (event) => {
     let currentValue = amountRef.current.value;
 
-    if (localCountryInfo.iso && currentValue) {
+    if (!currentValue) {
+      amountRef.current.value = 0;
+      setSelectedTask({ ...selectedTask, amount: 0 });
+      return;
+    }
+
+    if (
+      selectedTask.currency &&
+      !currentValue.includes(".", currentValue.length - 1)
+    ) {
       let convertedCurrency = convertNumberToCurrency(
-        localCountryInfo.iso,
+        selectedTask.currency,
         currentValue
       );
 
       if (isNaN(parseFloat(convertedCurrency))) {
-        amountRef.current.value = 0;
+        amountRef.current.value = currentValue.slice(0, -1);
         return;
       }
 
       amountRef.current.value = convertedCurrency;
+      setSelectedTask({
+        ...selectedTask,
+        amount: convertedCurrency.replace(",", ""),
+      });
     }
   };
 
@@ -94,15 +144,15 @@ function TaskForm(props) {
 
   // Set Default currency base by local informations
   useEffect(() => {
-    if (localCountryInfo && !selectedCurrency) {
-      setSelectedCurrency(localCountryInfo.currency);
+    if (localCountryInfo && !selectedTask.currency) {
+      setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
     }
   }, [localCountryInfo]);
 
   return (
     <div className="task-form">
       <div className="task-form__header">
-        <GobackButton backgroundColor={"transparent"}>Go back</GobackButton>
+        <GobackButton backgroundColor={"transparent"} callback={history.goBack}>Go back</GobackButton>
         <h5 className="task-form__title">{selectedTaskMode.name}</h5>
       </div>
 
@@ -114,7 +164,6 @@ function TaskForm(props) {
           return (
             <BorderButton
               border={{ size: 2 }}
-              backgroundColor={"transparent"}
               callback={() => handleSelectMode(taskModes[key])}
               key={key}
             >
@@ -173,7 +222,8 @@ function TaskForm(props) {
                 className="task-form__amount-input-icon"
                 onClick={handleDisplayCurrencyModal}
               >
-                {localCountryInfo && localCountryInfo.symbol}
+                {selectedTask.currency &&
+                  getSymbolByCurrency(selectedTask.currency)}
               </span>
               <input
                 className="form-control"
@@ -210,9 +260,22 @@ function TaskForm(props) {
         </Form>
       </div>
 
-      <AccountCategoryModal callback={handleSelectAccountCategory} />
-      <TaskCategoryModal callback={handleSelectTaskCategory} selectedTaskMode={selectedTaskMode} />
-      <CurrencyModal selectedCurrency={selectedCurrency} />
+      {accountModalShow && (
+        <AccountCategoryModal callback={handleSelectAccountCategory} />
+      )}
+      {taskModalShow && (
+        <TaskCategoryModal
+          callback={handleSelectTaskCategory}
+          selectedTaskMode={selectedTaskMode}
+        />
+      )}
+      {CurrencyModalShow && (
+        <CurrencyModal
+          amountRef={amountRef}
+          setSelectedTask={setSelectedTask}
+          selectedTask={selectedTask}
+        />
+      )}
     </div>
   );
 }

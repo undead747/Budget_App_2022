@@ -4,7 +4,7 @@ import { CustomButton } from './Button';
 function BorderButton({ border, ...rest }) {
     border = {size: 1, color: 'var(--button-color-type-1)', style: 'solid', ...border};
     return (
-        <CustomButton border = {border} {...rest} />
+        <CustomButton border = {border} backgroundColor={"transparent"} {...rest} />
     );
 }
 

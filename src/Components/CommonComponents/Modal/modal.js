@@ -1,63 +1,50 @@
-import React, { useState } from 'react';
-import { Modal } from 'react-bootstrap';
+import { useState } from "react";
+import { Modal } from "react-bootstrap";
+import BorderButton from "../Button/BorderButton";
+import { CustomButton } from "../Button/Button";
+import "./modal.css";
 
-function useModal() {
-    const [show, setShow] = useState(false);
-    const [modalStates, setModalStates] = useState({
-        size : "lg", 
-        centered : true, 
-        fullscreen : false, 
-        content : '', 
-        title : ''
-    });
-    const handleClose = () =>{
-        // for prevent modal lagging when closing (causing by reset Modal state)
-        const minimumDelay = 100;
-        setShow(false);
-        setTimeout(() => {
-            setModalStates({
-                size : "lg", 
-                centered : true, 
-                fullscreen : false, 
-                content : '', 
-                title : ''
-            });
-        }, minimumDelay);
-    } 
-    const handleShow = () => setShow(true);
+export function useSuccessModal() {
+  const [show, setShow] = useState(false);
+  const [content, setContent] = useState();
 
-    const setIModalStates = (props) => {
-        const states = {size: "lg", centered: true, fullscreen: false, content : '', title : '', ...props};
-        setModalStates(states);
-    }
+  const handleShow = () => setShow(true);
 
-    const ModalComponent = () => {
-        return (
-            <>
-                <Modal 
-                        show={show} 
-                        onHide={handleClose} 
-                        centered={modalStates.centered} 
-                        size={modalStates.size}
-                        fullscreen={modalStates.fullscreen}
-                        className={"default-mode"}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{modalStates.title}</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>{modalStates.content}</Modal.Body>
-                    <Modal.Footer>{modalStates.footer && modalStates.footer}</Modal.Footer>
-                </Modal>
-            </>
-        );
-    }
+  const handleClose = () => setShow(false);
 
-    return {
-        handleClose,
-        handleShow,
-        setIModalStates,
-        ModalComponent    
-    }
+  const setSucessModalContent = (content) => setContent(content);
 
+  const SuccessModal = () => {
+    return (
+      <Modal
+        show={show}
+        onHide={handleClose}
+        centered={true}
+        className={"default-mode"}
+      >
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="modal-body__content">
+            <i className="modal-body__icon far fa-check-circle"></i>
+            <p className="modal-body__p">{content && content}</p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <BorderButton border={{ size: 2 }} onClick={handleClose}>
+            Close
+          </BorderButton>
+          <CustomButton onClick={handleClose}>Save Changes</CustomButton>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  return {
+    show,
+    handleShow,
+    handleClose,
+    SuccessModal,
+    setSucessModalContent,
+  };
 }
-
-export default useModal;

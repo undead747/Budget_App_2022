@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { matchPath, useHistory, useLocation } from 'react-router-dom';
-import { getFormatDateForDatePicker, getFormatDateParam, getNextDate, getPreDate } from '../../../Helpers/DateHelper';
+import { getFormatDateForDatePicker, getNextDate, getPreDate } from '../../../Helpers/DateHelper';
 import { CustomButton } from '../../CommonComponents/Button/Button';
 import { useHomeController } from '../../HomeContext';
 import '../Sidebar/SidebarData'
@@ -29,21 +29,21 @@ export default function Navigator(tabId) {
   const preDate = () => {
     if(selectedTab === 0 && currDate){
       let preDate = getPreDate(new Date(currDate));
-      history.push(`/daily/${getFormatDateParam(preDate)}`);
+      history.push(`/daily/${getFormatDateForDatePicker(preDate)}`);
     }
   }
 
   const nextDate = () => {
     if(selectedTab === 0 && currDate){
       let nextDate = getNextDate(new Date(currDate));
-      history.push(`/daily/${getFormatDateParam(nextDate)}`);
+      history.push(`/daily/${getFormatDateForDatePicker(nextDate)}`);
     }
   }
 
   const handleDatePicker = () => {
     if(selectedTab === 0 && datePickerRef.current.value){
       let selectedDate = new Date(datePickerRef.current.value);
-      history.push(`/daily/${getFormatDateParam(selectedDate)}`);
+      history.push(`/daily/${getFormatDateForDatePicker(selectedDate)}`);
     }
   }
 

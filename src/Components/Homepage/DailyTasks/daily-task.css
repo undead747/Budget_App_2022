@@ -29,11 +29,3 @@
 .task-table__header{
     font-size: 1.1rem;
 }
-
-.daily__btn{
-    position: fixed;
-    bottom: 10%;
-    right: 7%;
-    
-    font-size: 2rem;
-}

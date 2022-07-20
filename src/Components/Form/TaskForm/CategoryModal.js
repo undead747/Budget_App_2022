@@ -50,6 +50,7 @@ export function useAccountCategoryModal() {
   };
 
   return {
+      show,
       handleShow,
       handleClose,
       AccountCategoryModal
@@ -123,6 +124,7 @@ export function useTaskCategoryModal() {
   };
 
   return {
+      show,
       handleShow,
       handleClose,
       TaskCategoryModal

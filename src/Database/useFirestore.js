@@ -11,6 +11,7 @@ import {
   limit,
   onSnapshot,
   query,
+  addDoc,
 } from "firebase/firestore";
 import { fireStoreInst } from "./firebaseInitialize";
 import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
@@ -30,7 +31,7 @@ export const Pagination = {
 
 export const useFirestore = (collectionName) => {
   const addDocument = async (document) => {
-    return await setDoc(collection(fireStoreInst, collectionName), {
+    return await addDoc(collection(fireStoreInst, collectionName), {
       ...document,
       create_at: serverTimestamp(),
     });
@@ -48,7 +49,8 @@ export const useFirestore = (collectionName) => {
   };
 
   const getDocuments = async () => {
-    return await getDocs(collection(fireStoreInst, collectionName));
+    const results = await getDocs(collection(fireStoreInst, collectionName));
+    return results.docs
   };
 
   const getDocumentsByPagination = async (pagination) => {
@@ -57,7 +59,8 @@ export const useFirestore = (collectionName) => {
       orderBy(pagination.orderBy, pagination.orderType),
       limit(pagination.size)
     );
-    return await getDocs(q);
+    const result = await getDocs(q);
+    return result.data()   
   };
 
   return {

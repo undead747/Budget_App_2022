@@ -10,6 +10,7 @@ import TasksByCalendar from './TasksByCalendar/TasksByCalendar';
 import TasksByYears from './TasksByYears/TasksByYears';
 import WeeklyTasks from './WeeklyTasks/WeeklyTasks';
 import "./home.css";
+import EclipseButton from '../CommonComponents/Button/EclipseButton';
 
 
 export default function Home() {
@@ -17,6 +18,10 @@ export default function Home() {
   const [errors, setErrors] = useState()
   const { logout } = useAuth()
   const history = useHistory()
+
+  const handleAddTask = () => {
+      history.push("/task/add");
+  }
 
   async function handleLogout() {
     setErrors('');
@@ -45,7 +50,7 @@ export default function Home() {
         <Redirect to={'/daily'} />
       </Switch>
       <CustomButton callback={handleLogout}>Sign out</CustomButton>
-
+      <EclipseButton customClass="btn--task-add" callback={handleAddTask}><i className="fas fa-plus"></i></EclipseButton>
     </>
   )
 }

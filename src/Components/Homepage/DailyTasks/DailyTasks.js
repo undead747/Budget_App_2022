@@ -1,16 +1,23 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
-import { getFormatDateParam } from '../../../Helpers/DateHelper';
-import EclipseButton from '../../CommonComponents/Button/EclipseButton';
+import { DatabaseCollections, useFirestore } from '../../../Database/useFirestore';
+import { getFormatDateForDatePicker, getFormatDateParam } from '../../../Helpers/DateHelper';
 import Summary from '../Summary/Summary';
 import './daily-task.css';
 
 export default function DailyTasks() {
   const param = useParams();
   const history = useHistory();
+  const [tasks, setTasks] = useState();
+  const {getDocuments} = useFirestore(DatabaseCollections.Tasks);
 
   useEffect(()=>{
-      if(!param.date && param.date !== 0) history.push(`/daily/${getFormatDateParam()}`);
+      if(!param.date && param.date !== 0) history.push(`/daily/${getFormatDateForDatePicker()}`);
+      if(!tasks){
+        getDocuments().then((data) => {
+              setTasks(data);
+            });
+      }
   })
 
   return (
@@ -37,8 +44,6 @@ export default function DailyTasks() {
               </tr>
           </tbody>
       </table>
-      
-      <EclipseButton customClass="daily__btn"><i className="fas fa-plus"></i></EclipseButton>
     </div>
   )
 }

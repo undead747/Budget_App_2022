@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import {DatabaseCollections, useFirestoreRealtime } from '../Database/useFirestore';
 import { getLocalCountryInfo } from '../Helpers/CountryHelper';
 import { getAllCurrenciesInfo, getCurrencyInfoByCode, getCurrencyRateByCode } from '../Helpers/CurrencyHelper';
+import { useSuccessModal } from './CommonComponents/Modal/modal';
 import { sidebarData } from './Homepage/Sidebar/SidebarData';
 
 const HomeControllerContext = React.createContext();
@@ -18,6 +19,8 @@ export default function HomeProvider({children}) {
     const accountCategories = useFirestoreRealtime(DatabaseCollections.AccountCategory);
     const incomeCategories = useFirestoreRealtime(DatabaseCollections.IncomeCategory);
     const expenseCategories = useFirestoreRealtime(DatabaseCollections.ExpenseCategory);
+
+    const {show: successShow, handleShow: handleSuccessShow, handleClose: handleSuccessClose, SuccessModal, setSucessModalContent} = useSuccessModal();
 
     const initLocalCountryInfo = async () => {
         let currentCountry = await getLocalCountryInfo();
@@ -38,6 +41,9 @@ export default function HomeProvider({children}) {
     const value = {
         loading,
         setLoading,
+        handleSuccessShow,
+        handleSuccessClose,
+        setSucessModalContent,
         selectedTab,
         setSelectTab,
         localCountryInfo,
@@ -60,6 +66,7 @@ export default function HomeProvider({children}) {
         </div>
       )}
         {children}
+      {successShow && <SuccessModal />}
     </HomeControllerContext.Provider>
   )
 }

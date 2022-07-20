@@ -8,6 +8,14 @@
     transition: all .2s ease ;
 }
 
+.btn.btn--custom:disabled, .btn.btn--custom.disabled{
+    background-color: var(--button-color-type-1);
+    opacity: .6;
+    color: var(--secondary-color-type-1);
+    font-weight: var(--regular);
+    border: transparent;
+}
+
 .btn--eclipse{
     border-radius: 50% !important;
     width: 4.5rem;

@@ -33,7 +33,3 @@ export function getFormatDateForDatePicker(date = new Date()){
 
     return `${date.getFullYear()}-${currMonth}-${currDate}`
 }
-
-export function getFormatDateParam(date = new Date()){
-    return `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`
-}
