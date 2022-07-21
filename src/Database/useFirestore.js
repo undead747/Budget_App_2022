@@ -12,6 +12,7 @@ import {
   onSnapshot,
   query,
   addDoc,
+  where,
 } from "firebase/firestore";
 import { fireStoreInst } from "./firebaseInitialize";
 import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
@@ -21,12 +22,6 @@ export const DatabaseCollections = {
   ExpenseCategory: "Expense category",
   IncomeCategory: "Income category",
   Tasks: "Tasks",
-};
-
-export const Pagination = {
-  size: 10,
-  orderBy: "create_at",
-  orderType: "desc",
 };
 
 export const useFirestore = (collectionName) => {
@@ -53,14 +48,31 @@ export const useFirestore = (collectionName) => {
     return results.docs
   };
 
-  const getDocumentsByPagination = async (pagination) => {
+  const getDocumentsByPagination = async ({pagination = {size: 10, orderBy: "create_at", orderType: "desc"}, params = null} = {}) => {
+    const results = [];
+    const queryConstraints = [];
+
+    if(params){
+      Object.keys(params).forEach(key => {
+        if(params[key] || params[key] === 0) queryConstraints.push(where(key, '==', params[key]));
+      })
+    }
+
     const q = query(
       collection(fireStoreInst, collectionName),
+      ...queryConstraints,
       orderBy(pagination.orderBy, pagination.orderType),
       limit(pagination.size)
     );
-    const result = await getDocs(q);
-    return result.data()   
+    
+    const queryResults = await getDocs(q);
+    
+    queryResults.forEach(doc => {
+        let data = lowercaseObjectPropKeys(doc.data());
+        results.push({...data, id: doc.id});
+    })
+
+    return results   
   };
 
   return {
