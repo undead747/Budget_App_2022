@@ -68,6 +68,7 @@ function TaskForm(props) {
         date: dateRef.current.value,
         note: noteRef.current.value,
         title: titleRef.current.value,
+        type: selectedTaskMode
       };
       
       setLoading(true);

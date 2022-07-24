@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import './summary.css';
 
-export default function Summary({ income = 0, expense = 0 }) {
-  const [sum, setSum] = useState(0);
+export default function Summary({ expenseTotal, incomeTotal, displayMoneyAmmount, ...rest }) {
+  const [sum, setSum] = useState(Number(0).toFixed(2));
+
+  useEffect(() => {
+      let sum = Number(incomeTotal) - Number(expenseTotal);
+      setSum(sum);
+  }, [expenseTotal, incomeTotal])
 
   const getSumDecorClass = () => {
     if(sum > 0) return 'summary__val--success text-success';
     if(sum === 0) return 'summary__val--warning text-warning';
     if(sum < 0) return 'summary__val--success text-success';
-  } 
+  }
+  
+  const getSumDecorSymbol = () => {
+    if(sum > 0) return '+ ';
+    if(sum === 0) return '';
+    if(sum < 0) return '- ';
+  }
 
-  useEffect(() => {
-     setSum(income - expense);
-  },[income, expense])
-    
   return (
     <div className="summary">
       <div className="summary__item">
@@ -21,20 +28,20 @@ export default function Summary({ income = 0, expense = 0 }) {
           <i className="fas fa-long-arrow-alt-up summary__icon"></i>
           <span>Income</span>
         </h5>
-        <h5 className="summary__val summary__val--success text-success">{income.toFixed(2)}</h5>
+        <h5 className="summary__val summary__val--success text-success">{parseInt(incomeTotal) !== 0 && "+ "} {displayMoneyAmmount(null, incomeTotal)}</h5>
       </div>
       <div className="summary__item">
         <h5 className="summary__title">
           <i className="fas fa-long-arrow-alt-down summary__icon"></i>
           <span>Expense</span>
         </h5>
-        <h5 className="summary__val summary__val--danger text-danger">{expense.toFixed(2)}</h5>
+        <h5 className="summary__val summary__val--danger text-danger">{parseInt(expenseTotal) !== 0 && "- "} {displayMoneyAmmount(null, expenseTotal)}</h5>
       </div>
       <div className="summary__item">
         <h5 className="summary__title">
           <span>Sum</span>
         </h5>
-        <h5 className={`summary__val ${getSumDecorClass()}`}>{sum.toFixed(2)}</h5>
+        <h5 className={`summary__val ${getSumDecorClass()}`}>{getSumDecorSymbol()} {displayMoneyAmmount(null, sum)}</h5>
       </div>
     </div>
   );

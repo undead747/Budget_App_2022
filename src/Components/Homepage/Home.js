@@ -41,7 +41,7 @@ export default function Home() {
       </div>
 
       <Switch>
-        <Route path={'/daily/:date?'} component={DailyTasks} />
+        <Route path={'/daily/:date?'} render={routes => <DailyTasks key={routes.match.params.date} {...routes} />} />
         <Route path={'/weekly/:date?'} component={WeeklyTasks} />
         <Route path={'/monthly/:date?'} component={MonthlyTasks} />
         <Route path={'/years/:date?'} component={TasksByYears} />
