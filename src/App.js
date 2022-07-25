@@ -22,7 +22,7 @@ function App() {
             <Switch>
               <Route path={"/signup"} component={Signup} />
               <Route path={"/login"} component={Login} />
-              <PrivateRoute path={'/task/:mode/:param?'} component={TaskForm} />
+              <PrivateRoute path={'/task/:mode/:id?'} component={TaskForm} />
               <PrivateRoute path="/" component={Home} />
               <Redirect to={"/"} />
             </Switch>

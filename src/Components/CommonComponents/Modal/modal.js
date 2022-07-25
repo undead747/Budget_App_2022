@@ -91,17 +91,17 @@ export function useErrorModal() {
 export function useConfirmModal() {
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
-  const callback = useRef();
+  const [callback, setCallback] = useState();
 
   const handleShow = (callback) =>{
       setShow(true);
-      callback.current = callback;
+      setCallback(() => callback);
   } 
 
   const handleClose = () => setShow(false);
 
   const submit = () => {
-     if(callback.current) callback.current();
+     if(callback) callback();
      handleClose();
   }
 
@@ -119,12 +119,12 @@ export function useConfirmModal() {
         </Modal.Header>
         <Modal.Body>
           <div className="modal-body__content">
-            <i className="modal-body__icon far fa-check-circle"></i>
+            <i className="modal-body__icon fas fa-exclamation-triangle"></i>
             <p className="modal-body__p">{content && content}</p>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <BorderButton border={{size: 2}}>Cancel</BorderButton>
+          <BorderButton border={{size: 2}} onClick={handleClose}>Cancel</BorderButton>
           <CustomButton onClick={submit}>Yes</CustomButton>
         </Modal.Footer>
       </Modal>

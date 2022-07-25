@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { taskModes } from "../../../Constants/TaskConstaints";
 import { DatabaseCollections, useFirestore } from "../../../Database/useFirestore";
 import {
@@ -18,6 +18,7 @@ import "./task-form.css";
 
 function TaskForm(props) {
   const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
+  const { mode, id: taskId } = useParams();
   const [selectedTask, setSelectedTask] = useState({
     date: null,
     accountCate: {},
@@ -29,8 +30,8 @@ function TaskForm(props) {
   });
 
   // State data from home controller
-  const {setLoading, localCountryInfo, handleSuccessShow, setSucessModalContent } = useHomeController();
-  const {addDocument} = useFirestore(DatabaseCollections.Tasks);
+  const { setLoading, localCountryInfo, handleErrorShow, handleErrorClose, setErrorModalContent } = useHomeController();
+  const { addDocument, getDocumentById } = useFirestore(DatabaseCollections.Tasks);
 
   // Define form refs
   const titleRef = useRef(),
@@ -60,7 +61,7 @@ function TaskForm(props) {
 
   const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     try {
       event.preventDefault();
       let task = {
@@ -70,13 +71,13 @@ function TaskForm(props) {
         title: titleRef.current.value,
         type: selectedTaskMode
       };
-      
+
       setLoading(true);
-      await addDocument(JSON.parse(JSON.stringify(task)));
+      if (mode === "add") await addDocument(JSON.parse(JSON.stringify(task)));
       setLoading(false);
       history.push('/');
     } catch (error) {
-      console.log(error)      
+      console.log(error)
     }
   };
 
@@ -149,6 +150,25 @@ function TaskForm(props) {
       setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
     }
   }, [localCountryInfo]);
+
+  useEffect(() => {
+    if (mode === "edit" && taskId) {
+      initTaskById();
+    }
+  }, [])
+
+  const initTaskById = async () => {
+    try {
+      setLoading(true);
+      const task = await getDocumentById(taskId);
+      setSelectedTask(task);
+    } catch (error) {
+      setErrorModalContent(JSON.stringify(error));
+      handleErrorShow();
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="task-form">

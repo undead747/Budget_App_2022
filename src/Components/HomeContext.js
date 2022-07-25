@@ -77,6 +77,7 @@ export default function HomeProvider({children}) {
 
       {successShow && <SuccessModal />}
       {errorShow && <ErrorModal />}
+      {confirmShow && <ConfirmModal />}
     </HomeControllerContext.Provider>
   )
 }

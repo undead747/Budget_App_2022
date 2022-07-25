@@ -13,6 +13,7 @@ import {
   query,
   addDoc,
   where,
+  getDoc,
 } from "firebase/firestore";
 import { fireStoreInst } from "./firebaseInitialize";
 import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
@@ -43,19 +44,28 @@ export const useFirestore = (collectionName) => {
     return await deleteDoc(doc(fireStoreInst, collectionName, docId));
   };
 
+  const getDocumentById = async(id) => {
+      const docRef = doc(fireStoreInst, collectionName, id);
+      const docSnap = await getDoc(docRef);
+
+      if(!docSnap.exists()) return
+      
+      return docSnap.data()
+  }
+
   const getDocuments = async () => {
     const results = await getDocs(collection(fireStoreInst, collectionName));
     return results.docs
   };
 
-  const getDocumentsByPagination = async ({pagination = {size: 10, orderBy: "create_at", orderType: "desc"}, params = null} = {}) => {
+  const getDocumentsByPagination = async ({ pagination = { size: 10, orderBy: "create_at", orderType: "desc" }, params = null } = {}) => {
     const results = [];
     const queryConstraints = [];
     const queryOrders = [];
 
-    if(params){
+    if (params) {
       Object.keys(params).forEach(key => {
-        if(params[key] || params[key] === 0) {
+        if (params[key] || params[key] === 0) {
           queryConstraints.push(where(key, '==', params[key]));
           queryOrders.push(orderBy(key, pagination.orderType))
         }
@@ -68,15 +78,15 @@ export const useFirestore = (collectionName) => {
       orderBy(pagination.orderBy, pagination.orderType),
       limit(pagination.size)
     );
-    
+
     const queryResults = await getDocs(q);
-    
+
     queryResults.forEach(doc => {
-        let data = lowercaseObjectPropKeys(doc.data());
-        results.push({...data, id: doc.id});
+      let data = lowercaseObjectPropKeys(doc.data());
+      results.push({ ...data, id: doc.id });
     })
 
-    return results   
+    return results
   };
 
   return {
@@ -85,6 +95,7 @@ export const useFirestore = (collectionName) => {
     deleteDocument,
     getDocuments,
     getDocumentsByPagination,
+    getDocumentById
   };
 };
 
@@ -99,7 +110,7 @@ export const useFirestoreRealtime = (collectionName) => {
 
         querySnapshot.forEach((doc) => {
           let data = lowercaseObjectPropKeys(doc.data());
-          results.push({...data, id: doc.id});
+          results.push({ ...data, id: doc.id });
         });
 
         setCurrentDocs(results);

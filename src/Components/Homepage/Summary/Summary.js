@@ -12,13 +12,11 @@ export default function Summary({ expenseTotal, incomeTotal, displayMoneyAmmount
   const getSumDecorClass = () => {
     if(sum > 0) return 'summary__val--success text-success';
     if(sum === 0) return 'summary__val--warning text-warning';
-    if(sum < 0) return 'summary__val--success text-success';
+    if(sum < 0) return 'summary__val--danger text-danger';
   }
   
   const getSumDecorSymbol = () => {
     if(sum > 0) return '+ ';
-    if(sum === 0) return '';
-    if(sum < 0) return '- ';
   }
 
   return (
