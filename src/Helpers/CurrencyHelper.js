@@ -67,6 +67,8 @@ const setCurrenciesFromLocalStorage = (currencyCode, data) => {
  * @param {string} currencyCode - base currency.
  */
 export async function getCurrencyRateByCode(currencyCode) {
+  if (!currencyCode) return;
+
   // if exchange rates exist in local storage
   let rates = getCurrenciesFromLocalStorage(currencyCode);
   if (rates && rates.length !== 0) return rates[0].rates;

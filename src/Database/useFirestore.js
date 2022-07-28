@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   doc,
-  setDoc,
   serverTimestamp,
   collection,
   updateDoc,
@@ -44,13 +43,13 @@ export const useFirestore = (collectionName) => {
     return await deleteDoc(doc(fireStoreInst, collectionName, docId));
   };
 
-  const getDocumentById = async(id) => {
-      const docRef = doc(fireStoreInst, collectionName, id);
-      const docSnap = await getDoc(docRef);
+  const getDocumentById = async (id) => {
+    const docRef = doc(fireStoreInst, collectionName, id);
+    const docSnap = await getDoc(docRef);
 
-      if(!docSnap.exists()) return
-      
-      return {data: docSnap.data(), id: docSnap.id}
+    if (!docSnap.exists()) return
+
+    return { data: docSnap.data(), id: docSnap.id }
   }
 
   const getDocuments = async () => {
