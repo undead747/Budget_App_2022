@@ -90,7 +90,7 @@ export default function DailyTasks() {
                 <td className="text-start">{task.taskcate && task.taskcate.name}</td>
                 <td className="text-start">{task.accountcate && task.accountcate.name}</td>
                 <td className="text-end fw-bolder">+ {displayMoneyAmmount(task.currency, task.amount)}</td>
-                <td><CustomButton callback={() => handleDeleteTask(task.id)}><i className="fas fa-trash"></i></CustomButton></td>
+                <td><CustomButton callback={(e) => handleDeleteTask(task.id, e)}><i className="fas fa-trash"></i></CustomButton></td>
               </tr>
             })
           }
@@ -129,7 +129,7 @@ export default function DailyTasks() {
                 <td className="text-start">{task.taskcate && task.taskcate.name}</td>
                 <td className="text-start">{task.accountcate && task.accountcate.name}</td>
                 <td className="text-end fw-bolder">- {displayMoneyAmmount(task.currency, task.amount)}</td>
-                <td><CustomButton callback={() => handleDeleteTask(task.id)}><i className="fas fa-trash"></i></CustomButton></td>
+                <td><CustomButton callback={(e) => handleDeleteTask(task.id, e)}><i className="fas fa-trash"></i></CustomButton></td>
               </tr>
             })
           }
@@ -174,7 +174,9 @@ export default function DailyTasks() {
     return convertNumberToCurrency(currency, amount);
   }
 
-  const handleDeleteTask = (taskId) => {
+  const handleDeleteTask = (taskId, e) => {
+    e.stopPropagation();
+
     try {
       setConfirmModalContent("are you sure to delete this task ? ");
       handleConfirmShow(async () => {

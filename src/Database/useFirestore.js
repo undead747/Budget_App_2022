@@ -33,9 +33,9 @@ export const useFirestore = (collectionName) => {
     });
   };
 
-  const updateDocument = async (document) => {
-    return await updateDoc(doc(fireStoreInst, collectionName, document.id), {
-      ...document.data,
+  const updateDocument = async (document, docId) => {
+    return await updateDoc(doc(fireStoreInst, collectionName, docId), {
+      ...document,
       update_at: serverTimestamp(),
     });
   };
@@ -50,7 +50,7 @@ export const useFirestore = (collectionName) => {
 
       if(!docSnap.exists()) return
       
-      return docSnap.data()
+      return {data: docSnap.data(), id: docSnap.id}
   }
 
   const getDocuments = async () => {

@@ -28,10 +28,11 @@ function TaskForm(props) {
     title: null,
     note: null,
   });
+  const selectedTaskId = useRef();
 
   // State data from home controller
   const { setLoading, localCountryInfo, handleErrorShow, handleErrorClose, setErrorModalContent } = useHomeController();
-  const { addDocument, getDocumentById } = useFirestore(DatabaseCollections.Tasks);
+  const { addDocument, updateDocument, getDocumentById } = useFirestore(DatabaseCollections.Tasks);
 
   // Define form refs
   const titleRef = useRef(),
@@ -71,11 +72,11 @@ function TaskForm(props) {
         title: titleRef.current.value,
         type: selectedTaskMode
       };
-
       setLoading(true);
-      if (mode === "add") await addDocument(JSON.parse(JSON.stringify(task)));
+      if (mode === "add") await addDocument(task);
+      if(mode === "edit") await updateDocument(task, selectedTaskId.current);
       setLoading(false);
-      history.push('/');
+      history.push(`/daily/${dateRef.current.value}`);
     } catch (error) {
       console.log(error)
     }
@@ -109,6 +110,7 @@ function TaskForm(props) {
 
   // Format money real-time when user input money
   const handleCurrencyInputEvent = (event) => {
+    debugger
     let currentValue = amountRef.current.value;
 
     if (!currentValue) {
@@ -134,7 +136,7 @@ function TaskForm(props) {
       amountRef.current.value = convertedCurrency;
       setSelectedTask({
         ...selectedTask,
-        amount: convertedCurrency.replace(",", ""),
+        amount: convertedCurrency.replaceAll(",", ""),
       });
     }
   };
@@ -142,7 +144,7 @@ function TaskForm(props) {
   // Set Default task date by current local date
   useEffect(() => {
     dateRef.current.value = getFormatDateForDatePicker();
-  });
+  }, []);
 
   // Set Default currency base by local informations
   useEffect(() => {
@@ -160,8 +162,19 @@ function TaskForm(props) {
   const initTaskById = async () => {
     try {
       setLoading(true);
-      const task = await getDocumentById(taskId);
+      const doc = await getDocumentById(taskId);
+      const task = doc.data;
       setSelectedTask(task);
+      selectedTaskId.current = doc.id;
+
+      dateRef.current.value = task.date;
+      accountCategoryRef.current.value = task.accountCate.name;
+      taskCategoryRef.current.value = task.taskCate.name;
+      amountRef.current.value = convertNumberToCurrency(task.currency, task.amount);
+      titleRef.current.value = task.title;
+      noteRef.current.value = task.note;
+
+      setSelectedTaskMode(task.type);
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
