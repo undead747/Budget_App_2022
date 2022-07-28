@@ -15,7 +15,7 @@ const exchangerateApi =
 
 /**
  * Get currencies exchange rates from local storages
- * Returns the list of exchange rates, otherwise return null
+ * Returns the array of exchange rates, otherwise return null
  * @param {string} currencyCode - base currency.
  */
 const getCurrenciesFromLocalStorage = (currencyCode) => {

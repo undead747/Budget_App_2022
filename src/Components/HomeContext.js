@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {DatabaseCollections, useFirestoreRealtime } from '../Database/useFirestore';
 import { getLocalCountryInfo } from '../Helpers/CountryHelper';
-import { getAllCurrenciesInfo, getCurrencyInfoByCode, getCurrencyRateByCode } from '../Helpers/CurrencyHelper';
+import { getAllCurrenciesInfo, getCurrencyInfoByCountryCode } from '../Helpers/CurrencyHelper';
 import { useConfirmModal, useErrorModal, useSuccessModal } from './CommonComponents/Modal/modal';
 import { sidebarData } from './Homepage/Sidebar/SidebarData';
 
@@ -26,7 +26,7 @@ export default function HomeProvider({children}) {
 
     const initLocalCountryInfo = async () => {
         let currentCountry = await getLocalCountryInfo();
-        let currencyInfo = getCurrencyInfoByCode(currentCountry.countryCode);
+        let currencyInfo = getCurrencyInfoByCountryCode(currentCountry.countryCode);
         setLocalCountryInfo(currencyInfo);
     }
 
