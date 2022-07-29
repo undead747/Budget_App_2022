@@ -6,8 +6,14 @@ import { isEmptyOrSpaces } from "../../../Helpers/StringHelper";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import { useHomeController } from "../../HomeContext";
 
+/**
+ * Custom React-Bootstrap modal component. Use when display currency category modal.  
+ * Returns open, close, modal component.
+ */
 export function useCurrencyModal() {
+  // #region State 
   const [show, setShow] = useState(false);
+  // #endregion State 
 
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
@@ -19,24 +25,29 @@ export function useCurrencyModal() {
     callback,
     ...rest
   }) => {
+    // #region State 
     const [currencyRates, setCurrencyRates] = useState();
     const [filterCurrencyRates, setFilterCurrencyRates] = useState();
-    const { countriesCurrencyInfo, setLoading } = useHomeController();
+    const { countriesCurrencyInfo } = useHomeController();
     const [selectedRow, setSelectedRow] = useState({
       currency: null,
       rate: null,
       amount: null
     });
+    // #endregion State 
 
+    // #region Function 
     const handleCurrencySearch = (event) => {
       let searchString = event.target.value;
 
+      // if string is empty => return origin rates
       if (isEmptyOrSpaces(searchString)) {
         setFilterCurrencyRates(currencyRates);
         return;
       }
 
       setTimeout(() => {
+        // get iso code by input string
         let isoList = handleSearchByCountriesInfor(searchString);
         let filters = currencyRates.filter((item) =>
           isoList.includes(item.name)
@@ -45,11 +56,14 @@ export function useCurrencyModal() {
       }, 100);
     };
 
+    // Search iso code base on input string
     const handleSearchByCountriesInfor = (searchString) => {
       let currencyResults = [];
 
       if (countriesCurrencyInfo) {
         searchString = searchString.toLowerCase();
+
+        // Search input string base on iso code, currency code and country name
         countriesCurrencyInfo.forEach((info) => {
           if (
             info.iso.toLowerCase().includes(searchString) ||
@@ -60,6 +74,7 @@ export function useCurrencyModal() {
         });
       }
 
+      // Incase multi country has same currency code
       currencyResults = currencyResults.filter(
         (element, index) => currencyResults.indexOf(element) == index
       );
@@ -68,7 +83,7 @@ export function useCurrencyModal() {
     };
 
     const handleSelectCurrencyRow = (currency) => {
-      let exchangedAmount = selectedTask.amount * currency.value;
+      let exchangedAmount = Number(selectedTask.amount) * Number(currency.value);
       setSelectedRow((state, props) => ({ ...state, currency: currency.name, rate: currency.value, amount: exchangedAmount }));
     }
 
@@ -90,14 +105,16 @@ export function useCurrencyModal() {
     }
 
     useEffect(() => {
-      if (!selectedRow.currency || !selectedRow.amount && selectedRow.amount !== 0) {
-        if (selectedTask.currency) {
+      if (!selectedRow.currency || !selectedRow.amount && selectedRow.amount !== 0 && selectedTask.currency) {
+          // Init Selected Row values
           setSelectedRow((state, props) => {
-            return { ...state, currency: selectedTask.currency, rate: 1 }
+            return { ...state, currency: selectedTask.currency, rate: 1, amount: selectedTask.amount }
           });
 
+          // Init exchange rates 
           getCurrencyRateByCode(selectedTask.currency).then((data) => {
             let currencies = [];
+
             if (data)
               Object.keys(data).forEach((key) => {
                 currencies.push({
@@ -109,13 +126,9 @@ export function useCurrencyModal() {
             setCurrencyRates(currencies);
             setFilterCurrencyRates(currencies);
           });
-
-          setSelectedRow((state, props) => {
-            return { ...state, amount: selectedTask.amount }
-          });
-        }
       }
     }, [selectedTask]);
+    // #endregion Function
 
     return (
       <Modal
@@ -133,11 +146,11 @@ export function useCurrencyModal() {
           <div>
             <p><strong>Selected Currency:</strong> {selectedRow && selectedRow.currency && selectedRow.currency}</p>
             <div className="task-form__currency-exchange">
-              <p><strong>Amount:</strong> {convertNumberToCurrency(selectedTask.currency, selectedTask.amount)} {selectedTask.currency && getSymbolByCurrency(selectedTask.currency)}</p>
+              <p><strong>Amount:</strong> {convertNumberToCurrency(selectedTask.currency, selectedTask.amount)} {getSymbolByCurrency(selectedTask.currency)}</p>
               {
                 (selectedRow.currency !== selectedTask.currency) && <>
                   <i className="fas fa-arrow-right"></i>
-                  <p>{convertNumberToCurrency(selectedRow.currency, selectedRow.amount)} {selectedRow && selectedRow.currency && getSymbolByCurrency(selectedRow.currency)}</p>
+                  <p>{convertNumberToCurrency(selectedRow.currency, selectedRow.amount)} {getSymbolByCurrency(selectedRow.currency)}</p>
                 </>
               }
             </div>

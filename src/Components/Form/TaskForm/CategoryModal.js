@@ -4,20 +4,30 @@ import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { useHomeController } from "../../HomeContext";
 import { taskModes } from "../../../Constants/TaskConstaints";
 
+/**
+ * Custom React-Bootstrap modal component. Use when display account category modal.  
+ * Returns open, close, modal component.
+ */
 export function useAccountCategoryModal() {
+  // #region State 
   const [show, setShow] = useState(false);
+  // #endregion State 
 
   const handleShow = () => setShow(true);
 
   const handleClose = () => setShow(false);
 
-  const AccountCategoryModal = ({ callback, ...rest }) => {
-    const {accountCategories} = useHomeController();
+  const AccountCategoryModal = ({ callback }) => {
+    // #region State 
+    const { accountCategories } = useHomeController();
+    // #endregion State 
 
+    // #region Function
     const handleSubmit = (category) => {
       handleClose();
-      if(callback) callback(category);
+      if (callback) callback(category);
     };
+    // #endregion Function 
 
     return (
       <Modal
@@ -50,48 +60,57 @@ export function useAccountCategoryModal() {
   };
 
   return {
-      show,
-      handleShow,
-      handleClose,
-      AccountCategoryModal
+    show,
+    handleShow,
+    handleClose,
+    AccountCategoryModal
   }
 }
 
-
+/**
+ * Custom React-Bootstrap modal component. Use when display task category modal.  
+ * Returns open, close, modal component.
+ */
 export function useTaskCategoryModal() {
+  // #region State 
   const [show, setShow] = useState(false);
+  // #endregion State 
 
   const handleShow = () => setShow(true);
 
   const handleClose = () => setShow(false);
 
   const TaskCategoryModal = ({ callback, selectedTaskMode, ...rest }) => {
-    const {incomeCategories, expenseCategories} = useHomeController();
+    // #region State 
+    const { incomeCategories, expenseCategories } = useHomeController();
     const [categories, setCategories] = useState();
+    // #endregion State 
 
+    // #region Function 
     const displayModalTitle = () => {
-        if(selectedTaskMode.id === taskModes.Expense.id) return "Expense Categories";
-        if(selectedTaskMode.id === taskModes.Income.id) return "Income Categories";
+      if (selectedTaskMode.id === taskModes.Expense.id) return "Expense Categories";
+      if (selectedTaskMode.id === taskModes.Income.id) return "Income Categories";
     }
 
     useEffect(() => {
-        if(incomeCategories && expenseCategories){
-          if(selectedTaskMode.id === taskModes.Expense.id){
-            setCategories(expenseCategories);
-            return
-          } 
-
-          if(selectedTaskMode.id === taskModes.Income.id){
-            setCategories(incomeCategories);
-            return
-          }        
+      if (incomeCategories && expenseCategories) {
+        if (selectedTaskMode.id === taskModes.Expense.id) {
+          setCategories(expenseCategories);
+          return
         }
+
+        if (selectedTaskMode.id === taskModes.Income.id) {
+          setCategories(incomeCategories);
+          return
+        }
+      }
     }, [incomeCategories, expenseCategories])
 
     const handleSubmit = (category) => {
       handleClose();
-      if(callback) callback(category);
+      if (callback) callback(category);
     };
+    // #endregion Function 
 
     return (
       <Modal
@@ -124,9 +143,9 @@ export function useTaskCategoryModal() {
   };
 
   return {
-      show,
-      handleShow,
-      handleClose,
-      TaskCategoryModal
+    show,
+    handleShow,
+    handleClose,
+    TaskCategoryModal
   }
 }

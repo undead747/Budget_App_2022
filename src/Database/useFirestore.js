@@ -60,13 +60,11 @@ export const useFirestore = (collectionName) => {
   const getDocumentsByPagination = async ({ pagination = { size: 10, orderBy: "create_at", orderType: "desc" }, params = null } = {}) => {
     const results = [];
     const queryConstraints = [];
-    const queryOrders = [];
 
     if (params) {
       Object.keys(params).forEach(key => {
         if (params[key] || params[key] === 0) {
           queryConstraints.push(where(key, '==', params[key]));
-          queryOrders.push(orderBy(key, pagination.orderType))
         }
       })
     }
