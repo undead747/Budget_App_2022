@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
 import { useHistory, useParams } from "react-router-dom";
 import { taskModes } from "../../../Constants/TaskConstaints";
-import { DatabaseCollections, useFirestore } from "../../../Database/useFirestore";
+import {
+  DatabaseCollections,
+  useFirestore,
+} from "../../../Database/useFirestore";
 import {
   convertNumberToCurrency,
   getSymbolByCurrency,
@@ -16,25 +19,29 @@ import { useAccountCategoryModal, useTaskCategoryModal } from "./CategoryModal";
 import { useCurrencyModal } from "./CurrencyModal";
 import "./task-form.css";
 
+/**
+ * Add-Edit currency form.
+ * Return Form component.
+ */
 function TaskForm(props) {
-  const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
+  // #region State
+
   const { mode, id: taskId } = useParams();
+  const history = useHistory();
+
+  // Store select task mode.
+  // Available task mode : income, expense.
+  const [selectedTaskMode, setSelectedTaskMode] = useState(taskModes.Income);
+
+  // Store Form-Task value.
   const [selectedTask, setSelectedTask] = useState({
-    date: null,
     accountCate: {},
     taskCate: {},
-    amount: 0,
+    amount: parseFloat(0),
     currency: null,
-    title: null,
-    note: null,
   });
-  const selectedTaskId = useRef();
 
-  // State data from home controller
-  const { setLoading, localCountryInfo, handleErrorShow, handleErrorClose, setErrorModalContent } = useHomeController();
-  const { addDocument, updateDocument, getDocumentById } = useFirestore(DatabaseCollections.Tasks);
-
-  // Define form refs
+  // Define Form Refs
   const titleRef = useRef(),
     dateRef = useRef(),
     accountCategoryRef = useRef(),
@@ -42,6 +49,24 @@ function TaskForm(props) {
     amountRef = useRef(),
     noteRef = useRef();
 
+  // Store selected task id if Form is in edit mode.
+  const selectedTaskId = useRef();
+
+  // Get loading animantion, alert message from home-Controller.
+  const {
+    setLoading,
+    localCountryInfo,
+    handleErrorShow,
+    handleErrorClose,
+    setErrorModalContent,
+  } = useHomeController();
+
+  // Database methods.
+  const { addDocument, updateDocument, getDocumentById } = useFirestore(
+    DatabaseCollections.Tasks
+  );
+
+  // Define account category, task category, currency modal
   const {
     show: accountModalShow,
     handleShow: handleAccountCateShow,
@@ -58,31 +83,43 @@ function TaskForm(props) {
     CurrencyModal,
   } = useCurrencyModal();
 
-  const history = useHistory();
+  // #endregion State
 
+  // #region Function
   const handleSelectMode = (mode) => setSelectedTaskMode(mode);
 
+  /**
+   * Handle submit event.
+   * Sending task contain :
+   * @param {object} event - triggered submit button.
+   */
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
+
       let task = {
         ...selectedTask,
         date: dateRef.current.value,
         note: noteRef.current.value,
         title: titleRef.current.value,
-        type: selectedTaskMode
+        type: selectedTaskMode,
       };
+
       setLoading(true);
+
       if (mode === "add") await addDocument(task);
-      if(mode === "edit") await updateDocument(task, selectedTaskId.current);
+      if (mode === "edit") await updateDocument(task, selectedTaskId.current);
+
       setLoading(false);
+
       history.push(`/daily/${dateRef.current.value}`);
     } catch (error) {
-      console.log(error)
+      setErrorModalContent(error);
+      handleErrorShow();
     }
   };
 
-  // Handle Account Categories Modal
+  // Handle Open Modals event.
   const handleDisplayAccountCategoryModal = () => {
     accountCategoryRef.current.blur();
     handleAccountCateShow();
@@ -93,22 +130,37 @@ function TaskForm(props) {
     accountCategoryRef.current.value = category.name;
   };
 
-  //Handle Task Cateogries Modal
   const handleDisplayTaskCategoryModal = () => {
     taskCategoryRef.current.blur();
     handleTaskCateShow();
   };
-
+  
   const handleSelectTaskCategory = (category) => {
     setSelectedTask({ ...selectedTask, taskCate: category });
     taskCategoryRef.current.value = category.name;
   };
-
+  
   const handleDisplayCurrencyModal = () => {
     handleCurrencyShow();
   };
 
-  // Format money real-time when user input money
+  // Init date-picker value.
+  useEffect(() => {
+    dateRef.current.value = getFormatDateForDatePicker();
+  }, []);
+
+  // Set Default currency base by local informations
+  useEffect(() => {
+    if (localCountryInfo && !selectedTask.currency) {
+      setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
+    }
+  }, [localCountryInfo]);
+  
+  /**
+   * Handle auto-format input currency.
+   * Change selectedTask value (amount), amountRef.
+   * @param {object} event - triggered search box element.
+   */
   const handleCurrencyInputEvent = (event) => {
     let currentValue = amountRef.current.value;
 
@@ -140,52 +192,58 @@ function TaskForm(props) {
     }
   };
 
-  // Set Default task date by current local date
-  useEffect(() => {
-    dateRef.current.value = getFormatDateForDatePicker();
-  }, []);
-
-  // Set Default currency base by local informations
-  useEffect(() => {
-    if (localCountryInfo && !selectedTask.currency) {
-      setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
-    }
-  }, [localCountryInfo]);
-
+  /**
+   * Init task values when task mode is edit.
+   * Change selectedTask values, selectedTaskId value.
+   * @param {object} event - triggered search box element.
+   */
   useEffect(() => {
     if (mode === "edit" && taskId) {
       initTaskById();
     }
-  }, [])
+  }, []);
 
   const initTaskById = async () => {
     try {
       setLoading(true);
+
       const doc = await getDocumentById(taskId);
       const task = doc.data;
+      
+      // Init State values.
       setSelectedTask(task);
       selectedTaskId.current = doc.id;
 
+      // Init Form Refs values.
       dateRef.current.value = task.date;
       accountCategoryRef.current.value = task.accountCate.name;
       taskCategoryRef.current.value = task.taskCate.name;
-      amountRef.current.value = convertNumberToCurrency(task.currency, task.amount);
+      
+      amountRef.current.value = convertNumberToCurrency(
+        task.currency,
+        task.amount
+      );
+
       titleRef.current.value = task.title;
       noteRef.current.value = task.note;
-
+      
+      // Init Task Mode.
       setSelectedTaskMode(task.type);
+      
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="task-form">
       <div className="task-form__header">
-        <GobackButton backgroundColor={"transparent"} callback={history.goBack}>Go back</GobackButton>
+        <GobackButton backgroundColor={"transparent"} callback={history.goBack}>
+          Go back
+        </GobackButton>
         <h5 className="task-form__title">{selectedTaskMode.name}</h5>
       </div>
 
