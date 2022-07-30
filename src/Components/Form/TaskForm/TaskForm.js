@@ -110,7 +110,6 @@ function TaskForm(props) {
 
   // Format money real-time when user input money
   const handleCurrencyInputEvent = (event) => {
-    debugger
     let currentValue = amountRef.current.value;
 
     if (!currentValue) {

@@ -4,15 +4,24 @@ import BorderButton from "../Button/BorderButton";
 import { CustomButton } from "../Button/Button";
 import "./modal.css";
 
+/**
+ * Custom React-Bootstrap modal component. Use when display success messages modal.  
+ * Returns open, close, set message content Func and modal component.
+ */
 export function useSuccessModal() {
+  // #region State 
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
+  // #endregion State
 
+
+  // #region Function
   const handleShow = () => setShow(true);
 
   const handleClose = () => setShow(false);
 
   const setSucessModalContent = (content) => setContent(content);
+  // #endregion Function
 
   const SuccessModal = () => {
     return (
@@ -46,15 +55,23 @@ export function useSuccessModal() {
   };
 }
 
+/**
+ * Custom React-Bootstrap modal component. Use when display error messages modal.  
+ * Returns open, close, set message content Func and modal component.
+ */
 export function useErrorModal() {
+  // #region State 
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
+  // #endregion State 
 
+  // #region Function 
   const handleShow = () => setShow(true);
 
   const handleClose = () => setShow(false);
 
   const setErrorModalContent = (content) => setContent(content);
+  // #endregion Function 
 
   const ErrorModal = () => {
     return (
@@ -88,24 +105,32 @@ export function useErrorModal() {
   };
 }
 
+/**
+ * Custom React-Bootstrap modal component. Use when display confirm messages modal.  
+ * Returns open, close, set message content Func and modal component.
+ */
 export function useConfirmModal() {
+  // #region State 
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
   const [callback, setCallback] = useState();
+  // #endregion State 
 
-  const handleShow = (callback) =>{
-      setShow(true);
-      setCallback(() => callback);
-  } 
+  // #region Func 
+  const handleShow = (callback) => {
+    setShow(true);
+    setCallback(() => callback);
+  }
 
   const handleClose = () => setShow(false);
 
   const submit = () => {
-     if(callback) callback();
-     handleClose();
+    if (callback) callback();
+    handleClose();
   }
 
   const setConfirmModalContent = (content) => setContent(content);
+  // #endregion Func
 
   const ConfirmModal = () => {
     return (
@@ -124,7 +149,7 @@ export function useConfirmModal() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <BorderButton border={{size: 2}} onClick={handleClose}>Cancel</BorderButton>
+          <BorderButton border={{ size: 2 }} onClick={handleClose}>Cancel</BorderButton>
           <CustomButton onClick={submit}>Yes</CustomButton>
         </Modal.Footer>
       </Modal>
