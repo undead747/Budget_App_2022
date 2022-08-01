@@ -24,6 +24,8 @@ export const DatabaseCollections = {
   Tasks: "Tasks",
 };
 
+export const TaskTotalDocId = "taskTotal";
+
 export const useFirestore = (collectionName) => {
   const addDocument = async (document) => {
     return await addDoc(collection(fireStoreInst, collectionName), {

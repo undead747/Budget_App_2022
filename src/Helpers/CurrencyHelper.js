@@ -12,7 +12,6 @@ const localStorageKey = "v6-exchangerate";
 const exchangerateApi =
   "https://v6.exchangerate-api.com/v6/b87d2f894975afeee4f84058/latest/";
 
-
 /**
  * Get currencies exchange rates from local storages
  * Returns the array of exchange rates, otherwise return null
@@ -22,9 +21,17 @@ const getCurrenciesFromLocalStorage = (currencyCode) => {
   const currDate = new Date().toDateString();
   const rateList = getItem(localStorageKey);
 
-  if (!currencyCode || !rateList || !rateList.date || rateList.date !== currDate) return;
+  if (
+    !currencyCode ||
+    !rateList ||
+    !rateList.date ||
+    rateList.date !== currDate
+  )
+    return;
 
-  const rates = rateList.rates.filter((rate) => rate.currencyCode === currencyCode);
+  const rates = rateList.rates.filter(
+    (rate) => rate.currencyCode === currencyCode
+  );
 
   if (rates.length === 0) return;
 
@@ -32,7 +39,7 @@ const getCurrenciesFromLocalStorage = (currencyCode) => {
 };
 
 /**
- * Set currencies exchange rates to local storages 
+ * Set currencies exchange rates to local storages
  * @param {string} currencyCode - base currency.
  * @param {list} data - list exchange rates based on currencyCode.
  */
@@ -51,7 +58,7 @@ const setCurrenciesFromLocalStorage = (currencyCode, data) => {
     return;
   }
 
-  // check if based on currency rate list exist 
+  // check if based on currency rate list exist
   const rates = getCurrenciesFromLocalStorage(currencyCode);
 
   // if not exist
@@ -62,7 +69,7 @@ const setCurrenciesFromLocalStorage = (currencyCode, data) => {
 };
 
 /**
- * Get currency exchange rates by currency code. 
+ * Get currency exchange rates by currency code.
  * returns exchange rates from api or local storage, otherwise return null
  * @param {string} currencyCode - base currency.
  */
@@ -76,7 +83,7 @@ export async function getCurrencyRateByCode(currencyCode) {
   // if not, start request api to v6.exchangerate-api.com
   const result = await sendRequest({ url: exchangerateApi + currencyCode });
 
-  if (!result || !result.data) return
+  if (!result || !result.data) return;
 
   setCurrenciesFromLocalStorage(currencyCode, result.data.conversion_rates);
 
@@ -84,7 +91,7 @@ export async function getCurrencyRateByCode(currencyCode) {
 }
 
 /**
- * Convert number to curency 
+ * Convert number to curency
  * Returns converted money, otherwise return null
  * @param {string} currency - base currency code.
  * @param {list} inputString - input number
@@ -100,8 +107,7 @@ export function convertNumberToCurrency(currency, inputString) {
 
   return new Intl.NumberFormat(iso, {
     style: "currency",
-    currency,
-    currencyDisplay: "code",
+    currency
   })
     .format(inputString)
     .replace(currency, "")
@@ -109,7 +115,7 @@ export function convertNumberToCurrency(currency, inputString) {
 }
 
 /**
- * Get currency informations by country code 
+ * Get currency informations by country code
  * Return list of currency information (symbol,...) base on country code
  * @param {string} countryCode - country code.
  */
@@ -120,23 +126,28 @@ export function getCurrencyInfoByCountryCode(countryCode) {
 }
 
 /**
- * Get All Curency informations  
+ * Returns an array of all ISO codes and according data
+ * Include: iso, countryName, currencyCode, symbol, date
  */
 export const getAllCurrenciesInfo = () => getAllISOCodes();
 
 /**
- * Get currency symbol by currency code  
+ * Get currency symbol by currency code
  * Returns currency symbol, otherwise return null
  * @param {string} currencyCode - currency Code.
  */
 export const getSymbolByCurrency = (currencyCode) => {
   if (!currencyCode) return;
   return getParamByParam("currency", currencyCode, "symbol");
-}
+};
 
 /**
- * Reverse currency back to number 
+ * Reverse currency back to number
  * @param {string} currency value - currency value.
  */
 export const convertCurrencyToNumber = (currency) =>
   Number(currency.replace(/[^0-9.-]+/g, ""));
+
+export const convertNumberWithCommas = (x) => {
+    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+}  

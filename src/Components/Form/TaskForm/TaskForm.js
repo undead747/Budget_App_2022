@@ -7,7 +7,7 @@ import {
   useFirestore,
 } from "../../../Database/useFirestore";
 import {
-  convertNumberToCurrency,
+  convertNumberWithCommas,
   getSymbolByCurrency,
 } from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
@@ -26,7 +26,7 @@ import "./task-form.css";
 function TaskForm(props) {
   // #region State
 
-  const { mode, id: taskId } = useParams();
+  const { mode, id: formId } = useParams();
   const history = useHistory();
 
   // Store select task mode.
@@ -57,7 +57,6 @@ function TaskForm(props) {
     setLoading,
     localCountryInfo,
     handleErrorShow,
-    handleErrorClose,
     setErrorModalContent,
   } = useHomeController();
 
@@ -90,7 +89,6 @@ function TaskForm(props) {
 
   /**
    * Handle submit event.
-   * Sending task contain :
    * @param {object} event - triggered submit button.
    */
   const handleSubmit = async (event) => {
@@ -134,20 +132,15 @@ function TaskForm(props) {
     taskCategoryRef.current.blur();
     handleTaskCateShow();
   };
-  
+
   const handleSelectTaskCategory = (category) => {
     setSelectedTask({ ...selectedTask, taskCate: category });
     taskCategoryRef.current.value = category.name;
   };
-  
+
   const handleDisplayCurrencyModal = () => {
     handleCurrencyShow();
   };
-
-  // Init date-picker value.
-  useEffect(() => {
-    dateRef.current.value = getFormatDateForDatePicker();
-  }, []);
 
   // Set Default currency base by local informations
   useEffect(() => {
@@ -155,7 +148,7 @@ function TaskForm(props) {
       setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
     }
   }, [localCountryInfo]);
-  
+
   /**
    * Handle auto-format input currency.
    * Change selectedTask value (amount), amountRef.
@@ -164,41 +157,49 @@ function TaskForm(props) {
   const handleCurrencyInputEvent = (event) => {
     let currentValue = amountRef.current.value;
 
+    // If current amount input is empty string, convert it to 0.
     if (!currentValue) {
       amountRef.current.value = 0;
       setSelectedTask({ ...selectedTask, amount: 0 });
       return;
     }
 
-    if (
-      selectedTask.currency &&
-      !currentValue.includes(".", currentValue.length - 1)
-    ) {
-      let convertedCurrency = convertNumberToCurrency(
-        selectedTask.currency,
-        currentValue
-      );
+    currentValue = currentValue.replaceAll(",", "");
 
-      if (isNaN(parseFloat(convertedCurrency))) {
-        amountRef.current.value = currentValue.slice(0, -1);
-        return;
-      }
-
-      amountRef.current.value = convertedCurrency;
-      setSelectedTask({
-        ...selectedTask,
-        amount: convertedCurrency.replaceAll(",", ""),
-      });
+    // If new input character is not number => remove it.
+    if (isNaN(Number(currentValue))) {
+      amountRef.current.value = 0;
+      setSelectedTask({ ...selectedTask, amount: 0 });
+      return;
     }
+
+    if (currentValue.includes(".", currentValue.length - 1)) return;
+
+    let formatedCurrency = convertNumberWithCommas(Number(currentValue));
+
+    amountRef.current.value = formatedCurrency;
+    setSelectedTask({
+      ...selectedTask,
+      amount: parseFloat(currentValue),
+    });
   };
+
+  /**
+   * Init date-picker value when task mode is add,
+   * Otherwise date-picker value will be inited by below useEffect.
+   */
+  useEffect(() => {
+    if (mode === "add" && formId) {
+      dateRef.current.value = getFormatDateForDatePicker(new Date(formId));
+    }
+  }, []);
 
   /**
    * Init task values when task mode is edit.
    * Change selectedTask values, selectedTaskId value.
-   * @param {object} event - triggered search box element.
    */
   useEffect(() => {
-    if (mode === "edit" && taskId) {
+    if (mode === "edit" && formId) {
       initTaskById();
     }
   }, []);
@@ -207,9 +208,9 @@ function TaskForm(props) {
     try {
       setLoading(true);
 
-      const doc = await getDocumentById(taskId);
+      const doc = await getDocumentById(formId);
       const task = doc.data;
-      
+
       // Init State values.
       setSelectedTask(task);
       selectedTaskId.current = doc.id;
@@ -218,18 +219,14 @@ function TaskForm(props) {
       dateRef.current.value = task.date;
       accountCategoryRef.current.value = task.accountCate.name;
       taskCategoryRef.current.value = task.taskCate.name;
-      
-      amountRef.current.value = convertNumberToCurrency(
-        task.currency,
-        task.amount
-      );
+
+      amountRef.current.value = convertNumberWithCommas(Number(task.amount));
 
       titleRef.current.value = task.title;
       noteRef.current.value = task.note;
-      
+
       // Init Task Mode.
       setSelectedTaskMode(task.type);
-      
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
@@ -237,6 +234,8 @@ function TaskForm(props) {
       setLoading(false);
     }
   };
+
+  // #endregion Function
 
   return (
     <div className="task-form">

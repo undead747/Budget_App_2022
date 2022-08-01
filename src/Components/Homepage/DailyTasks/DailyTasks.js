@@ -5,10 +5,12 @@ import {
   DatabaseCollections,
   useFirestore,
 } from "../../../Database/useFirestore";
-import { convertNumberToCurrency, getCurrencyRateByCode } from "../../../Helpers/CurrencyHelper";
+import {
+  convertNumberToCurrency,
+  getCurrencyRateByCode,
+} from "../../../Helpers/CurrencyHelper";
 import {
   getFormatDateForDatePicker,
-  getFormatDateParam,
 } from "../../../Helpers/DateHelper";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import { useHomeController } from "../../HomeContext";
@@ -16,9 +18,11 @@ import Summary from "../Summary/Summary";
 import "./daily-task.css";
 
 export default function DailyTasks() {
+  // #region State
   const param = useParams();
   const history = useHistory();
-  const [tasks, setTasks] = useState([]);
+
+  // Get loading animantion, alert message, current location information from home-Controller.
   const {
     handleErrorShow,
     handleErrorClose,
@@ -27,29 +31,41 @@ export default function DailyTasks() {
     handleConfirmClose,
     setConfirmModalContent,
     localCountryInfo,
-    setLoading
+    setLoading,
   } = useHomeController();
-  const { getDocumentsByPagination, deleteDocument } = useFirestore(DatabaseCollections.Tasks);
-  const loadDataFlag = useRef(false);
-  const [incomeTotal, setIncomeTotal] = useState(Number(0).toFixed(2));
-  const [expenseTotal, setExpenseTotal] = useState(Number(0).toFixed(2));
 
+  // Database method
+  const { getDocumentsByPagination, deleteDocument } = useFirestore(
+    DatabaseCollections.Tasks
+  );
+  // getting data from Flag, use for saving firebase-read operation
+  const loadDataFlag = useRef(false);
+
+  const [tasks, setTasks] = useState([]);
+  const [incomeTotal, setIncomeTotal] = useState(parseFloat(0).toFixed(2));
+  const [expenseTotal, setExpenseTotal] = useState(parseFloat(0).toFixed(2));
+
+  // Redirect to current date tab if URL don't have date param
   useEffect(() => {
     if (!param.date && param.date !== 0) {
       history.push(`/daily/${getFormatDateForDatePicker()}`);
     }
   }, [param.date]);
 
+  /**
+   * Loading tasks based on url date param.
+   * Change tasks value.
+   */
   useEffect(() => {
     try {
       if (param.date && tasks.length === 0 && !loadDataFlag.current) {
         loadDataFlag.current = true;
 
         setLoading(true);
-        getDocumentsByPagination({ params: { [Tasks.date]: param.date } })
-          .then((data) => {
-            setTasks(data);
-          })
+
+        getDocumentsByPagination({ params: { [Tasks.date]: param.date } }).then(
+          (data) => setTasks(data)
+        );
       }
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
@@ -60,12 +76,17 @@ export default function DailyTasks() {
     }
   }, [param.date]);
 
+  /**
+   * Display tasks with income type.
+   */
   const displayIncomeTable = () => {
-    if (!tasks || tasks.length === 0) return
+    if (!tasks || tasks.length === 0) return;
 
-    let incomeTasks = tasks.filter(task => task.type.id === taskModes.Income.id);
+    let incomeTasks = tasks.filter(
+      (task) => task.type.id === taskModes.Income.id
+    );
 
-    if (incomeTasks.length === 0) return
+    if (incomeTasks.length === 0) return;
 
     return (
       <table className="table task-table">
@@ -78,33 +99,55 @@ export default function DailyTasks() {
             <th className="text-end">
               <span className="text-success">
                 {parseInt(incomeTotal) !== 0 && "+ "}
-                {displayMoneyAmmount(null, incomeTotal)}
+                {convertNumberToCurrency(
+                  localCountryInfo.currency,
+                  incomeTotal
+                )}
               </span>
             </th>
           </tr>
         </thead>
         <tbody>
-          {
-            incomeTasks.map(task => {
-              return <tr className="task-table__row" key={task.id} onClick={() => handleEditTask(task.id)}>
-                <td className="text-start">{task.taskcate && task.taskcate.name}</td>
-                <td className="text-start">{task.accountcate && task.accountcate.name}</td>
-                <td className="text-end fw-bolder">+ {displayMoneyAmmount(task.currency, task.amount)}</td>
-                <td><CustomButton callback={(e) => handleDeleteTask(task.id, e)}><i className="fas fa-trash"></i></CustomButton></td>
+          {incomeTasks.map((task) => {
+            return (
+              <tr
+                className="task-table__row"
+                key={task.id}
+                onClick={() => handleEditTask(task.id)}
+              >
+                <td className="text-start">
+                  {task.taskcate && task.taskcate.name}
+                </td>
+                <td className="text-start">
+                  {task.accountcate && task.accountcate.name}
+                </td>
+                <td className="text-end fw-bolder">
+                  + {convertNumberToCurrency(task.currency, task.amount)}
+                </td>
+                <td>
+                  <CustomButton callback={(e) => handleDeleteTask(task.id, e)}>
+                    <i className="fas fa-trash"></i>
+                  </CustomButton>
+                </td>
               </tr>
-            })
-          }
+            );
+          })}
         </tbody>
       </table>
-    )
-  }
+    );
+  };
 
+  /**
+   * Display tasks with expense type.
+   */
   const displayExpenseTable = () => {
-    if (!tasks || tasks.length === 0) return
+    if (!tasks || tasks.length === 0) return;
 
-    let expenseTasks = tasks.filter(task => task.type.id === taskModes.Expense.id);
+    let expenseTasks = tasks.filter(
+      (task) => task.type.id === taskModes.Expense.id
+    );
 
-    if (expenseTasks.length === 0) return
+    if (expenseTasks.length === 0) return;
 
     return (
       <table className="table task-table">
@@ -117,88 +160,128 @@ export default function DailyTasks() {
             <th className="text-end">
               <span className="text-danger">
                 {parseInt(expenseTotal) !== 0 && "- "}
-                {displayMoneyAmmount(null, expenseTotal)}
+                {convertNumberToCurrency(
+                  localCountryInfo.currency,
+                  expenseTotal
+                )}
               </span>
             </th>
           </tr>
         </thead>
         <tbody>
-          {
-            expenseTasks.map(task => {
-              return <tr className="task-table__row" key={task.id} onClick={() => handleEditTask(task.id)}>
-                <td className="text-start">{task.taskcate && task.taskcate.name}</td>
-                <td className="text-start">{task.accountcate && task.accountcate.name}</td>
-                <td className="text-end fw-bolder">- {displayMoneyAmmount(task.currency, task.amount)}</td>
-                <td><CustomButton callback={(e) => handleDeleteTask(task.id, e)}><i className="fas fa-trash"></i></CustomButton></td>
+          {expenseTasks.map((task) => {
+            return (
+              <tr
+                className="task-table__row"
+                key={task.id}
+                onClick={() => handleEditTask(task.id)}
+              >
+                <td className="text-start">
+                  {task.taskcate && task.taskcate.name}
+                </td>
+                <td className="text-start">
+                  {task.accountcate && task.accountcate.name}
+                </td>
+                <td className="text-end fw-bolder">
+                  - {convertNumberToCurrency(task.currency, task.amount)}
+                </td>
+                <td>
+                  <CustomButton callback={(e) => handleDeleteTask(task.id, e)}>
+                    <i className="fas fa-trash"></i>
+                  </CustomButton>
+                </td>
               </tr>
-            })
-          }
+            );
+          })}
         </tbody>
       </table>
-    )
-  }
+    );
+  };
 
+  /**
+   * Calculating total income and expense.
+   * Change incomeTotal and expenseTotal value
+   */
   useEffect(() => {
     if (localCountryInfo && tasks) {
-      getCurrencyRateByCode(localCountryInfo.currency).then(rates => {
-        let incomeTotal = tasks.filter(task => task.type.id === taskModes.Income.id).reduce((total, task) => {
-          let amount = Number(task.amount);
-          if (task.currency !== localCountryInfo.currency && rates[task.currency]) {
-            amount = amount * Number(rates[task.currency]);
-          }
+      getCurrencyRateByCode(localCountryInfo.currency).then((rates) => {
+        let incomeTotal = tasks
+          .filter((task) => task.type.id === taskModes.Income.id)
+          .reduce((total, task) => {
+            let amount = parseFloat(task.amount);
+            if (
+              task.currency !== localCountryInfo.currency &&
+              rates[task.currency]
+            ) {
+              amount = amount / parseFloat(rates[task.currency]);
+            }
 
-          return total += amount;
-        }, 0)
+            return (total += amount);
+          }, 0);
 
         setIncomeTotal(incomeTotal);
 
-        let expenseTotal = tasks.filter(task => task.type.id === taskModes.Expense.id).reduce((total, task) => {
-          let amount = task.amount;
-          if (task.currency !== localCountryInfo.currency && rates[task.currency]) {
-            amount = amount * Number(rates[task.currency]);
-          }
+        let expenseTotal = tasks
+          .filter((task) => task.type.id === taskModes.Expense.id)
+          .reduce((total, task) => {
+            let amount = parseFloat(task.amount);
+            if (
+              task.currency !== localCountryInfo.currency &&
+              rates[task.currency]
+            ) {
+              amount = amount / parseFloat(rates[task.currency]);
+            }
 
-          return total += amount;
-        }, 0)
+            return (total += amount);
+          }, 0);
 
         setExpenseTotal(expenseTotal);
-      })
+      });
     }
-  }, [localCountryInfo, tasks])
+  }, [localCountryInfo, tasks]);
 
-  const displayMoneyAmmount = (currency, amount) => {
-    if (!currency && localCountryInfo) return convertNumberToCurrency(localCountryInfo.currency, amount);
-
-    if (!currency && !amount && amount !== 0) return;
-
-    return convertNumberToCurrency(currency, amount);
-  }
-
+  /**
+   * Handle delete task  event.
+   * @param {string} taskId - delete task ID.
+   * @param {object} e - triggered delete button.
+   */
   const handleDeleteTask = (taskId, e) => {
     e.stopPropagation();
 
     try {
       setConfirmModalContent("are you sure to delete this task ? ");
+
       handleConfirmShow(async () => {
         setLoading(true);
+
         await deleteDocument(taskId);
-        let tasks = await getDocumentsByPagination({ params: { [Tasks.date]: param.date } });
+
+        let tasks = await getDocumentsByPagination({
+          params: { [Tasks.date]: param.date },
+        });
+
         setTasks(tasks);
+
         setLoading(false);
-      })
+      });
     } catch (err) {
       setErrorModalContent(JSON.stringify(err));
       handleErrorShow();
     }
-  }
+  };
 
-  const handleEditTask = (taskId) =>{
+  /**
+   * Handle edit task  event.
+   * Redirect to edit form.
+   * @param {string} taskId - delete task ID.
+   */
+  const handleEditTask = (taskId) => {
     history.push(`/task/edit/${taskId}`);
-  }
+  };
 
   return (
     <div className="daily">
-      <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} displayMoneyAmmount={displayMoneyAmmount} />
+      <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} />
       {displayIncomeTable()}
       {displayExpenseTable()}
     </div>
