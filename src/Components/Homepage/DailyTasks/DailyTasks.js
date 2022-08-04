@@ -32,7 +32,7 @@ export default function DailyTasks() {
     setConfirmModalContent,
     localCountryInfo,
     setLoading,
-  } = useHomeController();
+  } = useHomeController(); 
 
   // Database method
   const { getDocumentsByPagination, deleteDocument } = useFirestore(
@@ -63,7 +63,14 @@ export default function DailyTasks() {
 
         setLoading(true);
 
-        getDocumentsByPagination({ params: { [Tasks.date]: param.date } }).then(
+        let testDate = new Date(param.date);
+        testDate.setHours(0, 0, 0, 0);
+
+        getDocumentsByPagination({ params: [{key: Tasks.createAt, operator: ">=", value: testDate }] }).then(
+          (data) => console.log(data)
+        );
+
+        getDocumentsByPagination({ params: [{key: Tasks.date, operator: "==", value: param.date }] }).then(
           (data) => setTasks(data)
         );
       }

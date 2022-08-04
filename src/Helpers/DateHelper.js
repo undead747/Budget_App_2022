@@ -59,3 +59,12 @@ export function getFormatDateForDatePicker(date = new Date()) {
 
     return `${date.getFullYear()}-${currMonth}-${currDate}`
 }
+
+
+export function getFirstDayOfMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
+    return new Date(year, month, 1);
+}
+
+export function getLastDayOfMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
+    return new Date(year, month + 1, 0);
+}
