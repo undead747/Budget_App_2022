@@ -56,8 +56,7 @@ export default function Home() {
             <DailyTasks key={routes.match.params.date} {...routes} />
           )}
         />
-        <Route path={"/weekly/:date?"} component={WeeklyTasks} />
-        <Route path={"/monthly/:date?"} component={MonthlyTasks} />
+        <Route path={"/monthly/:year?/:month?"} component={MonthlyTasks} />
         <Route path={"/years/:date?"} component={TasksByYears} />
         <Route path={"/calendar/:date?"} component={TasksByCalendar} />
 

@@ -5,11 +5,6 @@ export const sidebarData = [
         path: '/daily'
     },
     {
-        id: 1,
-        title: 'Weekly',
-        path: '/weekly'
-    },    
-    {
         id: 2,
         title: 'Monthly',
         path: '/monthly'
