@@ -63,13 +63,6 @@ export default function DailyTasks() {
 
         setLoading(true);
 
-        let testDate = new Date(param.date);
-        testDate.setHours(0, 0, 0, 0);
-
-        getDocumentsByPagination({ params: [{key: Tasks.createAt, operator: ">=", value: testDate }] }).then(
-          (data) => console.log(data)
-        );
-
         getDocumentsByPagination({ params: [{key: Tasks.date, operator: "==", value: param.date }] }).then(
           (data) => setTasks(data)
         );

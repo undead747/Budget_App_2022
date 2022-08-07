@@ -62,9 +62,16 @@ export function getFormatDateForDatePicker(date = new Date()) {
 
 
 export function getFirstDayOfMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
-    return new Date(year, month, 1);
+    let date = new Date(year, month, 1);
+    date.setHours(0, 0, 0, 0);
+
+    return date;
 }
 
 export function getLastDayOfMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
-    return new Date(year, month + 1, 0);
+    let date = new Date(year, month + 1, 0);
+    date.setHours(23, 59, 59, 999);
+
+    return date;
+
 }

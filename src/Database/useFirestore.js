@@ -67,7 +67,7 @@ export const useFirestore = (collectionName) => {
       queryConstraints.push(where(param.key, param.operator, param.value ));
     })
 
-    const q = query(
+    let q = query(
       collection(fireStoreInst, collectionName),
       ...queryConstraints,
       orderBy(pagination.orderBy, pagination.orderType)
