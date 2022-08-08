@@ -34,21 +34,13 @@ export default function Navigator(tabId) {
 
     if(!month || !year) return;
 
-    return `${month}-${year}`;
+    if(month.length === 1) month = `0${month}`;
+
+    return `${year}-${month}`;
   } 
 
   useEffect(() => {
-    let currDateVal = getCurrDate();
-    
-    if (currDateVal) {
-
-      setCurrDate(currDateVal);
-      datePickerRef.current.value = currDateVal;
-    }
-  }, [getCurrDate]);
-
-  useEffect(() => {
-      if(selectedTab){
+      if(selectedTab || selectedTab === 0){
         let currDateVal = null;
 
         switch (selectedTab) {
@@ -56,28 +48,33 @@ export default function Navigator(tabId) {
             currDateVal = getCurrDailyDate();
             break;
           case sidebarData[1].id:
+            currDateVal = getCurrMonthDate();
+            break;
           default:
             break;
         }
+
+        setCurrDate(currDateVal);
+        datePickerRef.current.value = currDateVal;
       }
   }, [selectedTab])
 
   const preDate = () => {
-    if (selectedTab === 0 && currDate) {
+    if (selectedTab === sidebarData[0].id && currDate) {
       let preDate = getPreDate(new Date(currDate));
       history.push(`/daily/${getFormatDateForDatePicker(preDate)}`);
     }
   };
 
   const nextDate = () => {
-    if (selectedTab === 0 && currDate) {
+    if (selectedTab === sidebarData[0].id && currDate) {
       let nextDate = getNextDate(new Date(currDate));
       history.push(`/daily/${getFormatDateForDatePicker(nextDate)}`);
     }
   };
 
   const handleDatePicker = () => {
-    if (selectedTab === 0 && datePickerRef.current.value) {
+    if (selectedTab === sidebarData[0].id && datePickerRef.current.value) {
       let selectedDate = new Date(datePickerRef.current.value);
       history.push(`/daily/${getFormatDateForDatePicker(selectedDate)}`);
     }
@@ -91,7 +88,7 @@ export default function Navigator(tabId) {
       </CustomButton>
       <input
         className="form-control navigator__date-picker"
-        type={"date"}
+        type={selectedTab === sidebarData[1].id ? "month" : "date"}
         ref={datePickerRef}
         onChange={handleDatePicker}
       />
