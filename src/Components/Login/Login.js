@@ -23,6 +23,7 @@ export default function Login() {
       history.push('/');
     } catch (error) {
       setErrors([error.message]);
+      setLoading(false);
     }
   } 
 

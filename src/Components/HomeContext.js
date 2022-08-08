@@ -24,7 +24,7 @@ export function useHomeController() {
 export default function HomeProvider({ children }) {
   // #region State
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectTab] = useState(sidebarData[0].id);
+  const [selectedTab, setSelectTab] = useState();
   const [localCountryInfo, setLocalCountryInfo] = useState();
   const [countriesCurrencyInfo, setCountriesCurrencyInfo] = useState();
   const accountCategories = useFirestoreRealtime(

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import './sidebar.css';
 import { useHomeController } from '../../HomeContext';
@@ -13,6 +13,13 @@ function Sidebar(props) {
         setSelectTab(tab.id);
         history.push(tab.path);
     }
+
+    useEffect(() => {
+        const url = window.location.href;
+
+        if(url.includes("daily")) setSelectTab(sidebarData[0].id);
+        if(url.includes("monthly")) setSelectTab(sidebarData[1].id);
+    }, [])
     
     return (
         <ul className='nav-bar'>

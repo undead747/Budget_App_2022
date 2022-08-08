@@ -22,6 +22,11 @@ export default function Navigator(tabId) {
   // #region Function
   const getCurrDate = () => {
     let dateParam = matchPath(pathname, { path: "/:mode/:date?" });
+
+    let search = window.location.search;
+    let params = new URLSearchParams(search);
+    let foo = params.get('month');
+
     return dateParam ? dateParam.params.date : null;
   };
 
@@ -70,6 +75,7 @@ export default function Navigator(tabId) {
         ref={datePickerRef}
         onChange={handleDatePicker}
       />
+  
       <CustomButton callback={() => nextDate()} disabled={!currDate}>
         <i className="fas fa-angle-right"></i>
       </CustomButton>

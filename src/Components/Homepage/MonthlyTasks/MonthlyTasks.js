@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import { taskModes, Tasks } from "../../../Constants/TaskConstaints";
@@ -5,13 +6,14 @@ import {
   DatabaseCollections,
   useFirestore,
 } from "../../../Database/useFirestore";
-import { getCurrencyRateByCode } from "../../../Helpers/CurrencyHelper";
+import { convertNumberToCurrency, getCurrencyRateByCode } from "../../../Helpers/CurrencyHelper";
 import {
   getFirstDayOfMonth,
   getLastDayOfMonth,
 } from "../../../Helpers/DateHelper";
 import { useHomeController } from "../../HomeContext";
 import Summary from "../Summary/Summary";
+import "./monthly-task.css";
 
 export default function MonthlyTasks() {
   // #region State
@@ -127,7 +129,7 @@ export default function MonthlyTasks() {
   const groupTasksByDate = (tasks, localCountryInfo, rates) => {
       const groups = tasks.reduce((groups, task) => {
           if(!groups[task.date]){
-              groups[task.date] = {expenseTotal: 0, incomeTotal: 0};
+              groups[task.date] = {expense: 0, income: 0, total: 0};
           }
 
           let amount = parseFloat(task.amount);
@@ -137,26 +139,66 @@ export default function MonthlyTasks() {
             ) {
               amount = amount / parseFloat(rates[task.currency]);
             }
-
-          groups[task.date].expenseTotal = parseFloat(groups[task.date].expenseTotal) + amount;   
-          groups[task.date].incomeTotal = parseFloat(groups[task.date].incomeTotal) + amount;
           
+          if(task.type.id === taskModes.Expense.id) groups[task.date].expense = parseFloat(groups[task.date].expense) + amount;   
+          if(task.type.id === taskModes.Income.id) groups[task.date].income = parseFloat(groups[task.date].income) + amount;
+          
+          groups[task.date].total = parseFloat(groups[task.date].income) - parseFloat(groups[task.date].expense);
+
           return groups;
       }, {})
+
+      let groupsArray = Object.keys(groups).map(key => {
+          return {
+            date: key,
+            ...groups[key]
+          }
+      })
       
-      setDisplayedTasks(groups);
+      groupsArray = groupsArray.sort(function(a, b){
+        a = new Date(a.date);
+        b = new Date(b.date);
+        
+        if(a < b) return -1;
+        if(a > b) return 1;
+
+        return 0;
+      })
+
+      setDisplayedTasks(groupsArray);
   }
-
-  const displayTasksTable = useCallback(() => {
-    if (!tasks || tasks.length === 0) return;
-
-    
-  }, [tasks])
 
   return (
     <div className="daily">
       <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} />
-      {displayTasksTable()}
+
+      <div className="task-table__wrapper">
+      <table className="table task-table">
+        <tbody>
+          { displayedTasks && displayedTasks.map(task => {
+            return (
+              <tr
+                className="task-table__row"
+                key={task.date}
+              >
+                <td className="text-start">
+                  {new Date(task.date).toLocaleDateString()}
+                </td>
+                <td className="text-end">
+                    <span className="text-success">+ {convertNumberToCurrency(localCountryInfo.currency, task.income)}</span>
+                </td>
+                <td>
+                  <div className="d-flex flex-column text-end">
+                    <span className="text-danger">- {convertNumberToCurrency(localCountryInfo.currency, task.expense)}</span>
+                    <span className="text-secondary small">Total: {convertNumberToCurrency(localCountryInfo.currency, task.total)}</span>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      </div>
     </div>
   );
 }
