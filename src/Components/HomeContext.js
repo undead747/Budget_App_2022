@@ -13,7 +13,6 @@ import {
   useErrorModal,
   useSuccessModal,
 } from "./CommonComponents/Modal/modal";
-import { sidebarData } from "./Homepage/Sidebar/SidebarData";
 
 const HomeControllerContext = React.createContext();
 

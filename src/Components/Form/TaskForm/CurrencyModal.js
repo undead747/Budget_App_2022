@@ -206,8 +206,7 @@ export function useCurrencyModal() {
                 {convertNumberToCurrency(
                   selectedTask.currency,
                   selectedTask.amount
-                )}{" "}
-                {getSymbolByCurrency(selectedTask.currency)}
+                )}
               </p>
               {selectedRow.currency !== selectedTask.currency && (
                 <>
@@ -216,8 +215,7 @@ export function useCurrencyModal() {
                     {convertNumberToCurrency(
                       selectedRow.currency,
                       selectedRow.amount
-                    )}{" "}
-                    {getSymbolByCurrency(selectedRow.currency)}
+                    )}
                   </p>
                 </>
               )}

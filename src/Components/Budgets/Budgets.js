@@ -1,7 +1,9 @@
 import React from 'react'
+import BudgetProvider from './BudgetContext'
 
 export default function Budgets() {
   return (
-    <div>Budgets</div>
+     <BudgetProvider>
+     </BudgetProvider>
   )
 }
