@@ -56,7 +56,10 @@ export default function Home() {
             <DailyTasks key={routes.match.params.date} {...routes} />
           )}
         />
-        <Route path={"/monthly/:year?/:month?"} component={MonthlyTasks} />
+        <Route path={"/monthly"} render={(routes) => {
+            let params = new URLSearchParams(routes.location.search);
+            return <MonthlyTasks key={params} {...routes} />
+        }} />
         <Route path={"/years/:date?"} component={TasksByYears} />
         <Route path={"/calendar/:date?"} component={TasksByCalendar} />
 

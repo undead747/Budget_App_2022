@@ -26,12 +26,30 @@ export function getPreDate(date = new Date()) {
 }
 
 /**
+ * Get previous month base on input date
+ * Returns previous date, otherwise return previous date of current date
+ * @param {date} date - input date.
+ */
+ export function getPreMonth(date = new Date()) {
+    return new Date(date.getFullYear(), date.getMonth() - 1);
+}
+
+/**
  * Get next date base on input date
  * Returns next date, otherwise return next date of current date
  * @param {date} date - input date.
  */
 export function getNextDate(date = new Date()) {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+}
+
+/**
+ * Get next month base on input date
+ * Returns next date, otherwise return next date of current date
+ * @param {date} date - input date.
+ */
+ export function getNextMonth(date = new Date()) {
+    return new Date(date.getFullYear(), date.getMonth() + 1);
 }
 
 /**
@@ -60,7 +78,6 @@ export function getFormatDateForDatePicker(date = new Date()) {
     return `${date.getFullYear()}-${currMonth}-${currDate}`
 }
 
-
 export function getFirstDayOfMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
     let date = new Date(year, month, 1);
     date.setHours(0, 0, 0, 0);
@@ -69,7 +86,7 @@ export function getFirstDayOfMonth(month = new Date().getMonth(), year = new Dat
 }
 
 export function getLastDayOfMonth(month = new Date().getMonth(), year = new Date().getFullYear()){
-    let date = new Date(year, month + 1, 0);
+    let date = new Date(year, Number(month) + 1, 0);
     date.setHours(23, 59, 59, 999);
 
     return date;

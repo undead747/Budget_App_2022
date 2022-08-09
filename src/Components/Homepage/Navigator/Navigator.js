@@ -3,7 +3,9 @@ import { matchPath, useHistory, useLocation } from "react-router-dom";
 import {
   getFormatDateForDatePicker,
   getNextDate,
+  getNextMonth,
   getPreDate,
+  getPreMonth,
 } from "../../../Helpers/DateHelper";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import { useHomeController } from "../../HomeContext";
@@ -25,58 +27,103 @@ export default function Navigator(tabId) {
     let dateParam = matchPath(pathname, { path: "/:mode/:date?" });
     return dateParam ? dateParam.params.date : null;
   };
-  
+
   const getCurrMonthDate = () => {
     let search = window.location.search;
     let params = new URLSearchParams(search);
     let month = params.get('month');
     let year = params.get('year');
 
-    if(!month || !year) return;
+    if (!month || !year) return;
 
-    if(month.length === 1) month = `0${month}`;
+    if (month.length === 1) month = `0${month}`;
 
     return `${year}-${month}`;
-  } 
+  }
 
   useEffect(() => {
-      if(selectedTab || selectedTab === 0){
-        let currDateVal = null;
+    if (selectedTab || selectedTab === 0) {
+      let currDateVal = null;
 
-        switch (selectedTab) {
-          case sidebarData[0].id:
-            currDateVal = getCurrDailyDate();
-            break;
-          case sidebarData[1].id:
-            currDateVal = getCurrMonthDate();
-            break;
-          default:
-            break;
-        }
-
-        setCurrDate(currDateVal);
-        datePickerRef.current.value = currDateVal;
+      switch (selectedTab) {
+        case sidebarData[0].id:
+          currDateVal = getCurrDailyDate();
+          break;
+        case sidebarData[1].id:
+          currDateVal = getCurrMonthDate();
+          break;
+        default:
+          break;
       }
-  }, [selectedTab])
+
+      if(!currDateVal) return;
+      
+      setCurrDate(currDateVal);
+      datePickerRef.current.value = currDateVal;
+    }
+  }, [selectedTab, window.location.href])
 
   const preDate = () => {
-    if (selectedTab === sidebarData[0].id && currDate) {
-      let preDate = getPreDate(new Date(currDate));
-      history.push(`/daily/${getFormatDateForDatePicker(preDate)}`);
+    let url = null,
+      preDate = null;
+
+    if (currDate) {
+      switch (selectedTab) {
+        case sidebarData[0].id:
+          preDate = getPreDate(new Date(currDate));
+          url = `/daily/${getFormatDateForDatePicker(preDate)}`;
+          break;
+        case sidebarData[1].id:
+          preDate = getPreMonth(new Date(currDate));
+          url = `/monthly/?month=${preDate.getMonth() + 1}&year=${preDate.getFullYear()}`
+          break;
+        default:
+          break;
+      }
+
+      history.push(url);
     }
   };
 
   const nextDate = () => {
-    if (selectedTab === sidebarData[0].id && currDate) {
-      let nextDate = getNextDate(new Date(currDate));
-      history.push(`/daily/${getFormatDateForDatePicker(nextDate)}`);
+    let url = null,
+    nextDate = null;
+
+  if (currDate) {
+    switch (selectedTab) {
+      case sidebarData[0].id:
+        nextDate = getNextDate(new Date(currDate));
+        url = `/daily/${getFormatDateForDatePicker(nextDate)}`;
+        break;
+      case sidebarData[1].id:
+        nextDate = getNextMonth(new Date(currDate));
+        url = `/monthly/?month=${nextDate.getMonth() + 1}&year=${nextDate.getFullYear()}`
+        break;
+      default:
+        break;
     }
+
+    history.push(url);
+  }
   };
 
   const handleDatePicker = () => {
-    if (selectedTab === sidebarData[0].id && datePickerRef.current.value) {
-      let selectedDate = new Date(datePickerRef.current.value);
-      history.push(`/daily/${getFormatDateForDatePicker(selectedDate)}`);
+    if (datePickerRef.current.value) {
+      let selectedDate = new Date(datePickerRef.current.value),
+          url = null;
+
+      switch (selectedTab) {
+        case sidebarData[0].id:
+          url = `/daily/${getFormatDateForDatePicker(nextDate)}`;
+          break;
+        case sidebarData[1].id:
+          url = `/monthly/?month=${selectedDate.getMonth() + 1}&year=${selectedDate.getFullYear()}`
+          break;
+        default:
+          break;
+      }
+
+      if(url) history.push(url);
     }
   };
   // #region Function
@@ -92,7 +139,7 @@ export default function Navigator(tabId) {
         ref={datePickerRef}
         onChange={handleDatePicker}
       />
-  
+
       <CustomButton callback={() => nextDate()} disabled={!currDate}>
         <i className="fas fa-angle-right"></i>
       </CustomButton>

@@ -15,11 +15,11 @@
     max-width: 150px;
 }
 
-input.navigator__date-picker[type="date"] {
+input.navigator__date-picker {
     position: relative;
   }
   
-  input.navigator__date-picker[type="date"]::-webkit-calendar-picker-indicator {
+  input.navigator__date-picker::-webkit-calendar-picker-indicator {
     position: absolute;
     top: 0;
     right: 0;

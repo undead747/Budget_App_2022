@@ -19,7 +19,7 @@ function Sidebar(props) {
 
         if(url.includes("daily")) setSelectTab(sidebarData[0].id);
         if(url.includes("monthly")) setSelectTab(sidebarData[1].id);
-    }, [])
+    }, [window.location.href])
     
     return (
         <ul className='nav-bar'>
