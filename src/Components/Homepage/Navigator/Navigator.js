@@ -130,7 +130,7 @@ export default function Navigator(tabId) {
 
   return (
     <div className="navigator">
-      <CustomButton callback={() => preDate()} disabled={!currDate}>
+      <CustomButton customClass="navigator__button" callback={() => preDate()} disabled={!currDate}>
         <i className="fas fa-angle-left"></i>
       </CustomButton>
       <input
@@ -140,7 +140,7 @@ export default function Navigator(tabId) {
         onChange={handleDatePicker}
       />
 
-      <CustomButton callback={() => nextDate()} disabled={!currDate}>
+      <CustomButton customClass="navigator__button" callback={() => nextDate()} disabled={!currDate}>
         <i className="fas fa-angle-right"></i>
       </CustomButton>
     </div>

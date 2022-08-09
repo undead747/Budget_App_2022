@@ -17,8 +17,19 @@ function Sidebar(props) {
     useEffect(() => {
         const url = window.location.href;
 
-        if(url.includes("daily")) setSelectTab(sidebarData[0].id);
-        if(url.includes("monthly")) setSelectTab(sidebarData[1].id);
+        if(url.includes("daily")){
+            setSelectTab(sidebarData[0].id);
+            return
+        } 
+        if(url.includes("monthly")){
+            setSelectTab(sidebarData[1].id);
+            return
+        }
+
+        if(url.includes("calendar")){
+            setSelectTab(sidebarData[2].id);
+            return
+        }
     }, [window.location.href])
     
     return (

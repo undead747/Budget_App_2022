@@ -15,11 +15,10 @@ import Navigator from "./Navigator/Navigator";
 import Sidebar from "./Sidebar/Sidebar";
 import TasksByCalendar from "./TasksByCalendar/TasksByCalendar";
 import TasksByYears from "./TasksByYears/TasksByYears";
-import WeeklyTasks from "./WeeklyTasks/WeeklyTasks";
-import "./home.css";
+import "./tasks.css";
 import EclipseButton from "../CommonComponents/Button/EclipseButton";
 
-export default function Home() {
+export default function Tasks() {
   const [errors, setErrors] = useState();
   const { logout } = useAuth();
   const history = useHistory();
@@ -57,15 +56,15 @@ export default function Home() {
           )}
         />
         <Route path={"/monthly"} render={(routes) => {
-            let params = new URLSearchParams(routes.location.search);
-            return <MonthlyTasks key={params} {...routes} />
+          let params = new URLSearchParams(routes.location.search);
+          return <MonthlyTasks key={params} {...routes} />
         }} />
         <Route path={"/years/:date?"} component={TasksByYears} />
         <Route path={"/calendar/:date?"} component={TasksByCalendar} />
 
         <Redirect to={"/daily"} />
       </Switch>
-      <CustomButton callback={handleLogout}>Sign out</CustomButton>
+      {/* <CustomButton callback={handleLogout}>Sign out</CustomButton> */}
       <EclipseButton customClass="btn--task-add" callback={handleAddTask}>
         <i className="fas fa-plus"></i>
       </EclipseButton>

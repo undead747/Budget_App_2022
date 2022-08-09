@@ -5,6 +5,10 @@
     padding: 1rem;
 }
 
+.navigator__button{
+    color: var(--primary-color) !important;
+}
+
 .navigator__title{
     margin: 0;
     font-size: 1rem;

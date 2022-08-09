@@ -25,6 +25,7 @@ export default function HomeProvider({ children }) {
   // #region State
   const [loading, setLoading] = useState(false);
   const [selectedTab, setSelectTab] = useState();
+  const [selectedBottomTab, setSelectBottomTab] = useState();
   const [localCountryInfo, setLocalCountryInfo] = useState();
   const [countriesCurrencyInfo, setCountriesCurrencyInfo] = useState();
   const accountCategories = useFirestoreRealtime(
@@ -92,6 +93,8 @@ export default function HomeProvider({ children }) {
     setConfirmModalContent,
     selectedTab,
     setSelectTab,
+    selectedBottomTab,
+    setSelectBottomTab,
     localCountryInfo,
     countriesCurrencyInfo,
     accountCategories,
