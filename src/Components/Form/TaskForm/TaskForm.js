@@ -1,3 +1,4 @@
+import { Firestore, Timestamp } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Form } from "react-bootstrap";
 import { useHistory, useParams } from "react-router-dom";
@@ -8,6 +9,7 @@ import {
 } from "../../../Database/useFirestore";
 import {
   convertNumberWithCommas,
+  getCurrencyRateByCode,
   getSymbolByCurrency,
 } from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
@@ -65,6 +67,12 @@ function TaskForm(props) {
     DatabaseCollections.Tasks
   );
 
+  const {
+    getDocumentById: getBudgetById,
+    addDocumentWithId: addBudget,
+    updateDocument: updateBudget,
+  } = useFirestore(DatabaseCollections.Budgets);
+
   // Define account category, task category, currency modal
   const {
     show: accountModalShow,
@@ -95,9 +103,12 @@ function TaskForm(props) {
     try {
       event.preventDefault();
 
+      let firebaseDate = Timestamp.fromDate(new Date(dateRef.current.value));
+
       let task = {
         ...selectedTask,
         date: dateRef.current.value,
+        formatedDate: firebaseDate,
         note: noteRef.current.value,
         title: titleRef.current.value,
         type: selectedTaskMode,
@@ -105,8 +116,8 @@ function TaskForm(props) {
 
       setLoading(true);
 
-      if (mode === "add") await addDocument(task);
-      if (mode === "edit") await updateDocument(task, selectedTaskId.current);
+      if (mode === "add") await addTask(task);
+      if (mode === "edit") await updateTask(task, selectedTaskId.current);
 
       setLoading(false);
 
@@ -115,6 +126,86 @@ function TaskForm(props) {
       setErrorModalContent(error);
       handleErrorShow();
     }
+  };
+
+  const addTask = async (task) => {
+    await addDocument(task);
+
+    let rates = await getCurrencyRateByCode(localCountryInfo.currency);
+    let amount = parseFloat(task.amount);
+    if (task.currency !== localCountryInfo.currency && rates[task.currency]) {
+      amount = amount / parseFloat(rates[task.currency]);
+    }
+
+    if (task.type.id === taskModes.Income.id) {
+      let budget = await getBudgetById(task.accountCate.id);
+      if (budget && budget.data) {
+        let calAmount = parseFloat(budget.data.amount) + amount;
+        await updateBudget({ ...budget.data, amount: calAmount }, budget.id);
+      } else {
+        let budget = {
+          name: task.accountCate.name,
+          amount: amount,
+        };
+
+        await addBudget(budget, task.accountCate.id);
+      }
+    }
+  };
+
+  const updateTask = async (newTask, taskId) => {
+    if (newTask.type.id === taskModes.Income.id) {
+      let oldTask = await getDocumentById(taskId);
+      let rates = await getCurrencyRateByCode(localCountryInfo.currency);
+      
+      let oldAmmount = parseFloat(oldTask.data.amount);
+      let newAmmount = parseFloat(newTask.amount);
+      
+      let oldTaskBudget = await getBudgetById(oldTask.data.accountCate.id);
+      
+      if (
+        oldTask.data.currency !== localCountryInfo.currency &&
+        rates[oldTask.data.currency]
+      ) {
+        oldAmmount = oldAmmount / parseFloat(rates[oldTask.data.currency]);
+      }
+
+      if (
+        newTask.currency !== localCountryInfo.currency &&
+        rates[newTask.currency]
+      ) {
+        newAmmount = newAmmount / parseFloat(rates[newTask.currency]);
+      }
+
+      if(oldTask.data.accountCate.id === newTask.accountCate.id){
+        if (oldTaskBudget && oldTaskBudget.data) {
+          let calAmount =
+            parseFloat(oldTaskBudget.data.amount) + (newAmmount - oldAmmount);
+          await updateBudget(
+            { ...oldTaskBudget.data, amount: calAmount },
+            oldTaskBudget.id
+          );
+        }
+      }else{
+        let newTaskBudget = await getBudgetById(newTask.accountCate.id);
+        if (newTaskBudget && newTaskBudget.data) {
+          let calAmount = parseFloat(newTaskBudget.data.amount) + newAmmount;
+          await updateBudget(
+            { ...newTaskBudget.data, amount: calAmount },
+            newTaskBudget.id
+          );
+        } else {
+          let budget = {
+            name: newTask.accountCate.name,
+            amount: newAmmount,
+          };
+  
+          await addBudget(budget, newTask.accountCate.id);
+        }
+      }
+    } 
+    
+    await updateDocument(newTask, taskId);
   };
 
   // Handle Open Modals event.
@@ -189,22 +280,20 @@ function TaskForm(props) {
    * Otherwise date-picker value will be inited by below useEffect.
    */
   useEffect(() => {
-    if (mode === "add" && formId) {
-      dateRef.current.value = getFormatDateForDatePicker(new Date(formId));
+    if (mode === "add") {
+      if (formId)
+        dateRef.current.value = getFormatDateForDatePicker(new Date(formId));
+      else dateRef.current.value = getFormatDateForDatePicker(new Date());
     }
-  }, []);
 
-  /**
-   * Init task values when task mode is edit.
-   * Change selectedTask values, selectedTaskId value.
-   */
-  useEffect(() => {
-    if (mode === "edit" && formId) {
+    if (mode === "edit") {
       initTaskById();
     }
   }, []);
 
   const initTaskById = async () => {
+    if (!formId) return;
+
     try {
       setLoading(true);
 

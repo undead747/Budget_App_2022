@@ -9,9 +9,7 @@ import {
   convertNumberToCurrency,
   getCurrencyRateByCode,
 } from "../../../Helpers/CurrencyHelper";
-import {
-  getFormatDateForDatePicker,
-} from "../../../Helpers/DateHelper";
+import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import { useHomeController } from "../../HomeContext";
 import Summary from "../Summary/Summary";
@@ -38,6 +36,11 @@ export default function DailyTasks() {
   const { getDocumentsByPagination, deleteDocument } = useFirestore(
     DatabaseCollections.Tasks
   );
+  const {
+    getDocumentById: getBudgetById,
+    addDocumentWithId: addBudget,
+    updateDocument: updateBudget,
+  } = useFirestore(DatabaseCollections.Budgets);
   // getting data from Flag, use for saving firebase-read operation
   const loadDataFlag = useRef(false);
 
@@ -63,12 +66,12 @@ export default function DailyTasks() {
 
         setLoading(true);
 
-        getDocumentsByPagination({ params: [{ key: Tasks.date, operator: "==", value: param.date }] }).then(
-          (data) => {
-            setTasks(data)
-            setLoading(false);
-          }
-        );
+        getDocumentsByPagination({
+          params: [{ key: Tasks.date, operator: "==", value: param.date }],
+        }).then((data) => {
+          setTasks(data);
+          setLoading(false);
+        });
       }
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
@@ -118,16 +121,16 @@ export default function DailyTasks() {
                 onClick={() => handleEditTask(task.id)}
               >
                 <td className="text-start">
-                  {task.taskcate && task.taskcate.name}
+                  {task.taskCate && task.taskCate.name}
                 </td>
                 <td className="text-start">
-                  {task.accountcate && task.accountcate.name}
+                  {task.accountCate && task.accountCate.name}
                 </td>
                 <td className="text-end fw-bolder">
                   + {convertNumberToCurrency(task.currency, task.amount)}
                 </td>
                 <td>
-                  <CustomButton callback={(e) => handleDeleteTask(task.id, e)}>
+                  <CustomButton callback={(e) => handleDeleteTask(task, e)}>
                     <i className="fas fa-trash"></i>
                   </CustomButton>
                 </td>
@@ -179,10 +182,10 @@ export default function DailyTasks() {
                 onClick={() => handleEditTask(task.id)}
               >
                 <td className="text-start">
-                  {task.taskcate && task.taskcate.name}
+                  {task.taskcate && task.taskCate.name}
                 </td>
                 <td className="text-start">
-                  {task.accountcate && task.accountcate.name}
+                  {task.accountCate && task.accountCate.name}
                 </td>
                 <td className="text-end fw-bolder">
                   - {convertNumberToCurrency(task.currency, task.amount)}
@@ -247,7 +250,7 @@ export default function DailyTasks() {
    * @param {string} taskId - delete task ID.
    * @param {object} e - triggered delete button.
    */
-  const handleDeleteTask = (taskId, e) => {
+  const handleDeleteTask = async (task, e) => {
     e.stopPropagation();
 
     try {
@@ -256,10 +259,33 @@ export default function DailyTasks() {
       handleConfirmShow(async () => {
         setLoading(true);
 
-        await deleteDocument(taskId);
+        await deleteDocument(task.id);
 
-        let tasks = await getDocumentsByPagination({ params: [{ key: Tasks.date, operator: "==", value: param.date }] });
+        let tasks = await getDocumentsByPagination({
+          params: [{ key: Tasks.date, operator: "==", value: param.date }],
+        });
         setTasks(tasks);
+
+        if (task.type.id === taskModes.Income.id) {
+          let rates = await getCurrencyRateByCode(localCountryInfo.currency);
+          let amount = parseFloat(task.amount);
+
+          if (
+            task.currency !== localCountryInfo.currency &&
+            rates[task.currency]
+          ) {
+            amount = amount / parseFloat(rates[task.currency]);
+          }
+          
+          let budget = await getBudgetById(task.accountCate.id);
+          if (budget && budget.data) {
+            let calAmount = parseFloat(budget.data.amount) - amount;
+            await updateBudget(
+              { ...budget.data, amount: calAmount },
+              budget.id
+            );
+          }
+        }
 
         setLoading(false);
       });

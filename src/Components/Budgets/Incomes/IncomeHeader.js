@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
-import { useHomeController } from "../../HomeContext";
-import "./summary.css";
+import React from 'react'
+import { useHomeController } from '../../HomeContext';
 
-export default function Summary({ expenseTotal, incomeTotal, ...rest }) {
+export default function IncomeHeader({ budgets, debts, ...rest }) {
   const { localCountryInfo } = useHomeController();
-
-  const [sum, setSum] = useState(Number(0).toFixed(2));
+  const [sum, setSum] = useState(parseFloat(0));
 
   useEffect(() => {
-    let sum = parseFloat(incomeTotal) - parseFloat(expenseTotal);
+    let sum = parseFloat(budgets) - parseFloat(debts);
     setSum(sum);
-  }, [expenseTotal, incomeTotal]);
+  }, [budgets, debts]);
 
   const getSumDecorClass = () => {
     if (sum > 0) return "summary__val--success text-success";
@@ -23,26 +20,27 @@ export default function Summary({ expenseTotal, incomeTotal, ...rest }) {
     if (sum > 0) return "+ ";
   };
 
+
   return (
     <div className="summary">
       <div className="summary__item">
         <h5 className="summary__title">
           <i className="fas fa-long-arrow-alt-up summary__icon"></i>
-          <span>Income</span>
+          <span>Budgets</span>
         </h5>
         <h5 className="summary__val summary__val--success text-success">
-          {parseInt(incomeTotal) !== 0 && "+ "}{" "}
-          {convertNumberToCurrency(localCountryInfo.currency, incomeTotal)}
+          {parseInt(budgets) !== 0 && "+ "}{" "}
+          {convertNumberToCurrency(localCountryInfo.currency, budgets)}
         </h5>
       </div>
       <div className="summary__item">
         <h5 className="summary__title">
           <i className="fas fa-long-arrow-alt-down summary__icon"></i>
-          <span>Expense</span>
+          <span>Debts</span>
         </h5>
         <h5 className="summary__val summary__val--danger text-danger">
-          {parseInt(expenseTotal) !== 0 && "- "}{" "}
-          {convertNumberToCurrency(localCountryInfo.currency, expenseTotal)}
+          {parseInt(debts) !== 0 && "- "}{" "}
+          {convertNumberToCurrency(localCountryInfo.currency, debts)}
         </h5>
       </div>
       <div className="summary__item">

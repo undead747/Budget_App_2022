@@ -78,8 +78,8 @@ export default function MonthlyTasks() {
 
     let tasks = await getDocumentsByPagination({
       params: [
-        { key: Tasks.createAt, operator: ">=", value: firstDayOfMonth },
-        { key: Tasks.createAt, operator: "<=", value: lastDayOfMonth },
+        { key: Tasks.formatedDate, operator: ">=", value: firstDayOfMonth },
+        { key: Tasks.formatedDate, operator: "<=", value: lastDayOfMonth },
       ],
     });
 

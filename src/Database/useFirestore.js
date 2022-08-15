@@ -13,6 +13,7 @@ import {
   addDoc,
   where,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { fireStoreInst } from "./firebaseInitialize";
 import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
@@ -22,11 +23,19 @@ export const DatabaseCollections = {
   ExpenseCategory: "Expense category",
   IncomeCategory: "Income category",
   Tasks: "Tasks",
+  Budgets: "Budgets"
 };
 
 export const TaskTotalDocId = "taskTotal";
 
 export const useFirestore = (collectionName) => {
+  const addDocumentWithId = async (document, id) => {
+     return await setDoc(doc(fireStoreInst, collectionName, id), {
+      ...document,
+      create_at: serverTimestamp(),
+    });
+  }
+
   const addDocument = async (document) => {
     return await addDoc(collection(fireStoreInst, collectionName), {
       ...document,
@@ -62,21 +71,24 @@ export const useFirestore = (collectionName) => {
   const getDocumentsByPagination = async ({ pagination = { orderBy: "create_at", orderType: "desc" }, params = [] } = {}) => {
     const results = [];
     const queryConstraints = [];
+    const orderConstraints = [];
+    const orderkeys = [];
 
     params.forEach(param => {
       queryConstraints.push(where(param.key, param.operator, param.value ));
+    })
+    
+    params.forEach(param => {
+      if(!orderkeys.includes(param.key) && param.operator !== "=="){
+        orderConstraints.push(orderBy(param.key, pagination.orderType ));
+        orderkeys.push(param.key);
+      }
     })
 
     let q = query(
       collection(fireStoreInst, collectionName),
       ...queryConstraints,
-      orderBy(pagination.orderBy, pagination.orderType)
-    );
-
-    if(pagination.size) q = query(
-      collection(fireStoreInst, collectionName),
-      ...queryConstraints,
-      orderBy(pagination.orderBy, pagination.orderType),
+      ...orderConstraints,
       limit(pagination.size)
     );
 
@@ -92,6 +104,7 @@ export const useFirestore = (collectionName) => {
 
   return {
     addDocument,
+    addDocumentWithId,
     updateDocument,
     deleteDocument,
     getDocuments,

@@ -10,6 +10,7 @@ export const Tasks = {
   createAt: "create_at",
   currency: "currency",
   date: "date",
+  formatedDate: "formatedDate",
   note: "note",
   taskCategory: "taskCate",
   title: "title",

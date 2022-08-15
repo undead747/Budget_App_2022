@@ -5,7 +5,7 @@
  */
 export function lowercaseObjectPropKeys(obj) {
   return Object.keys(obj).reduce((accumulator, key) => {
-    accumulator[key.toLowerCase()] = obj[key];
+    accumulator[key[0].toLowerCase() + key.slice(1)] = obj[key];
     return accumulator;
   }, {});
 }
