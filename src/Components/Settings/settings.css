@@ -1,0 +1,31 @@
+.settings{
+    padding: .5em 0;
+}
+
+.settings__title{
+    font-weight: var(--light);
+    margin-left: .3em;
+}
+
+.settings__table {
+    background-color: var(--primary-color);
+}
+
+.settings__table-column{
+    vertical-align: middle;
+}
+
+.settings__table-title{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.settings__table-icon{
+    width: 10%;
+}
+
+.settings__logout-btn{
+    width: 97%;
+    margin: 0 auto;
+}
