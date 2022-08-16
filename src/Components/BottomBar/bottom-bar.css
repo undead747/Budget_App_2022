@@ -25,13 +25,12 @@
 
 .bottom-bar__item-content{
     position: relative;
-}
-
-.bottom-bar__item-content{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    cursor: pointer;
 }
 
 .bottom-bar__item--active .bottom-bar__item-content::before{

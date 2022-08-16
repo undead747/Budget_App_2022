@@ -32,7 +32,6 @@ export default function Settings() {
 
   return (
     <div className='settings'>
-      <h6 className='settings__title'>Settings</h6>
       <table className="table settings__table">
         <tbody>
           <tr className="settings__table-row">
