@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
 import { useHomeController } from "../../HomeContext";
-import "./summary.css";
 
 export default function Summary({ expenseTotal, incomeTotal, ...rest }) {
   const { localCountryInfo } = useHomeController();

@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.css';
 import "@fortawesome/fontawesome-free/css/all.css";  
 import "react-datepicker/dist/react-datepicker.css";
+import 'boxicons';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

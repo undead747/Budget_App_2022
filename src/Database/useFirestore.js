@@ -64,8 +64,14 @@ export const useFirestore = (collectionName) => {
   }
 
   const getDocuments = async () => {
-    const results = await getDocs(collection(fireStoreInst, collectionName));
-    return results.docs
+    let results = await getDocs(collection(fireStoreInst, collectionName));
+
+    results = results.docs.map(doc => ({
+      data: doc.data(),
+      id: doc.id
+    }))
+
+    return results
   };
 
   const getDocumentsByPagination = async ({ pagination = { orderBy: "create_at", orderType: "desc" }, params = [] } = {}) => {

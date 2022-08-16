@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { convertNumberToCurrency } from '../../../Helpers/CurrencyHelper';
 import { useHomeController } from '../../HomeContext';
 
 export default function IncomeHeader({ budgets, debts, ...rest }) {
@@ -16,26 +17,20 @@ export default function IncomeHeader({ budgets, debts, ...rest }) {
     if (sum < 0) return "summary__val--danger text-danger";
   };
 
-  const getSumDecorSymbol = () => {
-    if (sum > 0) return "+ ";
-  };
-
-
   return (
     <div className="summary">
       <div className="summary__item">
         <h5 className="summary__title">
-          <i className="fas fa-long-arrow-alt-up summary__icon"></i>
+        <box-icon name='coin-stack' type='solid' ></box-icon>
           <span>Budgets</span>
         </h5>
         <h5 className="summary__val summary__val--success text-success">
-          {parseInt(budgets) !== 0 && "+ "}{" "}
           {convertNumberToCurrency(localCountryInfo.currency, budgets)}
         </h5>
       </div>
       <div className="summary__item">
         <h5 className="summary__title">
-          <i className="fas fa-long-arrow-alt-down summary__icon"></i>
+        <box-icon name='file'></box-icon>
           <span>Debts</span>
         </h5>
         <h5 className="summary__val summary__val--danger text-danger">
@@ -48,7 +43,6 @@ export default function IncomeHeader({ budgets, debts, ...rest }) {
           <span>Sum</span>
         </h5>
         <h5 className={`summary__val ${getSumDecorClass()}`}>
-          {getSumDecorSymbol()}{" "}
           {convertNumberToCurrency(localCountryInfo.currency, sum)}
         </h5>
       </div>
