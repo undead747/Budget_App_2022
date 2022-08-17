@@ -1,0 +1,18 @@
+.incomesAndExpenses{
+    background-color: var(--primary-color);
+}
+
+.incomesAndExpenses__Header{
+    padding-top: .3em;
+}
+
+.incomesAndExpenses__Dropdown{
+    display: flex;
+    justify-content: flex-end;
+
+    margin-right: .2em;
+}
+
+.incomesAndExpenses__Dropdown > .form-select{
+    width: 45%;
+}
