@@ -1,137 +1,90 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { useHistory, useLocation } from 'react-router-dom';
+import { taskModes } from '../../../Constants/TaskConstaints';
+import { CustomButton } from '../../CommonComponents/Button/Button';
+import { StatisticsMode, useStatistics } from '../StatisticsContext';
 
 export default function Navigator() {
-    // #region State
-    const { selectedTab } = useHomeController();
-    const [currDate, setCurrDate] = useState();
-    const history = useHistory();
-    const { pathname } = useLocation();
-    const datePickerRef = useRef();
-    // #endregion State
-  
-    // #region Function
-    const getCurrDailyDate = () => {
-      let dateParam = matchPath(pathname, { path: "/:mode/:date?" });
-      return dateParam ? dateParam.params.date : null;
-    };
-  
-    const getCurrMonthDate = () => {
-      let search = window.location.search;
-      let params = new URLSearchParams(search);
-      let month = params.get('month');
-      let year = params.get('year');
-  
-      if (!month || !year) return;
-  
-      if (month.length === 1) month = `0${month}`;
-  
-      return `${year}-${month}`;
-    }
-  
-    useEffect(() => {
-      if (selectedTab || selectedTab === 0) {
-        let currDateVal = null;
-  
-        switch (selectedTab) {
-          case sidebarData[0].id:
-            currDateVal = getCurrDailyDate();
-            break;
-          case sidebarData[1].id:
-            currDateVal = getCurrMonthDate();
-            break;
-          default:
-            break;
-        }
-  
-        if(!currDateVal) return;
-        
-        setCurrDate(currDateVal);
-        datePickerRef.current.value = currDateVal;
-      }
-    }, [selectedTab, window.location.href])
-  
-    const preDate = () => {
-      let url = null,
-        preDate = null;
-  
-      if (currDate) {
-        switch (selectedTab) {
-          case sidebarData[0].id:
-            preDate = getPreDate(new Date(currDate));
-            url = `/daily/${getFormatDateForDatePicker(preDate)}`;
-            break;
-          case sidebarData[1].id:
-            preDate = getPreMonth(new Date(currDate));
-            url = `/monthly/?month=${preDate.getMonth() + 1}&year=${preDate.getFullYear()}`
-            break;
-          default:
-            break;
-        }
-  
-        history.push(url);
-      }
-    };
-  
-    const nextDate = () => {
-      let url = null,
-      nextDate = null;
-  
-    if (currDate) {
-      switch (selectedTab) {
-        case sidebarData[0].id:
-          nextDate = getNextDate(new Date(currDate));
-          url = `/daily/${getFormatDateForDatePicker(nextDate)}`;
-          break;
-        case sidebarData[1].id:
-          nextDate = getNextMonth(new Date(currDate));
-          url = `/monthly/?month=${nextDate.getMonth() + 1}&year=${nextDate.getFullYear()}`
-          break;
-        default:
-          break;
-      }
-  
-      history.push(url);
-    }
-    };
-  
-    const handleDatePicker = () => {
-      if (datePickerRef.current.value) {
-        let selectedDate = new Date(datePickerRef.current.value),
-            url = null;
-  
-        switch (selectedTab) {
-          case sidebarData[0].id:
-            url = `/daily/${getFormatDateForDatePicker(nextDate)}`;
-            break;
-          case sidebarData[1].id:
-            url = `/monthly/?month=${selectedDate.getMonth() + 1}&year=${selectedDate.getFullYear()}`
-            break;
-          default:
-            break;
-        }
-  
-        if(url) history.push(url);
-      }
-    };
-    // #region Function
+  // #region State
+  const {currDate, taskMode, statisticsMode} = useStatistics();
+  const history = useHistory();
+  const datePickerRef = useRef();
+  // #endregion State
 
-  return (
-    <>
-      <div className="navigator">
-        <CustomButton customClass="navigator__button" callback={() => preDate()} disabled={!currDate}>
-          <i className="fas fa-angle-left"></i>
-        </CustomButton>
-        <input
-          className="form-control navigator__date-picker"
-          type={selectedTab === sidebarData[1].id ? "month" : "date"}
-          ref={datePickerRef}
-          onChange={handleDatePicker}
-        />
+  // #region Function
+  useEffect(() => {
+    const date = new Date();
 
-        <CustomButton customClass="navigator__button" callback={() => nextDate()} disabled={!currDate}>
-          <i className="fas fa-angle-right"></i>
-        </CustomButton>
-      </div>
-    </>
-  )
+    if (!currDate || !statisticsMode || !taskMode) {
+      let month = date.getMonth() + 1;
+      if (month.toString().length === 1) month = `0${month}`;
+
+      history.push(`/statistics?taskMode=${taskModes.Income.param}&statisticsMode=${StatisticsMode.ByMonth.name}&month=${month}&year=${date.getFullYear()}`)
+      return
+    };
+
+    datePickerRef.current.value = currDate;
+  }, [currDate, taskMode, statisticsMode])
+
+//   const preDate = () => {
+//     let url = null,
+//       preDate = null;
+
+//     preDate = getPreDate(new Date(currDate));
+//     history.push(`/statistics?mode=${StatisticsMode.Incomes.param}&month=${month}&year=${date.getFullYear()}`)
+//   }
+// };
+
+// const handleDatePicker = () => {
+//   if (datePickerRef.current.value) {
+//     let selectedDate = new Date(datePickerRef.current.value),
+//       url = null;
+
+//     switch (selectedTab) {
+//       case sidebarData[0].id:
+//         url = `/daily/${getFormatDateForDatePicker(nextDate)}`;
+//         break;
+//       case sidebarData[1].id:
+//         url = `/monthly/?month=${selectedDate.getMonth() + 1}&year=${selectedDate.getFullYear()}`
+//         break;
+//       default:
+//         break;
+//     }
+
+//     if (url) history.push(url);
+//   }
+// };
+
+const preDate = () => {
+
+}
+
+const nextDate = () => {
+
+}
+
+const handleDatePicker = () => {
+  
+}
+// #region Function
+
+return (
+  <>
+    <div className="navigator">
+      <CustomButton customClass="navigator__button" callback={() => preDate()} disabled={!currDate}>
+        <i className="fas fa-angle-left"></i>
+      </CustomButton>
+      <input
+        className="form-control navigator__date-picker"
+        type={"month"}
+        ref={datePickerRef}
+        onChange={handleDatePicker}
+      />
+
+      <CustomButton customClass="navigator__button" callback={() => nextDate()} disabled={!currDate}>
+        <i className="fas fa-angle-right"></i>
+      </CustomButton>
+    </div>
+  </>
+)
 }

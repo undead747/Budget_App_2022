@@ -1,8 +1,8 @@
 import React from 'react'
 import DropdownMode from './DropdownMode'
 import Navigator from './Navigator'
-import ToggleModebar from './ToggleModebar'
 import './income-expense.css'
+import ToggleTaskMode from './ToggleTaskMode'
 
 export default function IncomesAndExpenses() {
   return (
@@ -12,7 +12,7 @@ export default function IncomesAndExpenses() {
               <DropdownMode />
             </div>
             <Navigator />
-            <ToggleModebar />
+            <ToggleTaskMode />
         </div>
     </div>
   )
