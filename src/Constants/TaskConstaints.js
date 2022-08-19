@@ -1,7 +1,7 @@
 // Define budget task mode - effect displayed categories
 export const taskModes = {
-  Expense: { id: 0, name: "Expense", param: 'expense' },
-  Income: { id: 1, name: "Income", param: 'income' }
+  Income: { id: 1, name: "Income", param: 'income' },
+  Expense: { id: 0, name: "Expense", param: 'expense' }
 };
 
 export const Tasks = {

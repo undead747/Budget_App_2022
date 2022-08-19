@@ -31,7 +31,9 @@ export function getPreDate(date = new Date()) {
  * @param {date} date - input date.
  */
  export function getPreMonth(date = new Date()) {
-    return new Date(date.getFullYear(), date.getMonth() - 1);
+    if(date.getMonth() === 0) return new Date(date.getFullYear() - 1, 11, 1);
+
+    return new Date(date.getFullYear(), date.getMonth() - 1, 1);
 }
 
 /**
@@ -49,7 +51,9 @@ export function getNextDate(date = new Date()) {
  * @param {date} date - input date.
  */
  export function getNextMonth(date = new Date()) {
-    return new Date(date.getFullYear(), date.getMonth() + 1);
+    if(date.getMonth() === 11) return new Date(date.getFullYear() + 1, 0, 1);
+
+    return new Date(date.getFullYear(), date.getMonth() + 1, 1);
 }
 
 /**
