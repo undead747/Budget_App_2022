@@ -1,38 +1,94 @@
-import React from 'react'
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import React, { useEffect, useState } from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
+import "./chart.css";
+import { dynamicColors } from "../../../Helpers/ColorHelper";
+import { getCurrencyRateByCode } from "../../../Helpers/CurrencyHelper";
+import { useHomeController } from "../../HomeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const data = {
-  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
+export default function Chart({ tasks, ...rest }) {
+  const [data, setData] = useState({
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
+        borderWidth: 1,
+      }
+    ]
+  });
 
-export default function Chart() {
-  return (
-      <Pie data={data} />
-  )
+  // Get loading animantion, alert message, current location information from home-Controller.
+  const { localCountryInfo } = useHomeController();
+
+  useEffect(() => {
+    contructChartData();
+  }, [tasks]);
+  
+  const contructChartData = async () => {
+    if (tasks && localCountryInfo) {
+      const groupbyTasks = {};
+      const rates = await getCurrencyRateByCode(localCountryInfo.currency);
+      
+      tasks.forEach(task => {
+        let amount = parseFloat(task.amount);
+        if (
+          task.currency !== localCountryInfo.currency &&
+          rates[task.currency]
+        ) {
+          amount = amount / parseFloat(rates[task.currency]);
+        } 
+
+        if(!groupbyTasks[task.taskCate.name]){
+          let color = dynamicColors();
+
+          groupbyTasks[task.taskCate.name] = {
+            color: color,
+            amount: amount
+          }
+        }else{
+          groupbyTasks[task.taskCate.name].amount = groupbyTasks[task.taskCate.name].amount +  amount;
+        }
+      })
+
+      const labels = [];
+      const data = [];
+      const colors = [];
+      Object.keys(groupbyTasks).forEach(key => {
+          labels.push(key);
+          data.push(groupbyTasks[key].amount);
+          colors.push(groupbyTasks[key].color);
+      })
+
+      setData(current => {
+
+        return {
+          ...current,
+          labels: labels,
+          datasets: [{
+            ...current.datasets[0],
+            data: data,
+            backgroundColor: colors,
+            borderColor: colors
+          }]
+        }
+      })
+    }
+  };
+
+  if (tasks && tasks.length > 0)
+    return (
+      <div className="tasks-chart">
+        <Pie data={data} />
+      </div>
+    );
+  else
+    return (
+      <div className="alert alert-warning" role="alert">
+        don't have any data to display
+      </div>
+    );
 }

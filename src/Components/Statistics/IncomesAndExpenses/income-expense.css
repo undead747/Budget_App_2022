@@ -1,15 +1,15 @@
 .incomesAndExpenses{
-    background-color: var(--primary-color);
 }
 
 .incomesAndExpenses__Header{
+    background-color: var(--primary-color);
     padding-top: .7em;
 }
 
 .incomesAndExpenses__Dropdown{
     display: flex;
     justify-content: flex-end;
-
+    
     margin-right: .2em;
 }
 
