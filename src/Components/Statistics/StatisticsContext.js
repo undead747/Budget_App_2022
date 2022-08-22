@@ -7,7 +7,7 @@ export const StatisticsMode = {
         id: 0,
         name: 'month'
     },
-    Expenses: {
+    ByYear: {
         id: 1,
         name: 'year',
     }

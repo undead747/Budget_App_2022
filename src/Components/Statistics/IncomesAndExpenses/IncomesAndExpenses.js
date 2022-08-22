@@ -14,8 +14,8 @@ import {
   getFirstDayOfMonth,
   getLastDayOfMonth,
 } from "../../../Helpers/DateHelper";
-import Chart from "../Chart/Chart";
 import { useHomeController } from "../../HomeContext";
+import { TaskChart } from "../Chart/Chart";
 
 export default function IncomesAndExpenses() {
   const { currDate, taskMode, statisticsMode } = useStatistics();
@@ -43,7 +43,16 @@ export default function IncomesAndExpenses() {
       return;
     }
 
-    loadTasksByMonth();
+    switch (statisticsMode) {
+      case StatisticsMode.ByMonth.name:
+        loadTasksByMonth();
+        break;
+      case StatisticsMode.ByYear.name:
+        loadTasksByYear();
+        break;
+      default:
+        break;
+    }
   }, [currDate, taskMode, statisticsMode]);
 
   const loadTasksByMonth = async () => {
@@ -86,6 +95,48 @@ export default function IncomesAndExpenses() {
     } catch (error) {}
   };
 
+  const loadTasksByYear = async() => {
+    try {
+      if(loadDataFlag.current === false){
+        loadDataFlag.current = true;
+
+        const currDateVal = new Date(currDate);
+        const firstMonthOfYear = 0;
+        const lastMonthOfYear = 11;
+  
+        let firstDayOfFirstMonth = getFirstDayOfMonth(
+          firstMonthOfYear,
+          currDateVal.getFullYear()
+        );
+        let lastDayOfLastMonth = getLastDayOfMonth(
+          lastMonthOfYear,
+          currDateVal.getFullYear()
+        );
+  
+        setLoading(true);
+        let tasks = await getDocumentsByPagination({
+          params: [
+            { key: Tasks.formatedDate, operator: ">=", value: firstDayOfFirstMonth },
+            { key: Tasks.formatedDate, operator: "<=", value: lastDayOfLastMonth },
+          ],
+        });
+        setLoading(false);
+        loadDataFlag.current = false;
+  
+        let expenseTasks = tasks.filter(
+          (task) => task.type.id === taskModes.Expense.id
+        );
+  
+        let incomeTasks = tasks.filter(
+          (task) => task.type.id === taskModes.Income.id
+        );
+        
+        setExpenseTasks(expenseTasks);
+        setIncomeTasks(incomeTasks);
+      }
+    } catch (error) {}
+  }
+
   return (
     <div className="incomesAndExpenses">
       <div className="incomesAndExpenses__Header">
@@ -96,8 +147,8 @@ export default function IncomesAndExpenses() {
         <ToggleTaskMode />
       </div>
       <div className="incomesAndExpenses__Chart">
-        {taskMode === taskModes.Income.param && <Chart tasks={incomeTasks} />}
-        {taskMode === taskModes.Expense.param && <Chart tasks={expenseTasks} />}
+        {taskMode === taskModes.Income.param && <TaskChart tasks={incomeTasks} />}
+        {taskMode === taskModes.Expense.param && <TaskChart tasks={expenseTasks} />}
       </div>
     </div>
   );

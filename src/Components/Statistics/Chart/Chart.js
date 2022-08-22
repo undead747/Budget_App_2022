@@ -8,7 +8,7 @@ import { useHomeController } from "../../HomeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Chart({ tasks, ...rest }) {
+export function TaskChart({ tasks, ...rest }) {
   const [data, setData] = useState({
     labels: [],
     datasets: [
@@ -92,3 +92,66 @@ export default function Chart({ tasks, ...rest }) {
       </div>
     );
 }
+
+export function BudgetsChart({ budgets, ...rest }) {
+  const [data, setData] = useState({
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
+        borderWidth: 1,
+      }
+    ]
+  });
+
+  useEffect(() => {
+    contructChartData();
+  }, [budgets]);
+  
+  const contructChartData = async () => {
+    if (budgets) {
+      const labels = [];
+      const data = [];
+      const colors = [];
+
+      budgets.forEach(budget => {
+        const amount = parseFloat(budget.amount);
+        const color = dynamicColors();
+
+        labels.push(budget.name);
+        data.push(amount);
+        colors.push(color);
+      })
+
+      setData(current => {
+
+        return {
+          ...current,
+          labels: labels,
+          datasets: [{
+            ...current.datasets[0],
+            data: data,
+            backgroundColor: colors,
+            borderColor: colors
+          }]
+        }
+      })
+    }
+  };
+
+  if (budgets && budgets.length > 0)
+    return (
+      <div className="tasks-chart">
+        <Pie data={data} />
+      </div>
+    );
+  else
+    return (
+      <div className="alert alert-warning" role="alert">
+        don't have any data to display
+      </div>
+    );
+}
+
