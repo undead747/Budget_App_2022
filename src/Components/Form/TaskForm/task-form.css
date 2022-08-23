@@ -64,7 +64,7 @@
 }
 
 .category-group > * + *{
-    margin-left: .7em;
+    margin-left: 1.3em;
 }
 
 input.task-form__date-input[type="date"]{
@@ -119,4 +119,8 @@ input.task-form__date-input[type="date"]::-webkit-calendar-picker-indicator {
 
 .currency--active{
     background-color: var(--button-color-type-1) !important;
+}
+
+.add-category{
+    padding: .5em 1em !important;
 }

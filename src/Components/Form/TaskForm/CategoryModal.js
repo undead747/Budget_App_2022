@@ -3,6 +3,8 @@ import { Modal } from "react-bootstrap";
 import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { useHomeController } from "../../HomeContext";
 import { taskModes } from "../../../Constants/TaskConstaints";
+import useCreateCategoryModal from "./CreateCategoryModal";
+import { DatabaseCollections } from "../../../Database/useFirestore";
 
 /**
  * Custom React-Bootstrap modal component. Use when display account category modal.  
@@ -19,7 +21,8 @@ export function useAccountCategoryModal() {
 
   const AccountCategoryModal = ({ callback }) => {
     // #region State 
-    const { accountCategories } = useHomeController();
+    const { accountCategories } = useHomeController(); 
+    const {show: addCategoryStatus, handleShow: showAddCategory, handleClose: closeAddCategory, CreateCategoryModal} = useCreateCategoryModal();
     // #endregion State 
 
     // #region Function
@@ -27,35 +30,45 @@ export function useAccountCategoryModal() {
       handleClose();
       if (callback) callback(category);
     };
+
     // #endregion Function 
 
     return (
-      <Modal
-        show={show}
-        onHide={handleClose}
-        centered={true}
-        size={"lg"}
-        className={"default-mode"}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Account Categories</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="category-group">
-            {accountCategories &&
-              accountCategories.map((category) => (
-                <BorderButton
-                  key={category.id}
-                  backgroundColor={"transparent"}
-                  border={{ size: 2, color: "#ffae49" }}
-                  onClick={() => handleSubmit(category)}
-                >
-                  {category.name}
+      <>
+        <Modal
+          show={show}
+          onHide={handleClose}
+          centered={true}
+          size={"lg"}
+          className={"default-mode"}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Account Categories</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="category-group">
+              {accountCategories &&
+                accountCategories.map((category) => (
+                  <BorderButton
+                    key={category.id}
+                    backgroundColor={"transparent"}
+                    border={{ size: 2, color: "#ffae49" }}
+                    onClick={() => handleSubmit(category)}
+                  >
+                    {category.name}
+                    <span><i class="fas fa-times"></i></span>
+                  </BorderButton>
+                ))}
+                <BorderButton customClass={"add-category"}  backgroundColor={"transparent"}
+                    border={{ size: 2, color: "#ffae49" }} onClick={showAddCategory}>
+                      <i className="fas fa-plus"></i>
                 </BorderButton>
-              ))}
-          </div>
-        </Modal.Body>
-      </Modal>
+            </div>
+          </Modal.Body>
+        </Modal>
+
+        {addCategoryStatus && <CreateCategoryModal collectionName={DatabaseCollections.AccountCategory} />}
+      </>
     );
   };
 

@@ -22,7 +22,7 @@ export function CustomButton({ children,
   border,
   ...rest }) {
 
-  const bootstrapBtndefaultPadding = '0.375rem';
+  const bootstrapBtndefaultPadding = '0.4rem';
   const padding = border && `calc(${bootstrapBtndefaultPadding} - ${border.size}px) calc(${bootstrapBtndefaultPadding} - ${border.size}px)`;
   
   const borderVal = border && `${border.size}px ${border.color} ${border.style}`;
