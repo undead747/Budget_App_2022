@@ -21,8 +21,8 @@ export function useAccountCategoryModal() {
 
   const AccountCategoryModal = ({ callback }) => {
     // #region State 
-    const { setLoading, accountCategories } = useHomeController(); 
-    const {show: addCategoryStatus, handleShow: showAddCateModal, CreateCategoryModal} = useCreateCategoryModal();
+    const { setLoading, accountCategories } = useHomeController();
+    const { show: addCategoryStatus, handleShow: showAddCateModal, CreateCategoryModal } = useCreateCategoryModal();
     // Database method
     const { deleteDocument } = useFirestore(DatabaseCollections.AccountCategory);
     // #endregion State 
@@ -33,22 +33,24 @@ export function useAccountCategoryModal() {
       if (callback) callback(category);
     };
 
-    const handleDeleteCate = async(event, docId) => {
-      event.stopPropagation();
+    const handleShowAddCateModal = () => {
+      showAddCateModal();
+    }
 
+    const handleDeleteCate = async (event, docId) => {
+      event.stopPropagation();
       try {
-        setLoading(true);
         await deleteDocument(docId);
-        setLoading(false);
       } catch (error) {
-        
+
       }
     }
 
     // #endregion Function 
 
     return (
-      <>
+      <>{
+        !addCategoryStatus &&
         <Modal
           show={show}
           onHide={handleClose}
@@ -74,13 +76,14 @@ export function useAccountCategoryModal() {
                     <span className="category-group__times" onClick={(event) => handleDeleteCate(event, category.id)}><i className="fas fa-times"></i></span>
                   </BorderButton>
                 ))}
-                <BorderButton customClass={"add-category"}  backgroundColor={"transparent"}
-                    border={{ size: 2, color: "#ffae49" }} onClick={showAddCateModal}>
-                      <i className="fas fa-plus"></i>
-                </BorderButton>
+              <BorderButton customClass={"add-category"} backgroundColor={"transparent"}
+                border={{ size: 2, color: "#ffae49" }} onClick={handleShowAddCateModal}>
+                <i className="fas fa-plus"></i>
+              </BorderButton>
             </div>
           </Modal.Body>
         </Modal>
+      }
 
         {addCategoryStatus && <CreateCategoryModal callback={handleShow} collectionName={DatabaseCollections.AccountCategory} />}
       </>

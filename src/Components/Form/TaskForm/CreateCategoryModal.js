@@ -24,14 +24,9 @@ export default function useCreateCategoryModal() {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-
       try {
-        setLoading(true);
         let result = await addDocument({Name: nameRef.current.value});
-        setLoading(false);
-        setTimeout(() => {
-            handleClose();
-        }, 100)
+        handleClose();
       } catch (error) {}
     };
 
