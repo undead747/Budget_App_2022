@@ -4,7 +4,7 @@ import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { useHomeController } from "../../HomeContext";
 import { taskModes } from "../../../Constants/TaskConstaints";
 import useCreateCategoryModal from "./CreateCategoryModal";
-import { DatabaseCollections } from "../../../Database/useFirestore";
+import { DatabaseCollections, useFirestore } from "../../../Database/useFirestore";
 
 /**
  * Custom React-Bootstrap modal component. Use when display account category modal.  
@@ -21,8 +21,10 @@ export function useAccountCategoryModal() {
 
   const AccountCategoryModal = ({ callback }) => {
     // #region State 
-    const { accountCategories } = useHomeController(); 
-    const {show: addCategoryStatus, handleShow: showAddCategory, handleClose: closeAddCategory, CreateCategoryModal} = useCreateCategoryModal();
+    const { setLoading, accountCategories } = useHomeController(); 
+    const {show: addCategoryStatus, handleShow: showAddCateModal, CreateCategoryModal} = useCreateCategoryModal();
+    // Database method
+    const { deleteDocument } = useFirestore(DatabaseCollections.AccountCategory);
     // #endregion State 
 
     // #region Function
@@ -30,6 +32,18 @@ export function useAccountCategoryModal() {
       handleClose();
       if (callback) callback(category);
     };
+
+    const handleDeleteCate = async(event, docId) => {
+      event.stopPropagation();
+
+      try {
+        setLoading(true);
+        await deleteDocument(docId);
+        setLoading(false);
+      } catch (error) {
+        
+      }
+    }
 
     // #endregion Function 
 
@@ -50,24 +64,25 @@ export function useAccountCategoryModal() {
               {accountCategories &&
                 accountCategories.map((category) => (
                   <BorderButton
+                    customClass={"category-group__item"}
                     key={category.id}
                     backgroundColor={"transparent"}
                     border={{ size: 2, color: "#ffae49" }}
                     onClick={() => handleSubmit(category)}
                   >
                     {category.name}
-                    <span><i class="fas fa-times"></i></span>
+                    <span className="category-group__times" onClick={(event) => handleDeleteCate(event, category.id)}><i className="fas fa-times"></i></span>
                   </BorderButton>
                 ))}
                 <BorderButton customClass={"add-category"}  backgroundColor={"transparent"}
-                    border={{ size: 2, color: "#ffae49" }} onClick={showAddCategory}>
+                    border={{ size: 2, color: "#ffae49" }} onClick={showAddCateModal}>
                       <i className="fas fa-plus"></i>
                 </BorderButton>
             </div>
           </Modal.Body>
         </Modal>
 
-        {addCategoryStatus && <CreateCategoryModal collectionName={DatabaseCollections.AccountCategory} />}
+        {addCategoryStatus && <CreateCategoryModal callback={handleShow} collectionName={DatabaseCollections.AccountCategory} />}
       </>
     );
   };

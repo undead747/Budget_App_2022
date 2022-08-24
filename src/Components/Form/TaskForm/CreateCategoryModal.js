@@ -10,15 +10,17 @@ export default function useCreateCategoryModal() {
   // #endregion State
   const handleShow = () => setShow(true);
   
-  const handleClose = () => setShow(false);
-  
-  const CreateCategoryModal = ({ collectionName , ...rest }) => {
+  const CreateCategoryModal = ({ collectionName , callback, ...rest }) => {
     // Get loading animantion, alert message from home-Controller.
     const { setLoading } = useHomeController();
     const nameRef = useRef();
     
     // Database method
     const { addDocument } = useFirestore(collectionName);
+
+    const handleClose = () => {
+        setShow(false);
+    }
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -27,7 +29,9 @@ export default function useCreateCategoryModal() {
         setLoading(true);
         let result = await addDocument({Name: nameRef.current.value});
         setLoading(false);
-        handleClose();
+        setTimeout(() => {
+            handleClose();
+        }, 100)
       } catch (error) {}
     };
 
@@ -67,7 +71,6 @@ export default function useCreateCategoryModal() {
   return {
     show,
     handleShow,
-    handleClose,
     CreateCategoryModal,
   };
 }
