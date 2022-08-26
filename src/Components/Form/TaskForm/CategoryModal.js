@@ -119,7 +119,7 @@ export function useTaskCategoryModal() {
     let taskCategoryCollectionName = null;
     if (selectedTaskMode.id === taskModes.Expense.id) taskCategoryCollectionName = DatabaseCollections.ExpenseCategory;
     if (selectedTaskMode.id === taskModes.Income.id) taskCategoryCollectionName = DatabaseCollections.IncomeCategory;
-
+    const { deleteDocument } = useFirestore(taskCategoryCollectionName);
     // #endregion State 
 
     // #region Function 
@@ -141,6 +141,15 @@ export function useTaskCategoryModal() {
       handleClose();
       if (callback) callback(category);
     };
+    
+    const handleDeleteCate = async (event, docId) => {
+      event.stopPropagation();
+      try {
+        await deleteDocument(docId);
+      } catch (error) {
+
+      }
+    }
     // #endregion Function 
 
     return (
@@ -159,12 +168,14 @@ export function useTaskCategoryModal() {
             {categories &&
               categories.map((category) => (
                 <BorderButton
+                  customClass={"category-group__item"}
                   key={category.id}
                   backgroundColor={"transparent"}
                   border={{ size: 2, color: "#ffae49" }}
                   onClick={() => handleSubmit(category)}
                 >
                   {category.name}
+                  <span className="category-group__times" onClick={(event) => handleDeleteCate(event, category.id)}><i className="fas fa-times"></i></span>
                 </BorderButton>
               ))}
                <BorderButton customClass={"add-category"}  backgroundColor={"transparent"}
