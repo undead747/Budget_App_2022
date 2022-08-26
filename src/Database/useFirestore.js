@@ -19,9 +19,9 @@ import { fireStoreInst } from "./firebaseInitialize";
 import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
 
 export const DatabaseCollections = {
-  AccountCategory: "Account category",
-  ExpenseCategory: "Expense category",
-  IncomeCategory: "Income category",
+  AccountCategory: "Account categories",
+  ExpenseCategory: "Expense categories",
+  IncomeCategory: "Income categories",
   Tasks: "Tasks",
   Budgets: "Budgets"
 };

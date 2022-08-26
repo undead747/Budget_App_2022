@@ -97,14 +97,14 @@ export function useTaskCategoryModal() {
     // #region State 
     const { incomeCategories, expenseCategories } = useHomeController();
     const [categories, setCategories] = useState();
+    const {show: addCategoryStatus, handleShow: showAddCategory, handleClose: closeAddCategory, CreateCategoryModal} = useCreateCategoryModal();
+    let taskCategoryCollectionName = null;
+    if (selectedTaskMode.id === taskModes.Expense.id) taskCategoryCollectionName = DatabaseCollections.ExpenseCategory;
+    if (selectedTaskMode.id === taskModes.Income.id) taskCategoryCollectionName = DatabaseCollections.IncomeCategory;
+
     // #endregion State 
 
     // #region Function 
-    const displayModalTitle = () => {
-      if (selectedTaskMode.id === taskModes.Expense.id) return "Expense Categories";
-      if (selectedTaskMode.id === taskModes.Income.id) return "Income Categories";
-    }
-
     useEffect(() => {
       if (incomeCategories && expenseCategories) {
         if (selectedTaskMode.id === taskModes.Expense.id) {
@@ -134,7 +134,7 @@ export function useTaskCategoryModal() {
         className={"default-mode"}
       >
         <Modal.Header closeButton>
-          <Modal.Title>{displayModalTitle()}</Modal.Title>
+          <Modal.Title>{taskCategoryCollectionName}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="category-group">
@@ -149,7 +149,12 @@ export function useTaskCategoryModal() {
                   {category.name}
                 </BorderButton>
               ))}
+               <BorderButton customClass={"add-category"}  backgroundColor={"transparent"}
+                    border={{ size: 2, color: "#ffae49" }} onClick={showAddCategory}>
+                      <i className="fas fa-plus"></i>
+                </BorderButton>
           </div>
+          {addCategoryStatus && <CreateCategoryModal collectionName={taskCategoryCollectionName} />}
         </Modal.Body>
       </Modal>
     );
