@@ -16,7 +16,13 @@
 }
 
 .navigator__date-picker{
-    max-width: 150px;
+    max-width: 220px;
+    text-align: center;
+}
+
+.navigator__react-datepicker{
+    color: var(--secondary-color-type-1) !important;
+    text-align: center;
 }
 
 input.navigator__date-picker {
@@ -33,3 +39,4 @@ input.navigator__date-picker {
     color: transparent;
     background: transparent;
   }
+  

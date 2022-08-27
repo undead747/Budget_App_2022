@@ -10,7 +10,6 @@ function Sidebar(props) {
     const history = useHistory();
 
     const handleSelectedTab = (tab) => {
-        setSelectTab(tab.id);
         history.push(tab.path);
     }
 
@@ -26,7 +25,7 @@ function Sidebar(props) {
             return
         }
 
-        if(url.includes("calendar")){
+        if(url.includes("years")){
             setSelectTab(sidebarData[2].id);
             return
         }

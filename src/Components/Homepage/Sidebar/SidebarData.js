@@ -11,7 +11,7 @@ export const sidebarData = [
     },    
     {
         id: 3,
-        title: 'Calendar',
-        path: '/calendar'
+        title: 'Years',
+        path: '/years'
     }  
 ]
