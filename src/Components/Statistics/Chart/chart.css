@@ -1,17 +1,7 @@
 .tasks-chart{
     margin: 1em auto;
     padding: 0.5em;
-    background-color: var(--primary-color);
+    height: 65vh;
+    width: 40vw;
 }
 
-@media only screen and (min-width: 768px) {
-    .tasks-chart{
-       max-width: 90%;
-    }
-  }
-
-  @media only screen and (min-width: 992px) {
-    .tasks-chart{
-       max-width: 37%;
-    }
-  }

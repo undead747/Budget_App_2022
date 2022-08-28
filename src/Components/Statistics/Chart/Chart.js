@@ -8,6 +8,11 @@ import { useHomeController } from "../../HomeContext";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+var options = {
+  maintainAspectRatio: false,
+  responsive: true
+};
+
 export function TaskChart({ tasks, ...rest }) {
   const [data, setData] = useState({
     labels: [],
@@ -82,7 +87,7 @@ export function TaskChart({ tasks, ...rest }) {
   if (tasks && tasks.length > 0)
     return (
       <div className="tasks-chart">
-        <Pie data={data} />
+        <Pie data={data} options={options} />
       </div>
     );
   else
@@ -144,7 +149,7 @@ export function BudgetsChart({ budgets, ...rest }) {
   if (budgets && budgets.length > 0)
     return (
       <div className="tasks-chart">
-        <Pie data={data} />
+        <Pie data={data} options={options} />
       </div>
     );
   else

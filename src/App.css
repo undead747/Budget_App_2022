@@ -60,6 +60,9 @@ body {
     background-color: var(--background-color);
     font-family: var(--body-font), var(--default-font);
     min-height: 100vh;
+    max-width: 768px;
+    margin: 0 auto;
+    position: relative;
 }
 
 .title-memo{
@@ -67,7 +70,8 @@ body {
 }
 
 .page-loading {
-    width: 100vw;
+    max-width: 768px;
+    width: 100%;
     height: 100vh;
     position: fixed;
     background-color: rgba(0, 0, 0, 0.7);

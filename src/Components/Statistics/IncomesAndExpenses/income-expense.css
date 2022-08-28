@@ -1,9 +1,10 @@
-.incomesAndExpenses{
-}
-
 .incomesAndExpenses__Header{
     background-color: var(--primary-color);
     padding-top: .7em;
+}
+
+.incomesAndExpenses__Chart{
+    background-color: var(--primary-color);
 }
 
 .incomesAndExpenses__Dropdown{
