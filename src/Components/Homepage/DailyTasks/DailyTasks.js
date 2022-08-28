@@ -125,8 +125,12 @@ export default function DailyTasks() {
                 <td className="text-start">
                   {task.taskCate && task.taskCate.name}
                 </td>
-                <td className="text-start">
-                  {task.accountCate && task.accountCate.name}
+                <td className="text-start task-table__row-title">
+                  <span>{task.accountCate && task.accountCate.name}</span>
+                  <span className="opacity-75">
+                    {task.title && task.title}
+                    {task.note && `(${task.note})`} 
+                  </span>
                 </td>
                 <td className="text-end fw-bolder">
                   + {convertNumberToCurrency(task.currency, task.amount)}
@@ -184,16 +188,20 @@ export default function DailyTasks() {
                 onClick={() => handleEditTask(task.id)}
               >
                 <td className="text-start">
-                  {task.taskcate && task.taskCate.name}
+                  {task.taskCate && task.taskCate.name}
                 </td>
-                <td className="text-start">
-                  {task.accountCate && task.accountCate.name}
+                <td className="text-start task-table__row-title">
+                  <span>{task.accountCate && task.accountCate.name}</span>
+                  <span className="opacity-75">
+                    {task.title && task.title}
+                    {task.note && `(${task.note})`} 
+                  </span>
                 </td>
                 <td className="text-end fw-bolder">
                   - {convertNumberToCurrency(task.currency, task.amount)}
                 </td>
                 <td>
-                  <CustomButton callback={(e) => handleDeleteTask(task.id, e)}>
+                  <CustomButton callback={(e) => handleDeleteTask(task, e)}>
                     <i className="fas fa-trash"></i>
                   </CustomButton>
                 </td>
@@ -253,7 +261,7 @@ export default function DailyTasks() {
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
-    } 
+    }
   };
 
   /**
@@ -264,10 +272,10 @@ export default function DailyTasks() {
   const handleDeleteTask = async (task, e) => {
     e.stopPropagation();
 
-    try {
-      setConfirmModalContent("are you sure to delete this task ? ");
+    setConfirmModalContent("are you sure to delete this task ? ");
 
-      handleConfirmShow(async () => {
+    handleConfirmShow(async () => {
+      try {
         setLoading(true);
 
         await deleteDocument(task.id);
@@ -297,13 +305,13 @@ export default function DailyTasks() {
             );
           }
         }
-      });
-    } catch (err) {
-      setErrorModalContent(JSON.stringify(err));
-      handleErrorShow();
-    } finally {
-      setLoading(false);
-    }
+      } catch (err) {
+        setErrorModalContent(JSON.stringify(err));
+        handleErrorShow();
+      } finally {
+        setLoading(false);
+      }
+    });
   };
 
   /**
