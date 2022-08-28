@@ -60,26 +60,28 @@ export default function DailyTasks() {
    * Change tasks value.
    */
   useEffect(() => {
+    getTasksByDate(param.date);
+  }, [param.date]);
+
+  const getTasksByDate = async (dateParam) => {
     try {
-      if (param.date && tasks.length === 0 && !loadDataFlag.current) {
+      if (dateParam && tasks.length === 0 && !loadDataFlag.current) {
         loadDataFlag.current = true;
 
         setLoading(true);
-
-        getDocumentsByPagination({
-          params: [{ key: Tasks.date, operator: "==", value: param.date }],
-        }).then((data) => {
-          setTasks(data);
-          setLoading(false);
+        const tasks = await getDocumentsByPagination({
+          params: [{ key: Tasks.date, operator: "==", value: dateParam }],
         });
+        setTasks(tasks);
       }
     } catch (error) {
       setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
     } finally {
+      setLoading(false);
       loadDataFlag.current = false;
     }
-  }, [param.date]);
+  };
 
   /**
    * Display tasks with income type.
@@ -208,8 +210,14 @@ export default function DailyTasks() {
    * Change incomeTotal and expenseTotal value
    */
   useEffect(() => {
-    if (localCountryInfo && tasks) {
-      getCurrencyRateByCode(localCountryInfo.currency).then((rates) => {
+    calculateTotal(localCountryInfo, tasks);
+  }, [localCountryInfo, tasks]);
+
+  const calculateTotal = async (localCountryInfo, tasks) => {
+    try {
+      if (localCountryInfo && tasks) {
+        const rates = await getCurrencyRateByCode(localCountryInfo.currency);
+
         let incomeTotal = tasks
           .filter((task) => task.type.id === taskModes.Income.id)
           .reduce((total, task) => {
@@ -241,9 +249,12 @@ export default function DailyTasks() {
           }, 0);
 
         setExpenseTotal(expenseTotal);
-      });
-    }
-  }, [localCountryInfo, tasks]);
+      }
+    } catch (error) {
+      setErrorModalContent(JSON.stringify(error));
+      handleErrorShow();
+    } 
+  };
 
   /**
    * Handle delete task  event.
@@ -276,7 +287,7 @@ export default function DailyTasks() {
           ) {
             amount = amount / parseFloat(rates[task.currency]);
           }
-          
+
           let budget = await getBudgetById(task.accountCate.id);
           if (budget && budget.data) {
             let calAmount = parseFloat(budget.data.amount) - amount;
@@ -286,12 +297,12 @@ export default function DailyTasks() {
             );
           }
         }
-
-        setLoading(false);
       });
     } catch (err) {
       setErrorModalContent(JSON.stringify(err));
       handleErrorShow();
+    } finally {
+      setLoading(false);
     }
   };
 

@@ -11,4 +11,6 @@
     margin-left: .7em;
     margin-bottom: 0;
     font-size: 1.2rem;
+
+    word-break: break-all;
 }

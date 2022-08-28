@@ -74,20 +74,23 @@ const setCurrenciesFromLocalStorage = (currencyCode, data) => {
  * @param {string} currencyCode - base currency.
  */
 export async function getCurrencyRateByCode(currencyCode) {
-  if (!currencyCode) return;
+  return new Promise(async (resolve, reject) => {
+    if (!currencyCode) reject("param null errors");
+  
+    // if exchange rates exist in local storage
+    let rates = getCurrenciesFromLocalStorage(currencyCode);
+    if (rates && rates.length !== 0) resolve(rates[0].rates);
+  
+    // if not, start request api to v6.exchangerate-api.com
+    const result = await sendRequest({ url: exchangerateApi + currencyCode });
+  
+    if (!result || !result.data) resolve(null);
+  
+    setCurrenciesFromLocalStorage(currencyCode, result.data.conversion_rates);
+  
+    resolve(result.data.conversion_rates);
+  })
 
-  // if exchange rates exist in local storage
-  let rates = getCurrenciesFromLocalStorage(currencyCode);
-  if (rates && rates.length !== 0) return rates[0].rates;
-
-  // if not, start request api to v6.exchangerate-api.com
-  const result = await sendRequest({ url: exchangerateApi + currencyCode });
-
-  if (!result || !result.data) return;
-
-  setCurrenciesFromLocalStorage(currencyCode, result.data.conversion_rates);
-
-  return result.data.conversion_rates;
 }
 
 /**

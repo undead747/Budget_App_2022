@@ -123,7 +123,8 @@ function TaskForm(props) {
 
       history.push(`/daily/${dateRef.current.value}`);
     } catch (error) {
-      setErrorModalContent(error);
+      console.log(error)
+      setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
     }
   };

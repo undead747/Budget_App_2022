@@ -18,7 +18,6 @@ export default function Home() {
                 <Route path={'/'} component={Tasks} />
                 <Redirect to={"/"} />
             </Switch>
-
             <BottomBar />
         </>
       );

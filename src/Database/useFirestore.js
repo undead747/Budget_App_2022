@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import { fireStoreInst } from "./firebaseInitialize";
 import { lowercaseObjectPropKeys } from "../Helpers/ObjectHelper";
+import { getAuth } from "firebase/auth";
 
 export const DatabaseCollections = {
   AccountCategory: "Account categories",
@@ -29,33 +30,36 @@ export const DatabaseCollections = {
 export const TaskTotalDocId = "taskTotal";
 
 export const useFirestore = (collectionName) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   const addDocumentWithId = async (document, id) => {
-     return await setDoc(doc(fireStoreInst, collectionName, id), {
+     return await setDoc(doc(fireStoreInst, collectionName, user.uid, collectionName, id), {
       ...document,
       create_at: serverTimestamp(),
     });
   }
 
   const addDocument = async (document) => {
-    return await addDoc(collection(fireStoreInst, collectionName), {
+    return await addDoc(collection(fireStoreInst, collectionName, user.uid, collectionName), {
       ...document,
       create_at: serverTimestamp(),
     });
   };
 
   const updateDocument = async (document, docId) => {
-    return await updateDoc(doc(fireStoreInst, collectionName, docId), {
+    return await updateDoc(doc(fireStoreInst, collectionName, user.uid, collectionName, docId), {
       ...document,
       update_at: serverTimestamp(),
     });
   };
 
   const deleteDocument = async (docId) => {
-    return await deleteDoc(doc(fireStoreInst, collectionName, docId));
+    return await deleteDoc(doc(fireStoreInst, collectionName, user.uid, collectionName, docId));
   };
 
   const getDocumentById = async (id) => {
-    const docRef = doc(fireStoreInst, collectionName, id);
+    const docRef = doc(fireStoreInst, collectionName, user.uid, collectionName, id);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) return
@@ -64,7 +68,7 @@ export const useFirestore = (collectionName) => {
   }
 
   const getDocuments = async () => {
-    let results = await getDocs(collection(fireStoreInst, collectionName));
+    let results = await getDocs(query(collection(fireStoreInst, collectionName, user.uid, collectionName)));
 
     results = results.docs.map(doc => ({
       data: doc.data(),
@@ -92,7 +96,7 @@ export const useFirestore = (collectionName) => {
     })
 
     let q = query(
-      collection(fireStoreInst, collectionName),
+      collection(fireStoreInst, collectionName, user.uid, collectionName),
       ...queryConstraints,
       ...orderConstraints,
       limit(pagination.size)
@@ -121,13 +125,14 @@ export const useFirestore = (collectionName) => {
 
 export const useFirestoreRealtime = (collectionName) => {
   const [currentDocs, setCurrentDocs] = useState();
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   useEffect(() => {
-    if (collectionName) {
-      const q = query(collection(fireStoreInst, collectionName), orderBy("Name"));
+    if (collectionName && user) {
+      const q = query(collection(fireStoreInst, collectionName, user.uid, collectionName), orderBy("Name"));
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         const results = [];
-
         querySnapshot.forEach((doc) => {
           let data = lowercaseObjectPropKeys(doc.data());
           results.push({ ...data, id: doc.id });
@@ -138,7 +143,7 @@ export const useFirestoreRealtime = (collectionName) => {
 
       return () => unsubscribe();
     }
-  }, [collectionName]);
+  }, [collectionName, user]);
 
   return currentDocs;
 };

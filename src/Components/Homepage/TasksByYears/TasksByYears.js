@@ -12,7 +12,10 @@ import {
   getLastDayOfMonth,
 } from "../../../Helpers/DateHelper";
 import { taskModes, Tasks } from "../../../Constants/TaskConstaints";
-import { convertNumberToCurrency, getCurrencyRateByCode } from "../../../Helpers/CurrencyHelper";
+import {
+  convertNumberToCurrency,
+  getCurrencyRateByCode,
+} from "../../../Helpers/CurrencyHelper";
 import Summary from "../Summary/Summary";
 
 export default function TasksByYears() {
@@ -41,37 +44,37 @@ export default function TasksByYears() {
 
   // Redirect to current date tab if URL don't have date param
   useEffect(() => {
-    try {
-      const year = param.date;
-      if (!year && year !== 0) {
-        const date = new Date();
+    const year = param.date;
+    if (!year && year !== 0) {
+      const date = new Date();
 
-        history.push(`/years/${date.getFullYear()}`);
-        return;
-      }
-
-      setLoading(true);
-      loadTaskByYearAsync(year).then(() => {
-        setLoading(false);
-      });
-    } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
-      handleErrorShow();
+      history.push(`/years/${date.getFullYear()}`);
+      return;
     }
+
+    loadTaskByYearAsync(year);
   }, [param.date]);
 
   const loadTaskByYearAsync = async (year) => {
-    let firstDayOfYear = getFirstDayOfMonth(0, year);
-    let lastDayOfYear = getLastDayOfMonth(11, year);
+    try {
+      let firstDayOfYear = getFirstDayOfMonth(0, year);
+      let lastDayOfYear = getLastDayOfMonth(11, year);
 
-    let tasks = await getDocumentsByPagination({
-      params: [
-        { key: Tasks.formatedDate, operator: ">=", value: firstDayOfYear },
-        { key: Tasks.formatedDate, operator: "<=", value: lastDayOfYear },
-      ],
-    });
+      setLoading(true);
+      let tasks = await getDocumentsByPagination({
+        params: [
+          { key: Tasks.formatedDate, operator: ">=", value: firstDayOfYear },
+          { key: Tasks.formatedDate, operator: "<=", value: lastDayOfYear },
+        ],
+      });
 
-    setTasks(tasks);
+      setTasks(tasks);
+    } catch (error) {
+      setErrorModalContent(JSON.stringify(error));
+      handleErrorShow();
+    } finally {
+      setLoading(false);
+    }
   };
 
   /**
@@ -79,8 +82,14 @@ export default function TasksByYears() {
    * Change incomeTotal and expenseTotal value
    */
   useEffect(() => {
-    if (localCountryInfo && tasks) {
-      getCurrencyRateByCode(localCountryInfo.currency).then((rates) => {
+    calculateTotal(localCountryInfo, tasks);
+  }, [localCountryInfo, tasks]);
+
+  const calculateTotal = async (localCountryInfo, tasks) => {
+    try {
+      if (localCountryInfo && tasks) {
+        const rates = await getCurrencyRateByCode(localCountryInfo.currency);
+
         let incomeTotal = tasks
           .filter((task) => task.type.id === taskModes.Income.id)
           .reduce((total, task) => {
@@ -113,9 +122,12 @@ export default function TasksByYears() {
 
         setExpenseTotal(expenseTotal);
         groupTasksByMonth(tasks, localCountryInfo, rates);
-      });
+      }
+    } catch (error) {
+      setErrorModalContent(JSON.stringify(error));
+      handleErrorShow();
     }
-  }, [localCountryInfo, tasks]);
+  };
 
   const groupTasksByMonth = (tasks, localCountryInfo, rates) => {
     const groups = tasks.reduce((groups, task) => {
@@ -166,45 +178,64 @@ export default function TasksByYears() {
   const handleRedirectToDailyTasks = (date, e) => {
     e.stopPropagation();
 
-    if(!date) return;
+    if (!date) return;
 
     date = new Date(date);
-    const url = `/monthly/?month=${ date.getMonth() + 1}&year=${date.getFullYear()}`;
+    const url = `/monthly/?month=${
+      date.getMonth() + 1
+    }&year=${date.getFullYear()}`;
     history.push(url);
-  }
+  };
 
   return (
     <div className="daily">
-    <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} />
+      <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} />
 
-    <div className="task-table__wrapper">
-      <table className="table task-table">
-        <tbody>
-          {displayedTasks && displayedTasks.map(task => {
-            return (
-              <tr
-                className="task-table__row"
-                key={task.month}
-                onClick={e => handleRedirectToDailyTasks(task.date, e)}
-              >
-                <td className="text-start">
-                  {task.month}
-                </td>
-                <td className="text-end">
-                  <span className="text-success">+ {convertNumberToCurrency(localCountryInfo.currency, task.income)}</span>
-                </td>
-                <td>
-                  <div className="d-flex flex-column text-end">
-                    <span className="text-danger">- {convertNumberToCurrency(localCountryInfo.currency, task.expense)}</span>
-                    <span className="text-secondary small">Total: {convertNumberToCurrency(localCountryInfo.currency, task.total)}</span>
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="task-table__wrapper">
+        <table className="table task-table">
+          <tbody>
+            {displayedTasks &&
+              displayedTasks.map((task) => {
+                return (
+                  <tr
+                    className="task-table__row"
+                    key={task.month}
+                    onClick={(e) => handleRedirectToDailyTasks(task.date, e)}
+                  >
+                    <td className="text-start">{task.month}</td>
+                    <td className="text-end">
+                      <span className="text-success">
+                        +{" "}
+                        {convertNumberToCurrency(
+                          localCountryInfo.currency,
+                          task.income
+                        )}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="d-flex flex-column text-end">
+                        <span className="text-danger">
+                          -{" "}
+                          {convertNumberToCurrency(
+                            localCountryInfo.currency,
+                            task.expense
+                          )}
+                        </span>
+                        <span className="text-secondary small">
+                          Total:{" "}
+                          {convertNumberToCurrency(
+                            localCountryInfo.currency,
+                            task.total
+                          )}
+                        </span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
   );
 }

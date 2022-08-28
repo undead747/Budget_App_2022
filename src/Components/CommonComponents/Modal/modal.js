@@ -85,7 +85,7 @@ export function useErrorModal() {
         </Modal.Header>
         <Modal.Body>
           <div className="modal-body__content">
-            <i className="modal-body__icon far fa-check-circle"></i>
+            <i className="modal-body__icon fas fa-exclamation-triangle"></i>
             <p className="modal-body__p">{content && content}</p>
           </div>
         </Modal.Body>
