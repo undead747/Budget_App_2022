@@ -277,8 +277,8 @@ export default function DailyTasks() {
     handleConfirmShow(async () => {
       try {
         setLoading(true);
-
         await deleteDocument(task.id);
+        setLoading(false);
 
         let tasks = await getDocumentsByPagination({
           params: [{ key: Tasks.date, operator: "==", value: param.date }],
