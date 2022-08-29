@@ -63,6 +63,7 @@ export default function HomeProvider({ children }) {
   // #region Function
   const initLocalCountryInfo = async () => {
     let currentCountry = await getLocalCountryInfo();
+
     let currencyInfo = getCurrencyInfoByCountryCode(currentCountry.countryCode);
     setLocalCountryInfo(currencyInfo);
   };
