@@ -152,5 +152,8 @@ export const convertCurrencyToNumber = (currency) =>
   Number(currency.replace(/[^0-9.-]+/g, ""));
 
 export const convertNumberWithCommas = (x) => {
-    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+  let parts = x.toString().split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  return parts.join(".");
 }  

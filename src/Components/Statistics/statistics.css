@@ -1,4 +1,6 @@
 .statistics__header{
     text-align: center;
     background-color: var(--primary-color);
+    padding-top: .5em;
+    padding-bottom: .5em;
 }

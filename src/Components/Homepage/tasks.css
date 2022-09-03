@@ -1,5 +1,14 @@
 .header {
     background-color: var(--primary-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.task__content{
+    margin-top: 6.5rem;
+    padding-top: 1px;
 }
 
 .btn--task-add{
@@ -9,16 +18,4 @@
     
     font-size: 1.3rem !important;
     color: var(--primary-color) !important;
-}
-
-@media screen and (min-width: 768px)  {
-    .btn--task-add{
-        right: 18%;
-    }   
-}
-
-@media screen and (min-width: 992px)  {
-    .btn--task-add{
-        right: 30%;
-    }   
 }

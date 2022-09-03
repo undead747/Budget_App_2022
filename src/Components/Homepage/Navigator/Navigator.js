@@ -178,6 +178,7 @@ export default function Navigator(tabId) {
           type={selectedTab === sidebarData[1].id ? "month" : "date"}
           ref={datePickerRef}
           onChange={handleDatePicker}
+          autoComplete={"off"}
         />
       )}
 
@@ -193,6 +194,7 @@ export default function Navigator(tabId) {
             dateFormat="yyyy"
             yearItemNumber={9}
             required
+            autoComplete="off"
           />
         </div>
       )}

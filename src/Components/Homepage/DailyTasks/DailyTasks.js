@@ -96,7 +96,8 @@ export default function DailyTasks() {
     if (incomeTasks.length === 0) return;
 
     return (
-      <table className="table task-table">
+      <div className="task-table">
+      <table className="table">
         <thead>
           <tr className="task-table__header">
             <th className="task-table__header-title">
@@ -145,6 +146,7 @@ export default function DailyTasks() {
           })}
         </tbody>
       </table>
+      </div>
     );
   };
 
@@ -161,7 +163,8 @@ export default function DailyTasks() {
     if (expenseTasks.length === 0) return;
 
     return (
-      <table className="table task-table">
+      <div className="task-table">
+      <table className="table">
         <thead>
           <tr className="task-table__header">
             <th className="task-table__header-title">
@@ -210,6 +213,7 @@ export default function DailyTasks() {
           })}
         </tbody>
       </table>
+      </div>
     );
   };
 

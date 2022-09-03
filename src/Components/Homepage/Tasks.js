@@ -48,23 +48,25 @@ export default function Tasks() {
         <Sidebar />
       </div>
 
-      <Switch>
-        <Route
-          path={"/daily/:date?"}
-          render={(routes) => (
-            <DailyTasks key={routes.match.params.date} {...routes} />
-          )}
-        />
-        <Route path={"/monthly"} render={(routes) => {
-          let params = new URLSearchParams(routes.location.search);
-          return <MonthlyTasks key={params} {...routes} />
-        }} />
-        <Route path={"/years/:date?"} component={TasksByYears} />
-        <Route path={"/calendar/:date?"} component={TasksByCalendar} />
+      <div className="task__content">
+        <Switch>
+          <Route
+            path={"/daily/:date?"}
+            render={(routes) => (
+              <DailyTasks key={routes.match.params.date} {...routes} />
+            )}
+          />
+          <Route path={"/monthly"} render={(routes) => {
+            let params = new URLSearchParams(routes.location.search);
+            return <MonthlyTasks key={params} {...routes} />
+          }} />
+          <Route path={"/years/:date?"} component={TasksByYears} />
+          <Route path={"/calendar/:date?"} component={TasksByCalendar} />
 
-        <Redirect to={"/daily"} />
-      </Switch>
-      {/* <CustomButton callback={handleLogout}>Sign out</CustomButton> */}
+          <Redirect to={"/daily"} />
+        </Switch>
+      </div>
+      
       <EclipseButton customClass="btn--task-add" callback={handleAddTask}>
         <i className="fas fa-plus"></i>
       </EclipseButton>
