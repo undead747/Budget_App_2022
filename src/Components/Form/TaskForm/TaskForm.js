@@ -262,13 +262,6 @@ function TaskForm(props) {
     handleCurrencyShow();
   };
 
-  // Set Default currency base by local informations
-  useEffect(() => {
-    if (localCountryInfo && !selectedTask.currency) {
-      setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
-    }
-  }, [localCountryInfo]);
-
   /**
    * Handle auto-format input currency.
    * Change selectedTask value (amount), amountRef.
@@ -313,12 +306,16 @@ function TaskForm(props) {
       if (formId)
         dateRef.current.value = getFormatDateForDatePicker(new Date(formId));
       else dateRef.current.value = getFormatDateForDatePicker(new Date());
+      
+      if (localCountryInfo && !selectedTask.currency) {
+        setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
+      }
     }
 
     if (mode === "edit") {
       initTaskById();
     }
-  }, []);
+  }, [localCountryInfo]);
 
   const initTaskById = async () => {
     if (!formId) return;

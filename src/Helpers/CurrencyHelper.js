@@ -10,7 +10,7 @@ import { getItem, setItem } from "./LocalStorageHelper";
 const localStorageKey = "v6-exchangerate";
 
 const exchangerateApi =
-  "https://v6.exchangerate-api.com/v6/b87d2f894975afeee4f84058/latest/";
+  "https://v6.exchangerate-api.com/v6/937daa363ed1edd7e0ce5b38/latest/";
 
 /**
  * Get currencies exchange rates from local storages
