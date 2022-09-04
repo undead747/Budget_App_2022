@@ -289,20 +289,31 @@ export default function DailyTasks() {
         });
         setTasks(tasks);
 
+        let rates = await getCurrencyRateByCode(localCountryInfo.currency);
+        let amount = parseFloat(task.amount);
+
+        if (
+          task.currency !== localCountryInfo.currency &&
+          rates[task.currency]
+        ) {
+          amount = amount / parseFloat(rates[task.currency]);
+        }
+
+        let budget = await getBudgetById(task.accountCate.id);
+
         if (task.type.id === taskModes.Income.id) {
-          let rates = await getCurrencyRateByCode(localCountryInfo.currency);
-          let amount = parseFloat(task.amount);
-
-          if (
-            task.currency !== localCountryInfo.currency &&
-            rates[task.currency]
-          ) {
-            amount = amount / parseFloat(rates[task.currency]);
-          }
-
-          let budget = await getBudgetById(task.accountCate.id);
           if (budget && budget.data) {
             let calAmount = parseFloat(budget.data.amount) - amount;
+            await updateBudget(
+              { ...budget.data, amount: calAmount },
+              budget.id
+            );
+          }
+        }
+
+        if (task.type.id === taskModes.Expense.id) {
+          if (budget && budget.data) {
+            let calAmount = parseFloat(budget.data.amount) + amount;
             await updateBudget(
               { ...budget.data, amount: calAmount },
               budget.id

@@ -138,8 +138,9 @@ function TaskForm(props) {
       amount = amount / parseFloat(rates[task.currency]);
     }
 
+    let budget = await getBudgetById(task.accountCate.id);
+    
     if (task.type.id === taskModes.Income.id) {
-      let budget = await getBudgetById(task.accountCate.id);
       if (budget && budget.data) {
         let calAmount = parseFloat(budget.data.amount) + amount;
         await updateBudget({ ...budget.data, amount: calAmount }, budget.id);
@@ -152,23 +153,34 @@ function TaskForm(props) {
         await addBudget(budget, task.accountCate.id);
       }
     }
+
+    if(task.type.id === taskModes.Expense.id){
+      if (budget && budget.data) {
+        let calAmount = parseFloat(budget.data.amount) - amount;
+        await updateBudget(
+          { ...budget.data, amount: calAmount },
+          budget.id
+        );
+      }
+    }
   };
 
   const updateTask = async (newTask, taskId) => {
-    if (newTask.type.id === taskModes.Income.id) {
       let oldTask = await getDocumentById(taskId);
       let rates = await getCurrencyRateByCode(localCountryInfo.currency);
       
       let oldAmmount = parseFloat(oldTask.data.amount);
       let newAmmount = parseFloat(newTask.amount);
+
+      oldTask = oldTask.data;
       
-      let oldTaskBudget = await getBudgetById(oldTask.data.accountCate.id);
+      let oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
       
       if (
-        oldTask.data.currency !== localCountryInfo.currency &&
-        rates[oldTask.data.currency]
+        oldTask.currency !== localCountryInfo.currency &&
+        rates[oldTask.currency]
       ) {
-        oldAmmount = oldAmmount / parseFloat(rates[oldTask.data.currency]);
+        oldAmmount = oldAmmount / parseFloat(rates[oldTask.currency]);
       }
 
       if (
@@ -178,33 +190,49 @@ function TaskForm(props) {
         newAmmount = newAmmount / parseFloat(rates[newTask.currency]);
       }
 
-      if(oldTask.data.accountCate.id === newTask.accountCate.id){
+      if (oldTask.type.id === taskModes.Income.id) {
         if (oldTaskBudget && oldTaskBudget.data) {
-          let calAmount =
-            parseFloat(oldTaskBudget.data.amount) + (newAmmount - oldAmmount);
+          let calAmount = parseFloat(oldTaskBudget.data.amount) - oldAmmount;
           await updateBudget(
             { ...oldTaskBudget.data, amount: calAmount },
             oldTaskBudget.id
           );
         }
-      }else{
-        let newTaskBudget = await getBudgetById(newTask.accountCate.id);
-        if (newTaskBudget && newTaskBudget.data) {
-          let calAmount = parseFloat(newTaskBudget.data.amount) + newAmmount;
+      }
+
+      if (oldTask.type.id === taskModes.Expense.id) {
+        if (oldTaskBudget && oldTaskBudget.data) {
+          let calAmount = parseFloat(oldTaskBudget.data.amount) + oldAmmount;
           await updateBudget(
-            { ...newTaskBudget.data, amount: calAmount },
-            newTaskBudget.id
+            { ...oldTaskBudget.data, amount: calAmount },
+            oldTaskBudget.id
           );
-        } else {
-          let budget = {
-            name: newTask.accountCate.name,
-            amount: newAmmount,
-          };
-  
-          await addBudget(budget, newTask.accountCate.id);
         }
       }
-    } 
+
+      oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
+
+      if (newTask.type.id === taskModes.Income.id) {
+        if (oldTaskBudget && oldTaskBudget.data) {
+          let calAmount = parseFloat(oldTaskBudget.data.amount) + newAmmount;
+          await updateBudget(
+            { ...oldTaskBudget.data, amount: calAmount },
+            oldTaskBudget.id
+          );
+        }
+      }
+
+      if (newTask.type.id === taskModes.Expense.id) {
+        if (oldTaskBudget && oldTaskBudget.data) {
+          let calAmount = parseFloat(oldTaskBudget.data.amount) - newAmmount;
+          await updateBudget(
+            { ...oldTaskBudget.data, amount: calAmount },
+            oldTaskBudget.id
+          );
+        }
+      }
+
+      await updateDocument(newTask, taskId);
     
     await updateDocument(newTask, taskId);
   };

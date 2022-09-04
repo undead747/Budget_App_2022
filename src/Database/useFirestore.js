@@ -24,7 +24,8 @@ export const DatabaseCollections = {
   ExpenseCategory: "Expense categories",
   IncomeCategory: "Income categories",
   Tasks: "Tasks",
-  Budgets: "Budgets"
+  Budgets: "Budgets",
+  Debts: "Debts"
 };
 
 export const TaskTotalDocId = "taskTotal";

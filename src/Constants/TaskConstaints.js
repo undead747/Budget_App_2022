@@ -4,6 +4,11 @@ export const taskModes = {
   Expense: { id: 0, name: "Expense", param: 'expense' }
 };
 
+export const DebtModes = {
+  MyDebt : {id: 0, name: "My Debt"},
+  AnotherDebt: {id: 1, name: "Another's Debt"}
+}
+
 export const Tasks = {
   accountCategory: "accountCate",
   amount: "amount",
