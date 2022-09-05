@@ -5,8 +5,8 @@ export const taskModes = {
 };
 
 export const DebtModes = {
-  MyDebt : {id: 0, name: "My Debt"},
-  AnotherDebt: {id: 1, name: "Another's Debt"}
+  OwedToMe : {id: 0, name: "Owed To Me"},
+  OwedByMe: {id: 1, name: "Owed By Me"}
 }
 
 export const Tasks = {

@@ -1,14 +1,15 @@
 import { Timestamp } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
-import { Form } from "react-bootstrap";
+import { ButtonGroup, Form } from "react-bootstrap";
 import { useHistory, useParams } from "react-router-dom";
 import { DebtModes } from "../../../Constants/TaskConstaints";
 import {
   DatabaseCollections,
   useFirestore,
 } from "../../../Database/useFirestore";
-import { convertNumberWithCommas } from "../../../Helpers/CurrencyHelper";
+import { convertNumberWithCommas, getSymbolByCurrency } from "../../../Helpers/CurrencyHelper";
 import { getFormatDateForDatePicker } from "../../../Helpers/DateHelper";
+import BorderButton from "../../CommonComponents/Button/BorderButton";
 import { CustomButton } from "../../CommonComponents/Button/Button";
 import GobackButton from "../../CommonComponents/Button/GobackButton";
 import { useHomeController } from "../../HomeContext";
@@ -18,16 +19,17 @@ export default function DebtForm() {
   const history = useHistory();
   const { mode, id: formId } = useParams();
 
-  const [selectedDebtMode, setSelectedDebtMode] = useState(DebtModes.MyDebt);
+  const [selectedDebtMode, setSelectedDebtMode] = useState(DebtModes.OwedByMe);
 
   const [selectedDebt, setSelectedDebt] = useState({
     amount: parseFloat(0),
     currency: null,
   });
 
-  const deadlineRef = useRef(),
-    creditorRef = useRef(),
-    debtorRef = useRef(),
+  const 
+    incurredDateRef = useRef(),
+    deadlineRef = useRef(),
+    nameRef = useRef(),
     amountRef = useRef(),
     titleRef = useRef(),
     noteRef = useRef();
@@ -60,14 +62,16 @@ export default function DebtForm() {
     try {
       event.preventDefault();
 
-      let firebaseDate = Timestamp.fromDate(new Date(deadlineRef.current.value));
+      let incurredFirebaseDate = Timestamp.fromDate(new Date(incurredDateRef.current.value));
+      let deadlineFirebaseDate = Timestamp.fromDate(new Date(deadlineRef.current.value));
 
       let debt = {
         ...selectedDebt,
-        creditor: creditorRef.current.value,
-        debtor: debtorRef.current.value,
+        name: nameRef.current.value,
         deadline: deadlineRef.current.value,
-        formatedDeadline: firebaseDate,
+        formatedDeadline: deadlineFirebaseDate,
+        incurredDate: incurredDateRef.current.value,
+        formatedIncurredDate: incurredFirebaseDate,
         note: noteRef.current.value,
         title: titleRef.current.value,
         type: selectedDebtMode,
@@ -130,6 +134,7 @@ export default function DebtForm() {
      useEffect(() => {
         if (mode === "add") {
           deadlineRef.current.value = getFormatDateForDatePicker(new Date());
+          incurredDateRef.current.value = getFormatDateForDatePicker(new Date());
           
           if (localCountryInfo && !selectedDebt.currency) {
             setSelectedDebt({ ...selectedDebt, currency: localCountryInfo.currency });
@@ -139,6 +144,36 @@ export default function DebtForm() {
         if (mode === "edit") {
         }
       }, [localCountryInfo]);
+  
+      const initTaskById = async () => {
+        if (!formId) return;
+    
+        try {
+          setLoading(true);
+    
+          const doc = await getDocumentById(formId);
+          const debt = doc.data;
+    
+          // Init State values.
+          setSelectedDebt(debt);
+          selectedDebtId.current = doc.id;
+    
+          // Init Form Refs values.
+          deadlineRef.current.value = debt.deadline;
+          amountRef.current.value = convertNumberWithCommas(Number(debt.amount));
+    
+          titleRef.current.value = debt.title;
+          noteRef.current.value = debt.note;
+    
+          // Init Task Mode.
+          setSelectedDebtMode(debt.type);
+        } catch (error) {
+          setErrorModalContent(JSON.stringify(error));
+          handleErrorShow();
+        } finally {
+          setLoading(false);
+        }
+      };
 
   return (
     <div className="task-form">
@@ -149,12 +184,40 @@ export default function DebtForm() {
       <h5 className="task-form__title">{selectedDebtMode.name}</h5>
     </div>
 
+    <ButtonGroup className="task-form__button-group">
+        {Object.keys(DebtModes).map((key) => {
+          if (DebtModes[key].id === selectedDebtMode.id)
+            return <CustomButton key={key}>{DebtModes[key].name}</CustomButton>;
+
+          return (
+            <BorderButton
+              border={{ size: 2 }}
+              callback={() => handleSelectMode(DebtModes[key])}
+              key={key}
+            >
+              {DebtModes[key].name}
+            </BorderButton>
+          );
+        })}
+      </ButtonGroup>
 
     <div className="task-form__form-content">
       <Form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="task-date" className="form-label">
-            Date
+            Incurred Date
+          </label>
+          <input
+            className="form-control task-form__date-input"
+            type="date"
+            ref={incurredDateRef}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="task-date" className="form-label">
+            Deadline
           </label>
           <input
             className="form-control task-form__date-input"
@@ -163,6 +226,53 @@ export default function DebtForm() {
             required
           />
         </div>
+
+        <div className="mb-3">
+            <label htmlFor="title" className="form-label">
+            Name
+            </label>
+            <input className="form-control" type="text" ref={nameRef} required />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="amount" className="form-label">
+              Amount
+            </label>
+            <div className="task-form__amount-input">
+              <span
+                className="task-form__amount-input-icon"
+              >
+                {selectedDebt.currency &&
+                  getSymbolByCurrency(selectedDebt.currency)}
+              </span>
+              <input
+                className="form-control"
+                type="text"
+                ref={amountRef}
+                onChange={handleCurrencyInputEvent}
+                defaultValue={0}
+                required
+              ></input>
+            </div>
+          </div>
+
+        <div className="mb-3">
+            <label htmlFor="title" className="form-label">
+              Title
+            </label>
+            <input className="form-control" type="text" ref={titleRef} />
+          </div>
+
+        <div className="mb-3">
+            <label htmlFor="note" className="form-label">
+              Note
+            </label>
+            <textarea
+              className="form-control"
+              ref={noteRef}
+              rows="3"
+            ></textarea>
+          </div>
 
         <div className="d-grid gap-2">
           <CustomButton type="submit">Submit</CustomButton>

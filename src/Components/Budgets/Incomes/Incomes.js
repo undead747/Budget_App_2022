@@ -8,7 +8,6 @@ import IncomeHeader from "./IncomeHeader";
 export default function Incomes() {
   const [incomes, setIncomes] = useState();
   const [budgets, setBudgets] = useState();
-  const debts = parseFloat(0);
 
   const { getDocuments } = useFirestore(DatabaseCollections.Budgets);
 
@@ -48,7 +47,7 @@ export default function Incomes() {
   }
 
   return <>
-      <IncomeHeader budgets={budgets} debts={debts} />
+      <IncomeHeader budgets={budgets} debts={0} />
 
       <table className="table task-table">
         <tbody>
