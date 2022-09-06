@@ -148,3 +148,13 @@ body {
 .summary__val--warning{
     background-color: rgba(255, 193, 7, 0.4);
 }
+
+.btn--complete{
+    background-color: rgba(25, 135, 84, .8) !important;
+    color: var(--background-color) !important; 
+}
+
+.btn--delete{
+    background-color: var(--bs-danger) !important;
+    color: var(--background-color) !important;  
+}

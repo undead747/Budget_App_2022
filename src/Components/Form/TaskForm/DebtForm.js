@@ -26,7 +26,7 @@ export default function DebtForm() {
     currency: null,
   });
 
-  const 
+  const
     incurredDateRef = useRef(),
     deadlineRef = useRef(),
     nameRef = useRef(),
@@ -51,13 +51,13 @@ export default function DebtForm() {
   );
   // #endregion State
 
-    // #region Function
-    const handleSelectMode = (mode) => setSelectedDebtMode(mode);
+  // #region Function
+  const handleSelectMode = (mode) => setSelectedDebtMode(mode);
 
-      /**
-   * Handle submit event.
-   * @param {object} event - triggered submit button.
-   */
+  /**
+* Handle submit event.
+* @param {object} event - triggered submit button.
+*/
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
@@ -97,7 +97,7 @@ export default function DebtForm() {
    * Change selectedTask value (amount), amountRef.
    * @param {object} event - triggered search box element.
    */
-   const handleCurrencyInputEvent = (event) => {
+  const handleCurrencyInputEvent = (event) => {
     let currentValue = amountRef.current.value;
 
     // If current amount input is empty string, convert it to 0.
@@ -127,64 +127,64 @@ export default function DebtForm() {
     });
   };
 
-    /**
-   * Init date-picker value when task mode is add,
-   * Otherwise date-picker value will be inited by below useEffect.
-   */
-     useEffect(() => {
-        if (mode === "add") {
-          deadlineRef.current.value = getFormatDateForDatePicker(new Date());
-          incurredDateRef.current.value = getFormatDateForDatePicker(new Date());
-          
-          if (localCountryInfo && !selectedDebt.currency) {
-            setSelectedDebt({ ...selectedDebt, currency: localCountryInfo.currency });
-          }
-        }
-    
-        if (mode === "edit") {
-        }
-      }, [localCountryInfo]);
-  
-      const initTaskById = async () => {
-        if (!formId) return;
-    
-        try {
-          setLoading(true);
-    
-          const doc = await getDocumentById(formId);
-          const debt = doc.data;
-    
-          // Init State values.
-          setSelectedDebt(debt);
-          selectedDebtId.current = doc.id;
-    
-          // Init Form Refs values.
-          deadlineRef.current.value = debt.deadline;
-          amountRef.current.value = convertNumberWithCommas(Number(debt.amount));
-    
-          titleRef.current.value = debt.title;
-          noteRef.current.value = debt.note;
-    
-          // Init Task Mode.
-          setSelectedDebtMode(debt.type);
-        } catch (error) {
-          setErrorModalContent(JSON.stringify(error));
-          handleErrorShow();
-        } finally {
-          setLoading(false);
-        }
-      };
+  /**
+ * Init date-picker value when task mode is add,
+ * Otherwise date-picker value will be inited by below useEffect.
+ */
+  useEffect(() => {
+    if (mode === "add") {
+      deadlineRef.current.value = getFormatDateForDatePicker(new Date());
+      incurredDateRef.current.value = getFormatDateForDatePicker(new Date());
+
+      if (localCountryInfo && !selectedDebt.currency) {
+        setSelectedDebt({ ...selectedDebt, currency: localCountryInfo.currency });
+      }
+    }
+
+    if (mode === "edit") {
+    }
+  }, [localCountryInfo]);
+
+  const initTaskById = async () => {
+    if (!formId) return;
+
+    try {
+      setLoading(true);
+
+      const doc = await getDocumentById(formId);
+      const debt = doc.data;
+
+      // Init State values.
+      setSelectedDebt(debt);
+      selectedDebtId.current = doc.id;
+
+      // Init Form Refs values.
+      deadlineRef.current.value = debt.deadline;
+      amountRef.current.value = convertNumberWithCommas(Number(debt.amount));
+
+      titleRef.current.value = debt.title;
+      noteRef.current.value = debt.note;
+
+      // Init Task Mode.
+      setSelectedDebtMode(debt.type);
+    } catch (error) {
+      setErrorModalContent(JSON.stringify(error));
+      handleErrorShow();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="task-form">
-    <div className="task-form__header">
-      <GobackButton backgroundColor={"transparent"} callback={history.goBack}>
-        Go back
-      </GobackButton>
-      <h5 className="task-form__title">{selectedDebtMode.name}</h5>
-    </div>
+      <div className="task-form__header">
+        <GobackButton backgroundColor={"transparent"} callback={history.goBack}>
+          Go back
+        </GobackButton>
+        <h5 className="task-form__title">{selectedDebtMode.name}</h5>
+      </div>
 
-    <ButtonGroup className="task-form__button-group">
+      <ButtonGroup className="task-form__button-group">
         {Object.keys(DebtModes).map((key) => {
           if (DebtModes[key].id === selectedDebtMode.id)
             return <CustomButton key={key}>{DebtModes[key].name}</CustomButton>;
@@ -201,35 +201,35 @@ export default function DebtForm() {
         })}
       </ButtonGroup>
 
-    <div className="task-form__form-content">
-      <Form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="task-date" className="form-label">
-            Incurred Date
-          </label>
-          <input
-            className="form-control task-form__date-input"
-            type="date"
-            ref={incurredDateRef}
-            required
-          />
-        </div>
+      <div className="task-form__form-content">
+        <Form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="task-date" className="form-label">
+              Incurred Date
+            </label>
+            <input
+              className="form-control task-form__date-input"
+              type="date"
+              ref={incurredDateRef}
+              required
+            />
+          </div>
 
-        <div className="mb-3">
-          <label htmlFor="task-date" className="form-label">
-            Deadline
-          </label>
-          <input
-            className="form-control task-form__date-input"
-            type="date"
-            ref={deadlineRef}
-            required
-          />
-        </div>
+          <div className="mb-3">
+            <label htmlFor="task-date" className="form-label">
+              Deadline
+            </label>
+            <input
+              className="form-control task-form__date-input"
+              type="date"
+              ref={deadlineRef}
+              required
+            />
+          </div>
 
-        <div className="mb-3">
+          <div className="mb-3">
             <label htmlFor="title" className="form-label">
-            Name
+              Name
             </label>
             <input className="form-control" type="text" ref={nameRef} required />
           </div>
@@ -256,14 +256,14 @@ export default function DebtForm() {
             </div>
           </div>
 
-        <div className="mb-3">
+          <div className="mb-3">
             <label htmlFor="title" className="form-label">
               Title
             </label>
             <input className="form-control" type="text" ref={titleRef} />
           </div>
 
-        <div className="mb-3">
+          <div className="mb-3">
             <label htmlFor="note" className="form-label">
               Note
             </label>
@@ -274,11 +274,17 @@ export default function DebtForm() {
             ></textarea>
           </div>
 
-        <div className="d-grid gap-2">
-          <CustomButton type="submit">Submit</CustomButton>
-        </div>
-      </Form>
+          <div className="d-grid gap-2">
+            <CustomButton type="submit" customClass={"text-capitalize"}>{mode}</CustomButton>
+            {
+              mode === "edit" && <>
+                <CustomButton type="submit" customClass={"btn--complete mt-3"}>Complete</CustomButton>
+                <CustomButton type="submit" customClass={"btn--delete"}>Delete</CustomButton>
+              </>
+            }
+          </div>
+        </Form>
+      </div>
     </div>
-  </div>
   );
 }

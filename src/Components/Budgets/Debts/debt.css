@@ -1,0 +1,7 @@
+.debt{
+    margin-top: 1.5rem;
+}
+
+.task-table__row-title--debt{
+    align-items: flex-start;
+}
