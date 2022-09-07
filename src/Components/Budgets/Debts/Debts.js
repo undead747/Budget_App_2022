@@ -45,6 +45,17 @@ export default function Debts() {
 
   const addDebts = () => history.push(`/debt/add`);
 
+    /**
+   * Handle edit task  event.
+   * Redirect to edit form.
+   * @param {string} taskId - delete task ID.
+   */
+     const handleEditDebt = (event, debtId) => {
+      event.preventDefault();
+
+      history.push(`/debt/${debtId}`);
+    };
+
   return (
     <div className="debt">
       <div className="task-table">
@@ -62,10 +73,10 @@ export default function Debts() {
                   switch (data.type.id) {
                     case DebtModes.OwedByMe.id:
                       creditor = data.name && data.name;
-                      debtor = 'me';
+                      debtor = 'Me';
                       break;
                     case DebtModes.OwedToMe.id:
-                      creditor = 'me';
+                      creditor = 'Me';
                       debtor = data.name && data.name;
                       break;
                     default:
@@ -77,6 +88,7 @@ export default function Debts() {
                   <tr
                     className="task-table__row"
                     key={id}
+                    onClick={event => handleEditDebt(event, id)}
                   >
                     <td className="text-start">
                       <div className="d-flex flex-column align-items-start">

@@ -69,9 +69,11 @@ export default function DailyTasks() {
         loadDataFlag.current = true;
 
         setLoading(true);
+        
         const tasks = await getDocumentsByPagination({
           params: [{ key: Tasks.date, operator: "==", value: dateParam }],
         });
+
         setTasks(tasks);
       }
     } catch (error) {
