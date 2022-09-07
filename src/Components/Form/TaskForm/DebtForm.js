@@ -46,7 +46,7 @@ export default function DebtForm() {
   } = useHomeController();
 
   // Database methods.
-  const { addDocument, updateDocument, getDocumentById } = useFirestore(
+  const { addDocument, updateDocument, getDocumentById, deleteDocument } = useFirestore(
     DatabaseCollections.Debts
   );
   // #endregion State
@@ -142,10 +142,11 @@ export default function DebtForm() {
     }
 
     if (mode === "edit") {
+      initDebtById();
     }
   }, [localCountryInfo]);
 
-  const initTaskById = async () => {
+  const initDebtById = async () => {
     if (!formId) return;
 
     try {
@@ -160,8 +161,9 @@ export default function DebtForm() {
 
       // Init Form Refs values.
       deadlineRef.current.value = debt.deadline;
+      incurredDateRef.current.value = debt.incurredDate;
       amountRef.current.value = convertNumberWithCommas(Number(debt.amount));
-
+      nameRef.current.value = debt.name;
       titleRef.current.value = debt.title;
       noteRef.current.value = debt.note;
 
@@ -174,6 +176,16 @@ export default function DebtForm() {
       setLoading(false);
     }
   };
+
+  const handleDeleteDebt = async () => {
+    if(!selectedDebtId.current) return;
+
+    setLoading(true);
+    await deleteDocument(selectedDebtId.current);
+    setLoading(false);
+
+    history.push('/budgets/debts');
+  }
 
   return (
     <div className="task-form">
@@ -278,8 +290,8 @@ export default function DebtForm() {
             <CustomButton type="submit" customClass={"text-capitalize"}>{mode}</CustomButton>
             {
               mode === "edit" && <>
-                <CustomButton type="submit" customClass={"btn--complete mt-3"}>Complete</CustomButton>
-                <CustomButton type="submit" customClass={"btn--delete"}>Delete</CustomButton>
+                <CustomButton type="button" customClass={"btn--complete mt-3"}>Complete</CustomButton>
+                <CustomButton type="button" customClass={"btn--delete"} callback={handleDeleteDebt}>Delete</CustomButton>
               </>
             }
           </div>

@@ -53,7 +53,7 @@ export default function Debts() {
      const handleEditDebt = (event, debtId) => {
       event.preventDefault();
 
-      history.push(`/debt/${debtId}`);
+      history.push(`/debt/edit/${debtId}`);
     };
 
   return (
@@ -107,7 +107,7 @@ export default function Debts() {
                         <span className="text-end fw-bolder">
                           {convertNumberToCurrency(data.currency, data.amount)}
                         </span>
-                        <span className="summary__val summary__val--success text-success">
+                        <span className="summary__val summary__val--warning text-warning">
                         <i className="far fa-clock"></i> {data.deadline && data.deadline}
                         </span>
                       </div>
