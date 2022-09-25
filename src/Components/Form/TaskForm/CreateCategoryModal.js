@@ -12,7 +12,7 @@ export default function useCreateCategoryModal() {
   
   const CreateCategoryModal = ({ collectionName , callback, ...rest }) => {
     // Get loading animantion, alert message from home-Controller.
-    const { setLoading } = useHomeController();
+    const { setLoading, handleErrorShow, setErrorModalContent } = useHomeController();
     const nameRef = useRef();
     
     // Database method
@@ -27,7 +27,10 @@ export default function useCreateCategoryModal() {
       try {
         let result = await addDocument({Name: nameRef.current.value});
         handleClose();
-      } catch (error) {}
+      } catch (error) {
+        setErrorModalContent(error.message);
+        handleErrorShow();
+      }
     };
 
     return (

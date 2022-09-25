@@ -124,7 +124,7 @@ function TaskForm(props) {
       history.push(`/daily/${dateRef.current.value}`);
     } catch (error) {
       console.log(error)
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     }
   };
@@ -343,7 +343,7 @@ function TaskForm(props) {
       // Init Task Mode.
       setSelectedTaskMode(task.type);
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);

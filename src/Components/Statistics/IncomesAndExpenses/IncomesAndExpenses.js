@@ -25,7 +25,12 @@ export default function IncomesAndExpenses() {
   const loadDataFlag = useRef(false);
 
   // Get loading animantion, alert message, current location information from home-Controller.
-  const { setLoading } = useHomeController();
+  const {
+    setLoading,
+    handleErrorShow,
+    handleErrorClose,
+    setErrorModalContent,
+  } = useHomeController();
 
   // Database method
   const { getDocumentsByPagination } = useFirestore(DatabaseCollections.Tasks);
@@ -57,11 +62,11 @@ export default function IncomesAndExpenses() {
 
   const loadTasksByMonth = async () => {
     try {
-      if(loadDataFlag.current === false){
+      if (loadDataFlag.current === false) {
         loadDataFlag.current = true;
 
         const currDateVal = new Date(currDate);
-  
+
         let firstDayOfMonth = getFirstDayOfMonth(
           currDateVal.getMonth(),
           currDateVal.getFullYear()
@@ -70,7 +75,7 @@ export default function IncomesAndExpenses() {
           currDateVal.getMonth(),
           currDateVal.getFullYear()
         );
-  
+
         setLoading(true);
         let tasks = await getDocumentsByPagination({
           params: [
@@ -80,30 +85,33 @@ export default function IncomesAndExpenses() {
         });
         setLoading(false);
         loadDataFlag.current = false;
-  
+
         let expenseTasks = tasks.filter(
           (task) => task.type.id === taskModes.Expense.id
         );
-  
+
         let incomeTasks = tasks.filter(
           (task) => task.type.id === taskModes.Income.id
         );
-        
+
         setExpenseTasks(expenseTasks);
         setIncomeTasks(incomeTasks);
       }
-    } catch (error) {}
+    } catch (error) {
+      setErrorModalContent(error.message);
+      handleErrorShow();
+    }
   };
 
-  const loadTasksByYear = async() => {
+  const loadTasksByYear = async () => {
     try {
-      if(loadDataFlag.current === false){
+      if (loadDataFlag.current === false) {
         loadDataFlag.current = true;
 
         const currDateVal = new Date(currDate);
         const firstMonthOfYear = 0;
         const lastMonthOfYear = 11;
-  
+
         let firstDayOfFirstMonth = getFirstDayOfMonth(
           firstMonthOfYear,
           currDateVal.getFullYear()
@@ -112,30 +120,41 @@ export default function IncomesAndExpenses() {
           lastMonthOfYear,
           currDateVal.getFullYear()
         );
-  
+
         setLoading(true);
         let tasks = await getDocumentsByPagination({
           params: [
-            { key: Tasks.formatedDate, operator: ">=", value: firstDayOfFirstMonth },
-            { key: Tasks.formatedDate, operator: "<=", value: lastDayOfLastMonth },
+            {
+              key: Tasks.formatedDate,
+              operator: ">=",
+              value: firstDayOfFirstMonth,
+            },
+            {
+              key: Tasks.formatedDate,
+              operator: "<=",
+              value: lastDayOfLastMonth,
+            },
           ],
         });
         setLoading(false);
         loadDataFlag.current = false;
-  
+
         let expenseTasks = tasks.filter(
           (task) => task.type.id === taskModes.Expense.id
         );
-  
+
         let incomeTasks = tasks.filter(
           (task) => task.type.id === taskModes.Income.id
         );
-        
+
         setExpenseTasks(expenseTasks);
         setIncomeTasks(incomeTasks);
       }
-    } catch (error) {}
-  }
+    } catch (error) {
+      setErrorModalContent(error.message);
+      handleErrorShow();
+    }
+  };
 
   return (
     <div className="incomesAndExpenses">
@@ -147,8 +166,12 @@ export default function IncomesAndExpenses() {
         <ToggleTaskMode />
       </div>
       <div className="incomesAndExpenses__Chart">
-        {taskMode === taskModes.Income.param && <TaskChart tasks={incomeTasks} />}
-        {taskMode === taskModes.Expense.param && <TaskChart tasks={expenseTasks} />}
+        {taskMode === taskModes.Income.param && (
+          <TaskChart tasks={incomeTasks} />
+        )}
+        {taskMode === taskModes.Expense.param && (
+          <TaskChart tasks={expenseTasks} />
+        )}
       </div>
     </div>
   );

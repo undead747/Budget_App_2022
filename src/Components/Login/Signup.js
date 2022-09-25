@@ -33,7 +33,7 @@ export default function Signup() {
       await signup(emailRef.current.value, passRef.current.value);
       history.push("/");
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);

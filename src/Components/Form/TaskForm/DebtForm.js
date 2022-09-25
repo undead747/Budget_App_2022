@@ -43,6 +43,8 @@ export default function DebtForm() {
     localCountryInfo,
     handleErrorShow,
     setErrorModalContent,
+    setConfirmModalContent,
+    handleConfirmShow,
   } = useHomeController();
 
   // Database methods.
@@ -86,8 +88,7 @@ export default function DebtForm() {
 
       history.push(`/budgets/debts`);
     } catch (error) {
-      console.log(error)
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     }
   };
@@ -170,14 +171,14 @@ export default function DebtForm() {
       // Init Task Mode.
       setSelectedDebtMode(debt.type);
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDeleteDebt = async () => {
+  const handleDeleteDebt = async (e, debt) => {
     e.stopPropagation();
 
     if(!selectedDebtId.current) return;
@@ -187,42 +188,18 @@ export default function DebtForm() {
     handleConfirmShow(async () => {
       try {
         setLoading(true);
-        await deleteDocument(debt.id);
+        await deleteDocument(selectedDebtId.current);
         setLoading(false);
 
         history.push('/budgets/debts');
       } catch (err) {
-        setErrorModalContent(JSON.stringify(err));
+        setErrorModalContent(err.message);
         handleErrorShow();
       } finally {
         setLoading(false);
       }
     })
   }
-
-      /**
-   * Handle delete task  event.
-   * @param {string} taskId - delete task ID.
-   * @param {object} e - triggered delete button.
-   */
-       const handleDeleteTask = async (e) => {
-        e.stopPropagation();
-        
-        setConfirmModalContent("are you sure to delete this task ? ");
-        
-        handleConfirmShow(async () => {
-          try {
-            setLoading(true);
-            await deleteDocument(debt.id);
-            setLoading(false);
-          } catch (err) {
-            setErrorModalContent(JSON.stringify(err));
-            handleErrorShow();
-          } finally {
-            setLoading(false);
-          }
-        })
-      }
 
   return (
     <div className="task-form">
@@ -331,7 +308,7 @@ export default function DebtForm() {
                   <i className="fas fa-check me-2"></i>
                   Complete
                 </CustomButton>
-                <CustomButton type="button" customClass={"btn--delete"} callback={handleDeleteDebt}>Delete</CustomButton>
+                <CustomButton type="button" customClass={"btn--delete"} callback={e => handleDeleteDebt(e)}>Delete</CustomButton>
               </>
             }
           </div>

@@ -113,7 +113,7 @@ export function useTaskCategoryModal() {
 
   const TaskCategoryModal = ({ callback, selectedTaskMode, ...rest }) => {
     // #region State 
-    const { incomeCategories, expenseCategories } = useHomeController();
+    const { incomeCategories, expenseCategories, handleErrorShow, setErrorModalContent} = useHomeController();
     const [categories, setCategories] = useState();
     const {show: addCategoryStatus, handleShow: showAddCategory, handleClose: closeAddCategory, CreateCategoryModal} = useCreateCategoryModal();
     let taskCategoryCollectionName = null;
@@ -147,7 +147,8 @@ export function useTaskCategoryModal() {
       try {
         await deleteDocument(docId);
       } catch (error) {
-
+        setErrorModalContent(error.message);
+        handleErrorShow();
       }
     }
     // #endregion Function 

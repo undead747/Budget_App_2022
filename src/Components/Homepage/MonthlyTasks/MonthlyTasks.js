@@ -79,7 +79,7 @@ export default function MonthlyTasks() {
 
       setTasks(tasks);
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);
@@ -133,7 +133,7 @@ export default function MonthlyTasks() {
         groupTasksByDate(tasks, localCountryInfo, rates);
       }
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     }
   };

@@ -25,7 +25,7 @@ export default function Login() {
       await login(emailRef.current.value, passRef.current.value);
       history.push("/");
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);

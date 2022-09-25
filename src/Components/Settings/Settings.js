@@ -25,7 +25,7 @@ export default function Settings() {
 
           history.push("/login");
       } catch (error) {
-        setErrorModalContent(JSON.stringify(error));
+        setErrorModalContent(error.message);
         handleErrorShow();
       }
   }

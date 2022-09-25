@@ -41,7 +41,7 @@ export default function Incomes() {
         setBudgets(total);
       }
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } 
   }

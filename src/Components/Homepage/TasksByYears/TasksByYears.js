@@ -70,7 +70,7 @@ export default function TasksByYears() {
 
       setTasks(tasks);
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);
@@ -124,7 +124,7 @@ export default function TasksByYears() {
         groupTasksByMonth(tasks, localCountryInfo, rates);
       }
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     }
   };

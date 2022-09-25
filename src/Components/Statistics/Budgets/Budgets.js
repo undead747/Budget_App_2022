@@ -1,21 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { DatabaseCollections, useFirestore } from '../../../Database/useFirestore';
-import { useHomeController } from '../../HomeContext';
-import { BudgetsChart } from '../Chart/Chart';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  DatabaseCollections,
+  useFirestore,
+} from "../../../Database/useFirestore";
+import { useHomeController } from "../../HomeContext";
+import { BudgetsChart } from "../Chart/Chart";
 
 export default function Budgets() {
   const loadDataFlag = useRef(false);
   const [budgets, setBudgets] = useState();
 
   // Get loading animantion, alert message, current location information from home-Controller.
-  const { setLoading } = useHomeController();
+  const {
+    setLoading,
+    handleErrorShow,
+    handleErrorClose,
+    setErrorModalContent,
+  } = useHomeController();
 
   // Database method
-  const { getDocumentsByPagination } = useFirestore(DatabaseCollections.Budgets);
+  const { getDocumentsByPagination } = useFirestore(
+    DatabaseCollections.Budgets
+  );
 
   useEffect(() => {
     loadBudgets();
-  })
+  });
 
   const loadBudgets = async () => {
     try {
@@ -27,12 +37,11 @@ export default function Budgets() {
         setLoading(false);
         setBudgets(budgets);
       }
-    } catch (errors) {
-      
+    } catch (error) {
+      setErrorModalContent(error.message);
+      handleErrorShow();
     }
-  }
+  };
 
-  return (
-    <BudgetsChart budgets={budgets} />
-  )
+  return <BudgetsChart budgets={budgets} />;
 }

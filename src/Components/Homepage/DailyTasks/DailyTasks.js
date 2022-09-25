@@ -77,7 +77,7 @@ export default function DailyTasks() {
         setTasks(tasks);
       }
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     } finally {
       setLoading(false);
@@ -265,7 +265,7 @@ export default function DailyTasks() {
         setExpenseTotal(expenseTotal);
       }
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     }
   };
@@ -323,7 +323,7 @@ export default function DailyTasks() {
           }
         }
       } catch (err) {
-        setErrorModalContent(JSON.stringify(err));
+        setErrorModalContent(err.message);
         handleErrorShow();
       } finally {
         setLoading(false);

@@ -34,7 +34,7 @@ export function useCurrencyModal() {
     // #region State
     const [currencyRates, setCurrencyRates] = useState();
     const [filterCurrencyRates, setFilterCurrencyRates] = useState();
-    const { countriesCurrencyInfo } = useHomeController();
+    const { countriesCurrencyInfo, handleErrorShow, setErrorModalContent } = useHomeController();
     const [selectedRow, setSelectedRow] = useState({
       currency: null,
       rate: null,
