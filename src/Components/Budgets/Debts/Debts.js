@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { DebtModes } from "../../../Constants/TaskConstaints";
-import { DatabaseCollections, useFirestore } from "../../../Database/useFirestore";
+import {
+  DatabaseCollections,
+  useFirestore,
+} from "../../../Database/useFirestore";
 import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
 import EclipseButton from "../../CommonComponents/Button/EclipseButton";
 import { useHomeController } from "../../HomeContext";
-import './debt.css'
+import "./debt.css";
 
 export default function Debts() {
   const history = useHistory();
@@ -20,7 +23,7 @@ export default function Debts() {
     handleErrorClose,
     setErrorModalContent,
     localCountryInfo,
-    setLoading
+    setLoading,
   } = useHomeController();
 
   useEffect(() => {
@@ -33,7 +36,7 @@ export default function Debts() {
       let debts = await getDocuments();
       setLoading(false);
 
-      console.log(debts)
+      console.log(debts);
       if (debts) {
         setDebts(debts);
       }
@@ -41,42 +44,56 @@ export default function Debts() {
       setErrorModalContent(JSON.stringify(error));
       handleErrorShow();
     }
-  }
+  };
 
   const addDebts = () => history.push(`/debt/add`);
+  
 
-    /**
+  /**
    * Handle edit task  event.
    * Redirect to edit form.
    * @param {string} taskId - delete task ID.
    */
-     const handleEditDebt = (event, debtId) => {
-      event.preventDefault();
+  const handleEditDebt = (event, debtId) => {
+    event.preventDefault();
 
-      history.push(`/debt/edit/${debtId}`);
-    };
+    history.push(`/debt/edit/${debtId}`);
+  };
+
+  if (!debts || debts.length === 0)
+    return (
+      <>
+        <div className="alert alert-warning" role="alert">
+          don't have any data to display
+        </div>
+
+        <EclipseButton customClass="btn--task-add" callback={addDebts}>
+          <i className="fas fa-plus"></i>
+        </EclipseButton>
+      </>
+    );
 
   return (
     <div className="debt">
       <div className="task-table">
         <table className="table task-table">
           <tbody>
-            {
-              debts && debts.map(debt => {
+            {debts &&
+              debts.map((debt) => {
                 const id = debt.id;
                 const data = debt.data;
 
-                let creditor = '';
-                let debtor = '';
+                let creditor = "";
+                let debtor = "";
 
                 if (data.type) {
                   switch (data.type.id) {
                     case DebtModes.OwedByMe.id:
                       creditor = data.name && data.name;
-                      debtor = 'Me';
+                      debtor = "Me";
                       break;
                     case DebtModes.OwedToMe.id:
-                      creditor = 'Me';
+                      creditor = "Me";
                       debtor = data.name && data.name;
                       break;
                     default:
@@ -88,18 +105,26 @@ export default function Debts() {
                   <tr
                     className="task-table__row"
                     key={id}
-                    onClick={event => handleEditDebt(event, id)}
+                    onClick={(event) => handleEditDebt(event, id)}
                   >
                     <td className="text-start">
                       <div className="d-flex flex-column align-items-start">
-                      <span><i className="far fa-user"></i> <strong>Creditor:</strong> {creditor}</span>
-                      <span><i className="far fa-user"></i> <strong>Debtor:</strong> {debtor}</span>
+                        <span>
+                          <i className="far fa-user"></i>{" "}
+                          <strong>Creditor:</strong> {creditor}
+                        </span>
+                        <span>
+                          <i className="far fa-user"></i>{" "}
+                          <strong>Debtor:</strong> {debtor}
+                        </span>
                       </div>
                     </td>
                     <td className="text-start">
                       <div className="d-flex flex-column align-items-center">
                         <span>{data.title && data.title}</span>
-                        <span className="opacity-75">{data.note && data.note}</span>
+                        <span className="opacity-75">
+                          {data.note && data.note}
+                        </span>
                       </div>
                     </td>
                     <td>
@@ -108,18 +133,17 @@ export default function Debts() {
                           {convertNumberToCurrency(data.currency, data.amount)}
                         </span>
                         <span className="summary__val summary__val--warning text-warning">
-                        <i className="far fa-clock"></i> {data.deadline && data.deadline}
+                          <i className="far fa-clock"></i>{" "}
+                          {data.deadline && data.deadline}
                         </span>
                       </div>
                     </td>
                   </tr>
-                )
-              })
-            }
+                );
+              })}
           </tbody>
         </table>
       </div>
-
 
       <EclipseButton customClass="btn--task-add" callback={addDebts}>
         <i className="fas fa-plus"></i>

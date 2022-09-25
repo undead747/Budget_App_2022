@@ -46,6 +46,12 @@ export default function Incomes() {
     } 
   }
 
+  if(!incomes || incomes.length === 0) return <>
+     <div className="alert alert-warning" role="alert">
+      don't have any data to display
+    </div>
+  </> 
+
   return <>
       <IncomeHeader budgets={budgets} debts={0} />
 

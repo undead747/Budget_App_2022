@@ -28,7 +28,7 @@ export default function Budgets() {
         setBudgets(budgets);
       }
     } catch (errors) {
-
+      
     }
   }
 

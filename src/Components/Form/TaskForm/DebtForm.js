@@ -178,14 +178,51 @@ export default function DebtForm() {
   };
 
   const handleDeleteDebt = async () => {
+    e.stopPropagation();
+
     if(!selectedDebtId.current) return;
 
-    setLoading(true);
-    await deleteDocument(selectedDebtId.current);
-    setLoading(false);
+    setConfirmModalContent("are you sure to delete this task ? ");
+        
+    handleConfirmShow(async () => {
+      try {
+        setLoading(true);
+        await deleteDocument(debt.id);
+        setLoading(false);
 
-    history.push('/budgets/debts');
+        history.push('/budgets/debts');
+      } catch (err) {
+        setErrorModalContent(JSON.stringify(err));
+        handleErrorShow();
+      } finally {
+        setLoading(false);
+      }
+    })
   }
+
+      /**
+   * Handle delete task  event.
+   * @param {string} taskId - delete task ID.
+   * @param {object} e - triggered delete button.
+   */
+       const handleDeleteTask = async (e) => {
+        e.stopPropagation();
+        
+        setConfirmModalContent("are you sure to delete this task ? ");
+        
+        handleConfirmShow(async () => {
+          try {
+            setLoading(true);
+            await deleteDocument(debt.id);
+            setLoading(false);
+          } catch (err) {
+            setErrorModalContent(JSON.stringify(err));
+            handleErrorShow();
+          } finally {
+            setLoading(false);
+          }
+        })
+      }
 
   return (
     <div className="task-form">
@@ -290,7 +327,10 @@ export default function DebtForm() {
             <CustomButton type="submit" customClass={"text-capitalize"}>{mode}</CustomButton>
             {
               mode === "edit" && <>
-                <CustomButton type="button" customClass={"btn--complete mt-3"}>Complete</CustomButton>
+                <CustomButton type="button" customClass={"btn--complete mt-3"}>
+                  <i className="fas fa-check me-2"></i>
+                  Complete
+                </CustomButton>
                 <CustomButton type="button" customClass={"btn--delete"} callback={handleDeleteDebt}>Delete</CustomButton>
               </>
             }

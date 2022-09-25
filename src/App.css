@@ -150,7 +150,7 @@ body {
 }
 
 .btn--complete{
-    background-color: rgba(25, 135, 84, .8) !important;
+    background-color: var(--secondary-color-type-1) !important;
     color: var(--background-color) !important; 
 }
 

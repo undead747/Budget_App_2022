@@ -460,7 +460,7 @@ function TaskForm(props) {
           </div>
 
           <div className="d-grid gap-2">
-            <CustomButton type="submit">Submit</CustomButton>
+            <CustomButton type="submit">{mode}</CustomButton>
           </div>
         </Form>
       </div>
