@@ -39,20 +39,22 @@ export default function BottomBar() {
 
     return (
         <div className='bottom-bar'>
-            <ul className='nav-bar bottom-bar__content'>
-                {
-                    Object.keys(bottombarData).map(key => {
-                        const tab = bottombarData[key];
+            <div className='container'>
+                <ul className='nav-bar bottom-bar__content'>
+                    {
+                        Object.keys(bottombarData).map(key => {
+                            const tab = bottombarData[key];
 
-                        return <li className={`nav-bar__item bottom-bar__item  ${selectedBottomTab === tab.id ? 'bottom-bar__item--active' : ''}`} key={tab.id} onClick={() => handleSelectedTab(tab)}>
-                            <div className='bottom-bar__item-content'>
-                                {tab.icon}
-                                <span className='bottom-bar__title'>{tab.title}</span>
-                            </div>
-                        </li>
-                    })
-                }
-            </ul>
+                            return <li className={`nav-bar__item bottom-bar__item  ${selectedBottomTab === tab.id ? 'bottom-bar__item--active' : ''}`} key={tab.id} onClick={() => handleSelectedTab(tab)}>
+                                <div className='bottom-bar__item-content'>
+                                    {tab.icon}
+                                    <span className='bottom-bar__title'>{tab.title}</span>
+                                </div>
+                            </li>
+                        })
+                    }
+                </ul>
+            </div>
         </div>
     )
 }

@@ -8,15 +8,20 @@
 }
 
 .task__content{
-    margin-top: 6.5rem;
-    padding-top: 1px;
+    padding-top: 6.5rem;
+}
+
+.task__add-btn{
+    position: fixed;
+    bottom: 12%;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 .btn--task-add{
     position: fixed;
-    bottom: 12%;
-    right: 10%;
-    
+    right: 5%;
+    bottom: 0;
     font-size: 1.3rem !important;
     color: var(--primary-color) !important;
 }

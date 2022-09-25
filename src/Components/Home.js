@@ -9,7 +9,7 @@ import Statistics from './Statistics/Statistics';
 
 export default function Home() {
     return (
-        <>
+        <div className='container'>
             <Switch>
                 <Route path={'/task/:mode/:id?'} component={TaskForm} />
                 <Route path={'/statistics'} component={Statistics} />
@@ -19,6 +19,6 @@ export default function Home() {
                 <Redirect to={"/"} />
             </Switch>
             <BottomBar />
-        </>
+        </div>
       );
 }

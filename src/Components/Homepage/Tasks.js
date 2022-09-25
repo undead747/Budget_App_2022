@@ -44,8 +44,10 @@ export default function Tasks() {
   return (
     <>
       <div className="header">
-        <Navigator />
-        <Sidebar />
+        <div className="container">
+          <Navigator />
+          <Sidebar />
+        </div>
       </div>
 
       <div className="task__content">
@@ -56,20 +58,25 @@ export default function Tasks() {
               <DailyTasks key={routes.match.params.date} {...routes} />
             )}
           />
-          <Route path={"/monthly"} render={(routes) => {
-            let params = new URLSearchParams(routes.location.search);
-            return <MonthlyTasks key={params} {...routes} />
-          }} />
+          <Route
+            path={"/monthly"}
+            render={(routes) => {
+              let params = new URLSearchParams(routes.location.search);
+              return <MonthlyTasks key={params} {...routes} />;
+            }}
+          />
           <Route path={"/years/:date?"} component={TasksByYears} />
           <Route path={"/calendar/:date?"} component={TasksByCalendar} />
 
           <Redirect to={"/daily"} />
         </Switch>
       </div>
-      
-      <EclipseButton customClass="btn--task-add" callback={handleAddTask}>
-        <i className="fas fa-plus"></i>
-      </EclipseButton>
+
+      <div className="container task__add-btn">
+        <EclipseButton customClass="btn--task-add" callback={handleAddTask}>
+          <i className="fas fa-plus"></i>
+        </EclipseButton>
+      </div>
     </>
   );
 }
