@@ -128,12 +128,14 @@ export default function DailyTasks() {
                 <td className="text-start">
                   {task.taskCate && task.taskCate.name}
                 </td>
-                <td className="text-start task-table__row-title">
-                  <span>{task.accountCate && task.accountCate.name}</span>
-                  <span className="opacity-75">
-                    {task.title && task.title}
-                    {task.note && `(${task.note})`} 
-                  </span>
+                <td className="text-start">
+                  <div className="task-table__row-title">
+                    <span>{task.accountCate && task.accountCate.name}</span>
+                    <span className="opacity-75">
+                      {task.title && task.title}
+                      {task.note && `(${task.note})`} 
+                    </span>
+                  </div>
                 </td>
                 <td className="text-end fw-bolder">
                   + {convertNumberToCurrency(task.currency, task.amount)}
@@ -195,12 +197,14 @@ export default function DailyTasks() {
                 <td className="text-start">
                   {task.taskCate && task.taskCate.name}
                 </td>
-                <td className="text-start task-table__row-title">
-                  <span>{task.accountCate && task.accountCate.name}</span>
-                  <span className="opacity-75">
-                    {task.title && task.title}
-                    {task.note && `(${task.note})`} 
-                  </span>
+                <td className="text-start">
+                  <div className="task-table__row-title">
+                    <span>{task.accountCate && task.accountCate.name}</span>
+                    <span className="opacity-75">
+                      {task.title && task.title}
+                      {task.note && `(${task.note})`} 
+                    </span>
+                  </div>
                 </td>
                 <td className="text-end fw-bolder">
                   - {convertNumberToCurrency(task.currency, task.amount)}
