@@ -123,7 +123,7 @@ function TaskForm(props) {
 
       history.push(`/daily/${dateRef.current.value}`);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setErrorModalContent(error.message);
       handleErrorShow();
     }
@@ -139,7 +139,7 @@ function TaskForm(props) {
     }
 
     let budget = await getBudgetById(task.accountCate.id);
-    
+
     if (task.type.id === taskModes.Income.id) {
       if (budget && budget.data) {
         let calAmount = parseFloat(budget.data.amount) + amount;
@@ -154,86 +154,83 @@ function TaskForm(props) {
       }
     }
 
-    if(task.type.id === taskModes.Expense.id){
+    if (task.type.id === taskModes.Expense.id) {
       if (budget && budget.data) {
         let calAmount = parseFloat(budget.data.amount) - amount;
-        await updateBudget(
-          { ...budget.data, amount: calAmount },
-          budget.id
-        );
+        await updateBudget({ ...budget.data, amount: calAmount }, budget.id);
       }
     }
   };
 
   const updateTask = async (newTask, taskId) => {
-      let oldTask = await getDocumentById(taskId);
-      let rates = await getCurrencyRateByCode(localCountryInfo.currency);
-      
-      let oldAmmount = parseFloat(oldTask.data.amount);
-      let newAmmount = parseFloat(newTask.amount);
+    let oldTask = await getDocumentById(taskId);
+    let rates = await getCurrencyRateByCode(localCountryInfo.currency);
 
-      oldTask = oldTask.data;
-      
-      let oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
-      
-      if (
-        oldTask.currency !== localCountryInfo.currency &&
-        rates[oldTask.currency]
-      ) {
-        oldAmmount = oldAmmount / parseFloat(rates[oldTask.currency]);
+    let oldAmmount = parseFloat(oldTask.data.amount);
+    let newAmmount = parseFloat(newTask.amount);
+
+    oldTask = oldTask.data;
+
+    let oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
+
+    if (
+      oldTask.currency !== localCountryInfo.currency &&
+      rates[oldTask.currency]
+    ) {
+      oldAmmount = oldAmmount / parseFloat(rates[oldTask.currency]);
+    }
+
+    if (
+      newTask.currency !== localCountryInfo.currency &&
+      rates[newTask.currency]
+    ) {
+      newAmmount = newAmmount / parseFloat(rates[newTask.currency]);
+    }
+
+    if (oldTask.type.id === taskModes.Income.id) {
+      if (oldTaskBudget && oldTaskBudget.data) {
+        let calAmount = parseFloat(oldTaskBudget.data.amount) - oldAmmount;
+        await updateBudget(
+          { ...oldTaskBudget.data, amount: calAmount },
+          oldTaskBudget.id
+        );
       }
+    }
 
-      if (
-        newTask.currency !== localCountryInfo.currency &&
-        rates[newTask.currency]
-      ) {
-        newAmmount = newAmmount / parseFloat(rates[newTask.currency]);
+    if (oldTask.type.id === taskModes.Expense.id) {
+      if (oldTaskBudget && oldTaskBudget.data) {
+        let calAmount = parseFloat(oldTaskBudget.data.amount) + oldAmmount;
+        await updateBudget(
+          { ...oldTaskBudget.data, amount: calAmount },
+          oldTaskBudget.id
+        );
       }
+    }
 
-      if (oldTask.type.id === taskModes.Income.id) {
-        if (oldTaskBudget && oldTaskBudget.data) {
-          let calAmount = parseFloat(oldTaskBudget.data.amount) - oldAmmount;
-          await updateBudget(
-            { ...oldTaskBudget.data, amount: calAmount },
-            oldTaskBudget.id
-          );
-        }
+    oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
+
+    if (newTask.type.id === taskModes.Income.id) {
+      if (oldTaskBudget && oldTaskBudget.data) {
+        let calAmount = parseFloat(oldTaskBudget.data.amount) + newAmmount;
+        await updateBudget(
+          { ...oldTaskBudget.data, amount: calAmount },
+          oldTaskBudget.id
+        );
       }
+    }
 
-      if (oldTask.type.id === taskModes.Expense.id) {
-        if (oldTaskBudget && oldTaskBudget.data) {
-          let calAmount = parseFloat(oldTaskBudget.data.amount) + oldAmmount;
-          await updateBudget(
-            { ...oldTaskBudget.data, amount: calAmount },
-            oldTaskBudget.id
-          );
-        }
+    if (newTask.type.id === taskModes.Expense.id) {
+      if (oldTaskBudget && oldTaskBudget.data) {
+        let calAmount = parseFloat(oldTaskBudget.data.amount) - newAmmount;
+        await updateBudget(
+          { ...oldTaskBudget.data, amount: calAmount },
+          oldTaskBudget.id
+        );
       }
+    }
 
-      oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
+    await updateDocument(newTask, taskId);
 
-      if (newTask.type.id === taskModes.Income.id) {
-        if (oldTaskBudget && oldTaskBudget.data) {
-          let calAmount = parseFloat(oldTaskBudget.data.amount) + newAmmount;
-          await updateBudget(
-            { ...oldTaskBudget.data, amount: calAmount },
-            oldTaskBudget.id
-          );
-        }
-      }
-
-      if (newTask.type.id === taskModes.Expense.id) {
-        if (oldTaskBudget && oldTaskBudget.data) {
-          let calAmount = parseFloat(oldTaskBudget.data.amount) - newAmmount;
-          await updateBudget(
-            { ...oldTaskBudget.data, amount: calAmount },
-            oldTaskBudget.id
-          );
-        }
-      }
-
-      await updateDocument(newTask, taskId);
-    
     await updateDocument(newTask, taskId);
   };
 
@@ -306,9 +303,12 @@ function TaskForm(props) {
       if (formId)
         dateRef.current.value = getFormatDateForDatePicker(new Date(formId));
       else dateRef.current.value = getFormatDateForDatePicker(new Date());
-      
+
       if (localCountryInfo && !selectedTask.currency) {
-        setSelectedTask({ ...selectedTask, currency: localCountryInfo.currency });
+        setSelectedTask({
+          ...selectedTask,
+          currency: localCountryInfo.currency,
+        });
       }
     }
 
@@ -354,133 +354,140 @@ function TaskForm(props) {
 
   return (
     <div className="task-form">
-      <div className="task-form__header">
-        <GobackButton backgroundColor={"transparent"} callback={history.goBack}>
-          Go back
-        </GobackButton>
-        <h5 className="task-form__title">{selectedTaskMode.name}</h5>
-      </div>
+      <div className="container">
+        <div className="task-form__header">
+          <GobackButton
+            backgroundColor={"transparent"}
+            callback={history.goBack}
+          >
+            Go back
+          </GobackButton>
+          <h5 className="task-form__title">{selectedTaskMode.name}</h5>
+        </div>
 
-      <ButtonGroup className="task-form__button-group">
-        {Object.keys(taskModes).map((key) => {
-          if (taskModes[key].id === selectedTaskMode.id)
-            return <CustomButton key={key}>{taskModes[key].name}</CustomButton>;
+        <ButtonGroup className="task-form__button-group">
+          {Object.keys(taskModes).map((key) => {
+            if (taskModes[key].id === selectedTaskMode.id)
+              return (
+                <CustomButton key={key}>{taskModes[key].name}</CustomButton>
+              );
 
-          return (
-            <BorderButton
-              border={{ size: 2 }}
-              callback={() => handleSelectMode(taskModes[key])}
-              key={key}
-            >
-              {taskModes[key].name}
-            </BorderButton>
-          );
-        })}
-      </ButtonGroup>
-
-      <div className="task-form__form-content">
-        <Form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="task-date" className="form-label">
-              Date
-            </label>
-            <input
-              className="form-control task-form__date-input"
-              type="date"
-              ref={dateRef}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="account-category" className="form-label">
-              Account
-            </label>
-            <input
-              className="form-control"
-              onClick={handleDisplayAccountCategoryModal}
-              type="text"
-              ref={accountCategoryRef}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="task-category" className="form-label">
-              Category
-            </label>
-            <input
-              className="form-control"
-              onClick={handleDisplayTaskCategoryModal}
-              type="text"
-              ref={taskCategoryRef}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="amount" className="form-label">
-              Amount
-            </label>
-            <div className="task-form__amount-input">
-              <span
-                className="task-form__amount-input-icon"
-                onClick={handleDisplayCurrencyModal}
+            return (
+              <BorderButton
+                border={{ size: 2 }}
+                callback={() => handleSelectMode(taskModes[key])}
+                key={key}
               >
-                {selectedTask.currency &&
-                  getSymbolByCurrency(selectedTask.currency)}
-              </span>
+                {taskModes[key].name}
+              </BorderButton>
+            );
+          })}
+        </ButtonGroup>
+
+        <div className="task-form__form-content">
+          <Form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="task-date" className="form-label">
+                Date
+              </label>
+              <input
+                className="form-control task-form__date-input"
+                type="date"
+                ref={dateRef}
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="account-category" className="form-label">
+                Account
+              </label>
               <input
                 className="form-control"
+                onClick={handleDisplayAccountCategoryModal}
                 type="text"
-                ref={amountRef}
-                onChange={handleCurrencyInputEvent}
-                defaultValue={0}
+                ref={accountCategoryRef}
                 required
-              ></input>
+              />
             </div>
-          </div>
 
-          <div className="mb-3">
-            <label htmlFor="title" className="form-label">
-              Title
-            </label>
-            <input className="form-control" type="text" ref={titleRef} />
-          </div>
+            <div className="mb-3">
+              <label htmlFor="task-category" className="form-label">
+                Category
+              </label>
+              <input
+                className="form-control"
+                onClick={handleDisplayTaskCategoryModal}
+                type="text"
+                ref={taskCategoryRef}
+                required
+              />
+            </div>
 
-          <div className="mb-3">
-            <label htmlFor="note" className="form-label">
-              Note
-            </label>
-            <textarea
-              className="form-control"
-              ref={noteRef}
-              rows="3"
-            ></textarea>
-          </div>
+            <div className="mb-3">
+              <label htmlFor="amount" className="form-label">
+                Amount
+              </label>
+              <div className="task-form__amount-input">
+                <span
+                  className="task-form__amount-input-icon"
+                  onClick={handleDisplayCurrencyModal}
+                >
+                  {selectedTask.currency &&
+                    getSymbolByCurrency(selectedTask.currency)}
+                </span>
+                <input
+                  className="form-control"
+                  type="text"
+                  ref={amountRef}
+                  onChange={handleCurrencyInputEvent}
+                  defaultValue={0}
+                  required
+                ></input>
+              </div>
+            </div>
 
-          <div className="d-grid gap-2">
-            <CustomButton type="submit">{mode}</CustomButton>
-          </div>
-        </Form>
+            <div className="mb-3">
+              <label htmlFor="title" className="form-label">
+                Title
+              </label>
+              <input className="form-control" type="text" ref={titleRef} />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="note" className="form-label">
+                Note
+              </label>
+              <textarea
+                className="form-control"
+                ref={noteRef}
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div className="d-grid gap-2">
+              <CustomButton type="submit">{mode}</CustomButton>
+            </div>
+          </Form>
+        </div>
+
+        {accountModalShow && (
+          <AccountCategoryModal callback={handleSelectAccountCategory} />
+        )}
+        {taskModalShow && (
+          <TaskCategoryModal
+            callback={handleSelectTaskCategory}
+            selectedTaskMode={selectedTaskMode}
+          />
+        )}
+        {CurrencyModalShow && (
+          <CurrencyModal
+            amountRef={amountRef}
+            setSelectedTask={setSelectedTask}
+            selectedTask={selectedTask}
+          />
+        )}
       </div>
-
-      {accountModalShow && (
-        <AccountCategoryModal callback={handleSelectAccountCategory} />
-      )}
-      {taskModalShow && (
-        <TaskCategoryModal
-          callback={handleSelectTaskCategory}
-          selectedTaskMode={selectedTaskMode}
-        />
-      )}
-      {CurrencyModalShow && (
-        <CurrencyModal
-          amountRef={amountRef}
-          setSelectedTask={setSelectedTask}
-          selectedTask={selectedTask}
-        />
-      )}
     </div>
   );
 }

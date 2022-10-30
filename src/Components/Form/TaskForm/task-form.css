@@ -1,5 +1,6 @@
 .task-form{
     background: var(--primary-color);
+    min-height: 100vh;
 }
 
 .task-form__button-group{
