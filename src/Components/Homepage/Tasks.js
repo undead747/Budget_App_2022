@@ -50,7 +50,7 @@ export default function Tasks() {
         </div>
       </div>
 
-      <div className="task__content">
+      <div className="task__content container">
         <Switch>
           <Route
             path={"/daily/:date?"}

@@ -159,11 +159,13 @@ export default function IncomesAndExpenses() {
   return (
     <div className="incomesAndExpenses">
       <div className="incomesAndExpenses__Header">
-        <div className="incomesAndExpenses__Dropdown">
-          <DropdownMode />
+        <div className="container">
+          <div className="incomesAndExpenses__Dropdown">
+            <DropdownMode />
+          </div>
+          <Navigator />
+          <ToggleTaskMode />
         </div>
-        <Navigator />
-        <ToggleTaskMode />
       </div>
       <div className="incomesAndExpenses__Chart">
         {taskMode === taskModes.Income.param && (

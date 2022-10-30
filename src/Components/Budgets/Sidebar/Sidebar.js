@@ -23,7 +23,7 @@ export default function Sidebar() {
     }, [window.location.href])
     
     return (
-        <ul className='nav-bar'>
+        <ul className='nav-bar container'>
             {
                 Object.keys(sidebarData).map(key => {
                     let tab = sidebarData[key];

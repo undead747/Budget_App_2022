@@ -31,7 +31,7 @@ export default function Settings() {
   }
 
   return (
-    <div className='settings'>
+    <div className='settings container'>
       <table className="table settings__table">
         <tbody>
           <tr className="settings__table-row">

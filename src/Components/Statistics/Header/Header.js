@@ -36,6 +36,7 @@ export default function Header() {
   }, [window.location.href])
 
   return (
+    <div className='container'>
     <ButtonGroup className="task-form__button-group">
       {Object.keys(TopbarData).map((key) => {
         if (TopbarData[key].id === selectedTab)
@@ -52,5 +53,6 @@ export default function Header() {
         );
       })}
     </ButtonGroup>
+    </div>
   )
 }

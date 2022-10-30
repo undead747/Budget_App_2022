@@ -139,7 +139,7 @@ export default function Navigator(tabId) {
 
       switch (selectedTab) {
         case sidebarData[0].id:
-          url = `/daily/${getFormatDateForDatePicker(nextDate)}`;
+          url = `/daily/${getFormatDateForDatePicker(selectedDate)}`;
           break;
         case sidebarData[1].id:
           url = `/monthly/?month=${
@@ -158,7 +158,6 @@ export default function Navigator(tabId) {
 
   const handleReactDatePicker = (date) => {
     if (!date) return;
-
     history.push(`/years/${date.getFullYear()}`);
   };
   // #region Function

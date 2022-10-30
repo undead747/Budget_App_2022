@@ -67,9 +67,11 @@ export default function Debts() {
           don't have any data to display
         </div>
 
+        <div className="container task__add-btn">
         <EclipseButton customClass="btn--task-add" callback={addDebts}>
           <i className="fas fa-plus"></i>
         </EclipseButton>
+        </div>
       </>
     );
 
@@ -145,9 +147,11 @@ export default function Debts() {
         </table>
       </div>
 
-      <EclipseButton customClass="btn--task-add" callback={addDebts}>
-        <i className="fas fa-plus"></i>
-      </EclipseButton>
+      <div className="container task__add-btn">
+        <EclipseButton customClass="btn--task-add" callback={addDebts}>
+          <i className="fas fa-plus"></i>
+        </EclipseButton>
+        </div>
     </div>
   );
 }

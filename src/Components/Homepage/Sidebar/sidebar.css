@@ -10,6 +10,8 @@
     flex-grow: 1;
     text-align: center;
     position: initial;
+
+    cursor: pointer;
 }
 
 .nav-bar__item.active{

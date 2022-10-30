@@ -9,7 +9,7 @@ import Statistics from './Statistics/Statistics';
 
 export default function Home() {
     return (
-        <div className='container'>
+        <div>
             <Switch>
                 <Route path={'/task/:mode/:id?'} component={TaskForm} />
                 <Route path={'/statistics'} component={Statistics} />

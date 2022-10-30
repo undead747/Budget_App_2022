@@ -12,7 +12,7 @@ export default function Budgets() {
       <div className='header budgets__header'>
          <Sidebar />
       </div>
-      <div className="budgets__content">
+      <div className="budgets__content container">
         <Switch>
             <Route path={'/budgets/debts'} component={Debts} />
             <Route path={'/budgets'} component={Incomes} />

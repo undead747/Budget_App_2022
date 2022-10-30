@@ -5,6 +5,8 @@
 
 .incomesAndExpenses__Chart{
     background-color: var(--primary-color);
+    height: calc(100vh - 260px);
+    overflow: auto;
 }
 
 .incomesAndExpenses__Dropdown{
@@ -14,6 +16,14 @@
     margin-right: .2em;
 }
 
-.incomesAndExpenses__Dropdown > .form-select{
-    width: 45%;
+@media only screen and (min-width: 768px) {
+    .incomesAndExpenses__Dropdown > .form-select{
+        width: 40%;
+}
+}
+
+@media only screen and (min-width: 992px) {
+    .incomesAndExpenses__Dropdown > .form-select{
+        width: 25%;
+}
 }
