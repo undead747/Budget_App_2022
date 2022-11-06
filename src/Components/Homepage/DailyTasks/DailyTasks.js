@@ -98,58 +98,58 @@ export default function DailyTasks() {
     if (incomeTasks.length === 0) return;
 
     return (
-      <div className="task-table">
-      <table className="table">
-        <thead>
-          <tr className="task-table__header">
-            <th className="task-table__header-title">
-              <i className="fas fa-long-arrow-alt-up"></i>Income
-            </th>
-            <th></th>
-            <th className="text-end">
-              <span className="text-success">
-                {parseInt(incomeTotal) !== 0 && "+ "}
-                {convertNumberToCurrency(
-                  localCountryInfo.currency,
-                  incomeTotal
-                )}
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {incomeTasks.map((task) => {
-            return (
-              <tr
-                className="task-table__row"
-                key={task.id}
-                onClick={() => handleEditTask(task.id)}
-              >
-                <td className="text-start">
-                  {task.taskCate && task.taskCate.name}
-                </td>
-                <td className="text-start">
-                  <div className="task-table__row-title">
-                    <span>{task.accountCate && task.accountCate.name}</span>
-                    <span className="opacity-75">
-                      {task.title && task.title}
-                      {task.note && `(${task.note})`} 
-                    </span>
-                  </div>
-                </td>
-                <td className="text-end fw-bolder">
-                  + {convertNumberToCurrency(task.currency, task.amount)}
-                </td>
-                <td>
-                  <CustomButton callback={(e) => handleDeleteTask(task, e)}>
-                    <i className="fas fa-trash"></i>
-                  </CustomButton>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="task-table__wrapper--daily-task">
+        <table className="table task-table">
+          <thead>
+            <tr className="task-table__header">
+              <th className="task-table__header-title text-nowrap">
+                <i className="fas fa-long-arrow-alt-up"></i>Income
+              </th>
+              <th></th>
+              <th className="text-end text-nowrap">
+                <span className="text-success">
+                  {parseInt(incomeTotal) !== 0 && "+ "}
+                  {convertNumberToCurrency(
+                    localCountryInfo.currency,
+                    incomeTotal
+                  )}
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {incomeTasks.map((task) => {
+              return (
+                <tr
+                  className="task-table__row"
+                  key={task.id}
+                  onClick={() => handleEditTask(task.id)}
+                >
+                  <td className="text-start text-nowrap">
+                    {task.taskCate && task.taskCate.name}
+                  </td>
+                  <td className="text-start text-nowrap">
+                    <div className="task-table__row-title">
+                      <span>{task.accountCate && task.accountCate.name}</span>
+                      <span className="opacity-75">
+                        {task.title && task.title}
+                        {task.note && `(${task.note})`} 
+                      </span>
+                    </div>
+                  </td>
+                  <td className="text-end fw-bolder text-nowrap">
+                    + {convertNumberToCurrency(task.currency, task.amount)}
+                  </td>
+                  <td>
+                    <CustomButton callback={(e) => handleDeleteTask(task, e)}>
+                      <i className="fas fa-trash"></i>
+                    </CustomButton>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     );
   };
@@ -167,59 +167,59 @@ export default function DailyTasks() {
     if (expenseTasks.length === 0) return;
 
     return (
-      <div className="task-table">
-      <table className="table">
-        <thead>
-          <tr className="task-table__header">
-            <th className="task-table__header-title">
-              <i className="fas fa-long-arrow-alt-down"></i>Expense
-            </th>
-            <th></th>
-            <th className="text-end">
-              <span className="text-danger">
-                {parseInt(expenseTotal) !== 0 && "- "}
-                {convertNumberToCurrency(
-                  localCountryInfo.currency,
-                  expenseTotal
-                )}
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {expenseTasks.map((task) => {
-            return (
-              <tr
-                className="task-table__row"
-                key={task.id}
-                onClick={() => handleEditTask(task.id)}
-              >
-                <td className="text-start">
-                  {task.taskCate && task.taskCate.name}
-                </td>
-                <td className="text-start">
-                  <div className="task-table__row-title">
-                    <span>{task.accountCate && task.accountCate.name}</span>
-                    <span className="opacity-75">
-                      {task.title && task.title}
-                      {task.note && `(${task.note})`} 
-                    </span>
-                  </div>
-                </td>
-                <td className="text-end fw-bolder">
-                  - {convertNumberToCurrency(task.currency, task.amount)}
-                </td>
-                <td>
-                  <CustomButton callback={(e) => handleDeleteTask(task, e)}>
-                    <i className="fas fa-trash"></i>
-                  </CustomButton>
-                </td>
+      <div className="task-table__wrapper--daily-task">
+          <table className="table task-table">
+            <thead>
+              <tr className="task-table__header text-nowrap">
+                <th className="task-table__header-title">
+                  <i className="fas fa-long-arrow-alt-down"></i>Expense
+                </th>
+                <th></th>
+                <th className="text-end text-nowrap">
+                  <span className="text-danger">
+                    {parseInt(expenseTotal) !== 0 && "- "}
+                    {convertNumberToCurrency(
+                      localCountryInfo.currency,
+                      expenseTotal
+                    )}
+                  </span>
+                </th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      </div>
+            </thead>
+            <tbody>
+              {expenseTasks.map((task) => {
+                return (
+                  <tr
+                    className="task-table__row"
+                    key={task.id}
+                    onClick={() => handleEditTask(task.id)}
+                  >
+                    <td className="text-start text-nowrap">
+                      {task.taskCate && task.taskCate.name}
+                    </td>
+                    <td className="text-start text-nowrap">
+                      <div className="task-table__row-title">
+                        <span>{task.accountCate && task.accountCate.name}</span>
+                        <span className="opacity-75">
+                          {task.title && task.title}
+                          {task.note && `(${task.note})`} 
+                        </span>
+                      </div>
+                    </td>
+                    <td className="text-end fw-bolder text-nowrap">
+                      - {convertNumberToCurrency(task.currency, task.amount)}
+                    </td>
+                    <td>
+                      <CustomButton callback={(e) => handleDeleteTask(task, e)}>
+                        <i className="fas fa-trash"></i>
+                      </CustomButton>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
     );
   };
 
@@ -347,7 +347,9 @@ export default function DailyTasks() {
   return (
     <div className="daily">
       <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} />
-      {displayIncomeTable()}
+      <div className="mb-3">
+        {displayIncomeTable()}
+      </div>
       {displayExpenseTable()}
     </div>
   );

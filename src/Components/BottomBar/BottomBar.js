@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { useHomeController } from '../HomeContext';
 import { bottombarData } from './BottomBarData'
 import './bottom-bar.css';
+import Alert from '../Alert/Alert';
 
 export default function BottomBar() {
     const {selectedBottomTab, setSelectBottomTab} = useHomeController();

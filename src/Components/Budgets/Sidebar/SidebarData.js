@@ -9,4 +9,9 @@ export const sidebarData = {
         title: 'Debt',
         path: '/budgets/debts'
     }, 
+    SpendingLimit: {
+        id: 2,
+        title: 'Spending Limit',
+        path: '/budgets/spendinglimit'
+    }, 
 }

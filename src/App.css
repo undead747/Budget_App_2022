@@ -19,6 +19,7 @@
     --side-bar-full-width--desktop: 200px;
     --icon-size: 35px;
     --icon-size--desktop: 50px;
+    --bottom-bar-height: 60px;
 
     /*---------- Font and typography --------*/
     /* defined font family */
@@ -55,6 +56,9 @@ body {
     scroll-behavior: smooth;
 }
 
+.text-nowrap {
+    white-space: nowrap;
+}
 
 .app{
     background-color: var(--background-color);
@@ -105,8 +109,6 @@ body {
     justify-content: space-between;
     align-items: center;
     margin: 1em .7em;
-
-    overflow-x: auto;
 }
 
 .summary__item{

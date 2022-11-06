@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   DatabaseCollections,
+  useFirestore,
   useFirestoreRealtime,
 } from "../Database/useFirestore";
 import { getLocalCountryInfo } from "../Helpers/CountryHelper";
 import {
   getAllCurrenciesInfo,
   getCurrencyInfoByCountryCode,
+  getCurrencyRateByCode,
 } from "../Helpers/CurrencyHelper";
 import {
   useConfirmModal,
@@ -27,6 +29,11 @@ export default function HomeProvider({ children }) {
   const [selectedBottomTab, setSelectBottomTab] = useState();
   const [localCountryInfo, setLocalCountryInfo] = useState();
   const [countriesCurrencyInfo, setCountriesCurrencyInfo] = useState();
+  const [debtAlert, setDebtAlert] = useState(false);
+  const [spendLimitAlert, setSpendLimitAlert] = useState(false);
+
+  const [demandTotal, setDemandTotal] = useState();
+
   const accountCategories = useFirestoreRealtime(
     DatabaseCollections.AccountCategory
   );
@@ -35,6 +42,10 @@ export default function HomeProvider({ children }) {
   );
   const expenseCategories = useFirestoreRealtime(
     DatabaseCollections.ExpenseCategory
+  );
+
+  const { getDocuments: getDemands } = useFirestore(
+    DatabaseCollections.Demands
   );
 
   const {
@@ -100,6 +111,10 @@ export default function HomeProvider({ children }) {
     accountCategories,
     incomeCategories,
     expenseCategories,
+    spendLimitAlert,
+    setSpendLimitAlert,
+    debtAlert,
+    setDebtAlert
   };
 
   return (

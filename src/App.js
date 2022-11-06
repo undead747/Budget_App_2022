@@ -7,7 +7,9 @@ import {
 import "./App.css";
 import { AuthProvider } from "./Auth/authContext";
 import PrivateRoute from "./Auth/PrivateRoute";
+import Alert from "./Components/Alert/Alert";
 import DebtForm from "./Components/Form/TaskForm/DebtForm";
+import DemandForm from "./Components/Form/TaskForm/DemandForm";
 import TaskForm from "./Components/Form/TaskForm/TaskForm";
 import Home from "./Components/Home";
 import HomeProvider from "./Components/HomeContext";
@@ -25,6 +27,7 @@ function App() {
               <Route path={"/login"} component={Login} />
               <PrivateRoute path={'/task/:mode/:id?'} component={TaskForm} />
               <PrivateRoute path={'/debt/:mode/:id?'} component={DebtForm} />
+              <PrivateRoute path={'/demand/:mode/:id?'} component={DemandForm} />
               <PrivateRoute path="/" component={Home} />
               <Redirect to={"/"} />
             </Switch>

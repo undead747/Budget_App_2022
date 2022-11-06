@@ -80,15 +80,17 @@ export async function getCurrencyRateByCode(currencyCode) {
     // if exchange rates exist in local storage
     let rates = getCurrenciesFromLocalStorage(currencyCode);
     if (rates && rates.length !== 0) resolve(rates[0].rates);
+    else {
+      // if not, start request api to v6.exchangerate-api.com
+      const result = await sendRequest({ url: exchangerateApi + currencyCode });
+    
+      if (!result || !result.data) resolve(null);
+      else{
+        setCurrenciesFromLocalStorage(currencyCode, result.data.conversion_rates);
+        resolve(result.data.conversion_rates);
+      }
+    }
   
-    // if not, start request api to v6.exchangerate-api.com
-    const result = await sendRequest({ url: exchangerateApi + currencyCode });
-  
-    if (!result || !result.data) resolve(null);
-  
-    setCurrenciesFromLocalStorage(currencyCode, result.data.conversion_rates);
-  
-    resolve(result.data.conversion_rates);
   })
 
 }

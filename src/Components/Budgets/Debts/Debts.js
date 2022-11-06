@@ -6,6 +6,7 @@ import {
   useFirestore,
 } from "../../../Database/useFirestore";
 import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
+import { compareTwoDate } from "../../../Helpers/DateHelper";
 import EclipseButton from "../../CommonComponents/Button/EclipseButton";
 import { useHomeController } from "../../HomeContext";
 import "./debt.css";
@@ -24,7 +25,20 @@ export default function Debts() {
     setErrorModalContent,
     localCountryInfo,
     setLoading,
+    spendLimitAlert, 
+    debtAlert
   } = useHomeController();
+
+  const decorAddButton = () => {
+    let count = 0;
+
+    if(spendLimitAlert) count += 1;
+    if(debtAlert) count += 1;
+
+    if(count === 0) return `container task__add-btn`;
+    if(count === 1) return `container task__add-btn task__add-btn--1-alert`;
+    if(count === 2) return `container task__add-btn task__add-btn--2-alert`;
+  }
 
   useEffect(() => {
     loadDebts();
@@ -36,15 +50,22 @@ export default function Debts() {
       let debts = await getDocuments();
       setLoading(false);
 
-      console.log(debts);
       if (debts) {
         setDebts(debts);
       }
     } catch (error) {
-      setErrorModalContent(JSON.stringify(error));
+      setErrorModalContent(error.message);
       handleErrorShow();
     }
   };
+
+  const decorDeadline = (deadline) => {
+    const compareRslt = compareTwoDate(new Date(), deadline.toDate());
+
+    if(compareRslt === 1) return "summary__val summary__val--success text-success";
+    if(compareRslt === 0) return "summary__val summary__val--warning text-warning";
+    if(compareRslt === -1) return "summary__val summary__val--danger text-danger";
+  }
 
   const addDebts = () => history.push(`/debt/add`);
   
@@ -67,7 +88,7 @@ export default function Debts() {
           don't have any data to display
         </div>
 
-        <div className="container task__add-btn">
+        <div className="container-md task__add-btn">
         <EclipseButton customClass="btn--task-add" callback={addDebts}>
           <i className="fas fa-plus"></i>
         </EclipseButton>
@@ -77,7 +98,7 @@ export default function Debts() {
 
   return (
     <div className="debt">
-      <div className="task-table">
+      <div className="task-table__wrapper">
         <table className="table task-table">
           <tbody>
             {debts &&
@@ -109,7 +130,7 @@ export default function Debts() {
                     key={id}
                     onClick={(event) => handleEditDebt(event, id)}
                   >
-                    <td className="text-start">
+                    <td className="text-start text-nowrap">
                       <div className="d-flex flex-column align-items-start">
                         <span>
                           <i className="far fa-user"></i>{" "}
@@ -121,7 +142,7 @@ export default function Debts() {
                         </span>
                       </div>
                     </td>
-                    <td className="text-start">
+                    <td className="text-start text-nowrap">
                       <div className="d-flex flex-column align-items-center">
                         <span>{data.title && data.title}</span>
                         <span className="opacity-75">
@@ -129,12 +150,12 @@ export default function Debts() {
                         </span>
                       </div>
                     </td>
-                    <td>
+                    <td className="text-nowrap">
                       <div className="d-flex flex-column align-items-center">
                         <span className="text-end fw-bolder">
                           {convertNumberToCurrency(data.currency, data.amount)}
                         </span>
-                        <span className="summary__val summary__val--warning text-warning">
+                        <span className={decorDeadline(data.formatedDeadline)}>
                           <i className="far fa-clock"></i>{" "}
                           {data.deadline && data.deadline}
                         </span>
@@ -147,7 +168,7 @@ export default function Debts() {
         </table>
       </div>
 
-      <div className="container task__add-btn">
+      <div className={decorAddButton()}>
         <EclipseButton customClass="btn--task-add" callback={addDebts}>
           <i className="fas fa-plus"></i>
         </EclipseButton>

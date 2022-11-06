@@ -1,7 +1,10 @@
+.task-table__wrapper--daily-task{
+    height: 28vh;
+    overflow: auto;
+}
+
 .task-table{
     background-color: var(--primary-color);
-    max-height: 55vh;
-    overflow: auto;
 }
 
 .task-table table{

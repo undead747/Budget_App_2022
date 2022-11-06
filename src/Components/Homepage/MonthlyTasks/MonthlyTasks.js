@@ -207,10 +207,10 @@ export default function MonthlyTasks() {
                     key={task.date}
                     onClick={(e) => handleRedirectToDailyTasks(task.date, e)}
                   >
-                    <td className="text-start">
+                    <td className="text-start text-nowrap">
                       {new Date(task.date).toLocaleDateString()}
                     </td>
-                    <td className="text-end">
+                    <td className="text-end text-nowrap">
                       <span className="text-success">
                         +{" "}
                         {convertNumberToCurrency(
@@ -219,7 +219,7 @@ export default function MonthlyTasks() {
                         )}
                       </span>
                     </td>
-                    <td>
+                    <td className="text-nowrap">
                       <div className="d-flex flex-column text-end">
                         <span className="text-danger">
                           -{" "}

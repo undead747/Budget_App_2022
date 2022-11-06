@@ -1,4 +1,4 @@
 .task-table__wrapper{
     height: 50vh;
-    overflow-y: auto;
+    overflow: auto;
 }

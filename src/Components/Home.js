@@ -1,5 +1,6 @@
 import React from 'react'
 import { Redirect, Route, Switch } from 'react-router-dom';
+import Alert from './Alert/Alert';
 import BottomBar from './BottomBar/BottomBar';
 import Budgets from './Budgets/Budgets';
 import TaskForm from './Form/TaskForm/TaskForm';
@@ -18,6 +19,7 @@ export default function Home() {
                 <Route path={'/'} component={Tasks} />
                 <Redirect to={"/"} />
             </Switch>
+            <Alert />
             <BottomBar />
         </div>
       );

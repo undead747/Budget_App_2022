@@ -1,0 +1,11 @@
+.alert-bar{
+    position: fixed;
+    left: 0;
+    bottom: var(--bottom-bar-height);
+    width: 100%;
+    background-color: var(--primary-color);
+}
+
+.alert-bar > *{
+    margin-bottom: .3em !important;
+}

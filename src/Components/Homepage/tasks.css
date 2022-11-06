@@ -12,16 +12,25 @@
 }
 
 .task__add-btn{
+    width: 100%;
     position: fixed;
-    bottom: 12%;
+    bottom: calc(var(--bottom-bar-height) + 1em);
     left: 50%;
     transform: translate(-50%, 0);
+    
+    display: flex;
+}
+
+.task__add-btn--1-alert{
+    bottom: calc(var(--bottom-bar-height) + 6em);
+}
+
+.task__add-btn--2-alert{
+    bottom: calc(var(--bottom-bar-height) + 12em);
 }
 
 .btn--task-add{
-    position: fixed;
-    right: 5%;
-    bottom: 0;
+    margin-left: auto;
     font-size: 1.3rem !important;
     color: var(--primary-color) !important;
 }

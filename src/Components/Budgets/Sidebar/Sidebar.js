@@ -14,8 +14,13 @@ export default function Sidebar() {
     useEffect(() => {
         const url = window.location.href;
 
-        if(url.includes("debt")){
+        if(url.includes(sidebarData.Debt.path)){
             setSelectTab(sidebarData.Debt.id);
+            return
+        } 
+
+        if(url.includes(sidebarData.SpendingLimit.path)){
+            setSelectTab(sidebarData.SpendingLimit.id);
             return
         } 
 

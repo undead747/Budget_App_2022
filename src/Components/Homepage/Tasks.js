@@ -17,12 +17,16 @@ import TasksByCalendar from "./TasksByCalendar/TasksByCalendar";
 import TasksByYears from "./TasksByYears/TasksByYears";
 import "./tasks.css";
 import EclipseButton from "../CommonComponents/Button/EclipseButton";
+import { useHomeController } from "../HomeContext";
 
 export default function Tasks() {
   const [errors, setErrors] = useState();
   const { logout } = useAuth();
   const history = useHistory();
   const { pathname } = useLocation();
+
+  // Get loading animantion, alert message, current location information from home-Controller.
+  const { spendLimitAlert, debtAlert } = useHomeController();
 
   const handleAddTask = () => {
     let dateParam = matchPath(pathname, { path: "/:mode/:date?" });
@@ -39,6 +43,17 @@ export default function Tasks() {
     } catch (error) {
       setErrors(error.message);
     }
+  }
+
+  const decorAddButton = () => {
+    let count = 0;
+
+    if(spendLimitAlert) count += 1;
+    if(debtAlert) count += 1;
+
+    if(count === 0) return `container task__add-btn`;
+    if(count === 1) return `container task__add-btn task__add-btn--1-alert`;
+    if(count === 2) return `container task__add-btn task__add-btn--2-alert`;
   }
 
   return (
@@ -72,7 +87,7 @@ export default function Tasks() {
         </Switch>
       </div>
 
-      <div className="container task__add-btn">
+      <div className={decorAddButton()}>
         <EclipseButton customClass="btn--task-add" callback={handleAddTask}>
           <i className="fas fa-plus"></i>
         </EclipseButton>

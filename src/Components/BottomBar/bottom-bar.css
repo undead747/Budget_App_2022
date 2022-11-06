@@ -4,6 +4,7 @@
     bottom: 0;
     width: 100%;
     background-color: var(--primary-color);
+    height: var(--bottom-bar-height);
 }
 
 .bottom-bar__content{

@@ -5,6 +5,7 @@ import Debts from './Debts/Debts'
 import Incomes from './Incomes/Incomes'
 import Sidebar from './Sidebar/Sidebar'
 import './budgets.css'
+import SpendingLimit from './SpendingLimit/SpendingLimit'
 
 export default function Budgets() {
   return (
@@ -14,6 +15,7 @@ export default function Budgets() {
       </div>
       <div className="budgets__content container">
         <Switch>
+            <Route path={'/budgets/spendinglimit'} component={SpendingLimit} />
             <Route path={'/budgets/debts'} component={Debts} />
             <Route path={'/budgets'} component={Incomes} />
             <Redirect to={'/'} />

@@ -54,29 +54,30 @@ export default function Incomes() {
 
   return <>
       <IncomeHeader budgets={budgets} debts={0} />
+      <div className="task-table__wrapper">
+        <table className="table task-table">
+          <tbody>
+              {
+                incomes && incomes.map(cate => {
+                  let budget = cate.data;
 
-      <table className="table task-table">
-        <tbody>
-            {
-              incomes && incomes.map(cate => {
-                let budget = cate.data;
-
-                return (
-                  <tr
-                  className="task-table__row"
-                  key={cate.id}
-                >
-                  <td className="text-start">
-                    {budget.name}
-                  </td>
-                  <td className="text-end fw-bolder">
-                    {convertNumberToCurrency(localCountryInfo.currency, budget.amount)}
-                  </td>
-                </tr>
-                )
-              })
-            }          
-        </tbody>
-      </table>
+                  return (
+                    <tr
+                    className="task-table__row"
+                    key={cate.id}
+                  >
+                    <td className="text-start">
+                      {budget.name}
+                    </td>
+                    <td className="text-end fw-bolder">
+                      {convertNumberToCurrency(localCountryInfo.currency, budget.amount)}
+                    </td>
+                  </tr>
+                  )
+                })
+              }          
+          </tbody>
+        </table>
+      </div>
   </>;
 }

@@ -202,8 +202,8 @@ export default function TasksByYears() {
                     key={task.month}
                     onClick={(e) => handleRedirectToDailyTasks(task.date, e)}
                   >
-                    <td className="text-start">{task.month}</td>
-                    <td className="text-end">
+                    <td className="text-start text-nowrap">{task.month}</td>
+                    <td className="text-end text-nowrap">
                       <span className="text-success">
                         +{" "}
                         {convertNumberToCurrency(
@@ -212,7 +212,7 @@ export default function TasksByYears() {
                         )}
                       </span>
                     </td>
-                    <td>
+                    <td className="text-nowrap">
                       <div className="d-flex flex-column text-end">
                         <span className="text-danger">
                           -{" "}
