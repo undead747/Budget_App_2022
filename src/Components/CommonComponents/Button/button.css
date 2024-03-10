@@ -24,6 +24,7 @@
     font-size: 1.7rem;  
 }
 
+
 .btn--go-back > *:first-child{
     margin-right: .3rem;
 }
@@ -35,6 +36,11 @@
     border: transparent;
     outline: none !important;
     box-shadow:none !important;
+}
+
+.btn.btn--eclipse:hover,
+.btn.btn--eclipse:focus{
+    box-shadow: 1px 3px 6px rgb(0 0 0 / 30%) !important;
 }
 
 @media only screen and (min-width: 992px) {

@@ -37,6 +37,10 @@ export default function DailyTasks() {
     DatabaseCollections.Tasks
   );
   const {
+    getDocumentsByPagination: getTransfersByPagination,
+    deleteDocument: deleteTransfer,
+  } = useFirestore(DatabaseCollections.Transfer);
+  const {
     getDocumentById: getBudgetById,
     addDocumentWithId: addBudget,
     updateDocument: updateBudget,
@@ -45,6 +49,7 @@ export default function DailyTasks() {
   const loadDataFlag = useRef(false);
 
   const [tasks, setTasks] = useState([]);
+  const [transfers, setTransfers] = useState([]);
   const [incomeTotal, setIncomeTotal] = useState(parseFloat(0).toFixed(2));
   const [expenseTotal, setExpenseTotal] = useState(parseFloat(0).toFixed(2));
 
@@ -61,6 +66,7 @@ export default function DailyTasks() {
    */
   useEffect(() => {
     getTasksByDate(param.date);
+    getTransferByDate(param.date);
   }, [param.date]);
 
   const getTasksByDate = async (dateParam) => {
@@ -69,7 +75,7 @@ export default function DailyTasks() {
         loadDataFlag.current = true;
 
         setLoading(true);
-        
+
         const tasks = await getDocumentsByPagination({
           params: [{ key: Tasks.date, operator: "==", value: dateParam }],
         });
@@ -82,6 +88,25 @@ export default function DailyTasks() {
     } finally {
       setLoading(false);
       loadDataFlag.current = false;
+    }
+  };
+
+  const getTransferByDate = async (dateParam) => {
+    try {
+      if (dateParam && transfers.length === 0) {
+        setLoading(true);
+
+        const transfers = await getTransfersByPagination({
+          params: [{ key: Tasks.date, operator: "==", value: dateParam }],
+        });
+
+        setTransfers(transfers);
+      }
+    } catch (error) {
+      setErrorModalContent(error.message);
+      handleErrorShow();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,7 +158,7 @@ export default function DailyTasks() {
                       <span>{task.accountCate && task.accountCate.name}</span>
                       <span className="opacity-75">
                         {task.title && task.title}
-                        {task.note && `(${task.note})`} 
+                        {task.note && `(${task.note})`}
                       </span>
                     </div>
                   </td>
@@ -141,9 +166,11 @@ export default function DailyTasks() {
                     + {convertNumberToCurrency(task.currency, task.amount)}
                   </td>
                   <td>
-                    <CustomButton callback={(e) => handleDeleteTask(task, e)}>
-                      <i className="fas fa-trash"></i>
-                    </CustomButton>
+                    <div className="d-flex justify-content-end align-items-center">
+                      <CustomButton callback={(e) => handleDeleteTask(task, e)}>
+                        <i className="fas fa-trash"></i>
+                      </CustomButton>
+                    </div>
                   </td>
                 </tr>
               );
@@ -168,58 +195,122 @@ export default function DailyTasks() {
 
     return (
       <div className="task-table__wrapper--daily-task">
-          <table className="table task-table">
-            <thead>
-              <tr className="task-table__header text-nowrap">
-                <th className="task-table__header-title">
-                  <i className="fas fa-long-arrow-alt-down"></i>Expense
-                </th>
-                <th></th>
-                <th className="text-end text-nowrap">
-                  <span className="text-danger">
-                    {parseInt(expenseTotal) !== 0 && "- "}
-                    {convertNumberToCurrency(
-                      localCountryInfo.currency,
-                      expenseTotal
-                    )}
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {expenseTasks.map((task) => {
-                return (
-                  <tr
-                    className="task-table__row"
-                    key={task.id}
-                    onClick={() => handleEditTask(task.id)}
-                  >
-                    <td className="text-start text-nowrap">
-                      {task.taskCate && task.taskCate.name}
-                    </td>
-                    <td className="text-start text-nowrap">
-                      <div className="task-table__row-title">
-                        <span>{task.accountCate && task.accountCate.name}</span>
-                        <span className="opacity-75">
-                          {task.title && task.title}
-                          {task.note && `(${task.note})`} 
-                        </span>
-                      </div>
-                    </td>
-                    <td className="text-end fw-bolder text-nowrap">
-                      - {convertNumberToCurrency(task.currency, task.amount)}
-                    </td>
-                    <td>
+        <table className="table task-table">
+          <thead>
+            <tr className="task-table__header text-nowrap">
+              <th className="task-table__header-title">
+                <i className="fas fa-long-arrow-alt-down"></i>Expense
+              </th>
+              <th></th>
+              <th className="text-end text-nowrap">
+                <span className="text-danger">
+                  {parseInt(expenseTotal) !== 0 && "- "}
+                  {convertNumberToCurrency(
+                    localCountryInfo.currency,
+                    expenseTotal
+                  )}
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {expenseTasks.map((task) => {
+              return (
+                <tr
+                  className="task-table__row"
+                  key={task.id}
+                  onClick={() => handleEditTask(task.id)}
+                >
+                  <td className="text-start text-nowrap">
+                    {task.taskCate && task.taskCate.name}
+                  </td>
+                  <td className="text-start text-nowrap">
+                    <div className="task-table__row-title">
+                      <span>{task.accountCate && task.accountCate.name}</span>
+                      <span className="opacity-75">
+                        {task.title && task.title}
+                        {task.note && `(${task.note})`}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="text-end fw-bolder text-nowrap">
+                    - {convertNumberToCurrency(task.currency, task.amount)}
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-end align-items-center">
                       <CustomButton callback={(e) => handleDeleteTask(task, e)}>
                         <i className="fas fa-trash"></i>
                       </CustomButton>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  /**
+   * Display tasks with expense type.
+   */
+  const displayTransferTable = () => {
+    if (!transfers || transfers.length === 0) return;
+
+    return (
+      <div className="task-table__wrapper--daily-task">
+        <table className="table task-table">
+          <thead>
+            <tr className="task-table__header text-nowrap">
+              <th className="task-table__header-title">
+                <i className="fas fa-long-arrow-alt-down"></i>Transfer
+              </th>
+              <th></th>
+              <th className="text-end text-nowrap">
+                <span className="text-danger"></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {transfers.map((transfer) => {
+              return (
+                <tr
+                  className="task-table__row"
+                  key={transfer.id}
+                >
+                  <td className="text-start text-nowrap">
+                    <span className="me-2">
+                      {transfer.fromIncomeCate && transfer.fromIncomeCate.name}
+                    </span>
+                    <i className="fa fa-arrow-right me-2"></i>
+                    {transfer.toIncomeCate && transfer.toIncomeCate.name}
+                  </td>
+                  <td className="text-start text-nowrap opacity-75">
+                    {transfer.note && transfer.note}
+                  </td>
+                  <td className="text-end fw-bolder text-nowrap">
+                    -{" "}
+                    {convertNumberToCurrency(
+                      transfer.currency,
+                      transfer.amount
+                    )}
+                  </td>
+                  <td>
+                    <div className="d-flex justify-content-end align-items-center">
+                      <CustomButton
+                        callback={(e) => handleDeleteTransfer(transfer, e)}
+                      >
+                        <i className="fas fa-trash"></i>
+                      </CustomButton>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     );
   };
 
@@ -290,10 +381,8 @@ export default function DailyTasks() {
         await deleteDocument(task.id);
         setLoading(false);
 
-        let tasks = await getDocumentsByPagination({
-          params: [{ key: Tasks.date, operator: "==", value: param.date }],
-        });
-        setTasks(tasks);
+        let filterTasks = tasks.filter(itm => itm.id !== task.id);
+        setTasks(filterTasks);
 
         let rates = await getCurrencyRateByCode(localCountryInfo.currency);
         let amount = parseFloat(task.amount);
@@ -336,6 +425,58 @@ export default function DailyTasks() {
   };
 
   /**
+   * Handle delete task  event.
+   * @param {string} taskId - delete task ID.
+   * @param {object} e - triggered delete button.
+   */
+  const handleDeleteTransfer = async (transfer, e) => {
+    e.stopPropagation();
+
+    setConfirmModalContent("are you sure to delete this transfer ? ");
+
+    handleConfirmShow(async () => {
+      try {
+        setLoading(true);
+        await deleteTransfer(transfer.id);
+        setLoading(false);
+
+        let filterTransfers = transfers.filter(item => item.id !== transfer.id);
+        setTransfers(filterTransfers);
+
+        let amount = parseFloat(transfer.amount);
+        let rates = await getCurrencyRateByCode(localCountryInfo.currency);
+        if (
+          transfer.currency !== localCountryInfo.currency &&
+          rates[transfer.currency]
+        ) {
+          amount = amount / parseFloat(rates[transfer.currency]);
+        }
+        
+        let fromCateBudget = await getBudgetById(transfer.fromIncomeCate.id);
+        let toCateBudget = await getBudgetById(transfer.toIncomeCate.id);
+
+        let calAmount = parseFloat(fromCateBudget.data.amount) + amount;
+        await updateBudget(
+          { ...fromCateBudget.data, amount: calAmount },
+          fromCateBudget.id
+        );
+
+        calAmount = parseFloat(toCateBudget.data.amount) - amount;
+        if(toCateBudget && toCateBudget.data){
+          await updateBudget(
+            { ...toCateBudget.data, amount: calAmount },
+            toCateBudget.id
+          );
+        }
+      } catch (err) {
+        setErrorModalContent(err.message);
+        handleErrorShow();
+      } finally {
+        setLoading(false);
+      }
+    });
+  };
+  /**
    * Handle edit task  event.
    * Redirect to edit form.
    * @param {string} taskId - delete task ID.
@@ -347,10 +488,9 @@ export default function DailyTasks() {
   return (
     <div className="daily">
       <Summary expenseTotal={expenseTotal} incomeTotal={incomeTotal} />
-      <div className="mb-3">
-        {displayIncomeTable()}
-      </div>
-      {displayExpenseTable()}
+      <div className="mb-3">{displayIncomeTable()}</div>
+      <div>{displayExpenseTable()}</div>
+      {displayTransferTable()}
     </div>
   );
 }

@@ -17,10 +17,16 @@ export const bottombarData = {
         path: '/budgets',
         icon: <i className="fas fa-piggy-bank"></i>
     },
-    Settings: {
+    Sync: {
         id: 3,
+        title: 'sync',
+        path: '/sync',
+        icon: <i className="fas fa-sync"></i>
+    },
+    Settings: {
+        id: 4,
         title: 'settings',
         path: '/settings',
         icon: <i className="fa fa-ellipsis-h"></i>
-    }
+    },
 }

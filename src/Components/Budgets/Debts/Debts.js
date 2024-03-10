@@ -62,9 +62,9 @@ export default function Debts() {
   const decorDeadline = (deadline) => {
     const compareRslt = compareTwoDate(new Date(), deadline.toDate());
 
-    if(compareRslt === 1) return "summary__val summary__val--success text-success";
+    if(compareRslt === -1) return "summary__val summary__val--success text-success";
     if(compareRslt === 0) return "summary__val summary__val--warning text-warning";
-    if(compareRslt === -1) return "summary__val summary__val--danger text-danger";
+    if(compareRslt === 1) return "summary__val summary__val--danger text-danger";
   }
 
   const addDebts = () => history.push(`/debt/add`);

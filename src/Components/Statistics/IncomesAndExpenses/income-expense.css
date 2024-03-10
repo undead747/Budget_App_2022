@@ -6,7 +6,7 @@
 .incomesAndExpenses__Chart{
     margin-top: .2em;
     background-color: var(--primary-color);
-    height: calc(100vh - 260px);
+    height: calc(100vh - 264px);
     overflow: auto;
 }
 

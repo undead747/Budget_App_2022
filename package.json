@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.1.0-9",
+    "@react-oauth/google": "^0.12.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,6 +13,8 @@
     "boxicons": "^2.1.2",
     "chart.js": "^3.9.1",
     "firebase": "^9.8.3",
+    "google-auth-library": "^9.6.3",
+    "googleapis": "^133.0.0",
     "iso-country-currency": "^0.6.0",
     "react": "^18.1.0",
     "react-bootstrap": "^2.4.0",

@@ -100,19 +100,26 @@ export function getLastDayOfMonth(month = new Date().getMonth(), year = new Date
 export function checkTwoDateEqualizer(date1, date2){
     if(!date1 || !date2) return;
 
-    if(date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDay()) return true;
+    if(date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth() && date1.getDate() === date2.getDate()) return true;
 
     return false;
 }
 
 export function compareTwoDate(date1, date2){
     if(!date1 || !date2) return;
-
-    date1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDay());
-    date2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDay());
+    
+    date1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    date2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
 
     if(date1.getTime() > date2.getTime()) return 1;
     if(date1.getTime() === date2.getTime()) return 0;
     if(date1.getTime() < date2.getTime()) return -1;
 
+}
+
+export function getCurrentDisplayMonth(){
+    const date = new Date();
+    const month = date.getMonth().toString().length === 1 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+
+    return `${date.getFullYear()}/${month}`;
 }

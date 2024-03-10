@@ -11,6 +11,7 @@ import {
   getCurrencyRateByCode,
 } from "../Helpers/CurrencyHelper";
 import {
+  useConfirmMailSyncModal,
   useConfirmModal,
   useErrorModal,
   useSuccessModal,
@@ -31,6 +32,7 @@ export default function HomeProvider({ children }) {
   const [countriesCurrencyInfo, setCountriesCurrencyInfo] = useState();
   const [debtAlert, setDebtAlert] = useState(false);
   const [spendLimitAlert, setSpendLimitAlert] = useState(false);
+  const [gmailUser, setGmailUser] = useState();
 
   const [demandTotal, setDemandTotal] = useState();
 
@@ -69,6 +71,14 @@ export default function HomeProvider({ children }) {
     ConfirmModal,
     setConfirmModalContent,
   } = useConfirmModal();
+
+  const {
+    show: confirmMailSyncModalShow,
+    handleShow: handleConfirmMailSyncModalShow,
+    handleClose: handleConfirmMailSyncModalClose,
+    ConfirmMailSyncModal,
+    setConfirmMailSyncModalContent,
+  } = useConfirmMailSyncModal();
   // #endregion State
 
   // #region Function
@@ -91,6 +101,8 @@ export default function HomeProvider({ children }) {
   // #endregion Function
 
   const value = {
+    gmailUser,
+    setGmailUser,
     loading,
     setLoading,
     handleSuccessShow,
@@ -102,6 +114,9 @@ export default function HomeProvider({ children }) {
     handleConfirmShow,
     handleConfirmClose,
     setConfirmModalContent,
+    handleConfirmMailSyncModalShow,
+    handleConfirmMailSyncModalClose,
+    setConfirmMailSyncModalContent,
     selectedTab,
     setSelectTab,
     selectedBottomTab,
@@ -134,6 +149,7 @@ export default function HomeProvider({ children }) {
       {successShow && <SuccessModal />}
       {errorShow && <ErrorModal />}
       {confirmShow && <ConfirmModal />}
+      {confirmMailSyncModalShow && <ConfirmMailSyncModal />}
     </HomeControllerContext.Provider>
   );
 }

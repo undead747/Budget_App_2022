@@ -26,7 +26,9 @@ export const DatabaseCollections = {
   Tasks: "Tasks",
   Budgets: "Budgets",
   Debts: "Debts",
-  Demands: "Demands"
+  Demands: "Demands",
+  Transfer: "Transfer",
+  MailSyncDate: "MailSyncDate" 
 };
 
 export const TaskTotalDocId = "taskTotal";

@@ -70,7 +70,7 @@ export default function Alert() {
   }, [localCountryInfo, tasks]);
 
   useEffect(() => {
-    if (Number(expenseTotal) > Number(demandTotal)) setSpendLimitAlert(true);
+    if (Number(expenseTotal) > Number(demandTotal) && Number(demandTotal) !== 0) setSpendLimitAlert(true);
   }, [demandTotal, expenseTotal]);
 
   useEffect(() => {

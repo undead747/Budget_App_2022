@@ -169,10 +169,10 @@ export default function IncomesAndExpenses() {
       </div>
       <div className="incomesAndExpenses__Chart">
         {taskMode === taskModes.Income.param && (
-          <TaskChart tasks={incomeTasks} />
+            <TaskChart tasks={incomeTasks} />
         )}
         {taskMode === taskModes.Expense.param && (
-          <TaskChart tasks={expenseTasks} />
+            <TaskChart tasks={expenseTasks} />
         )}
       </div>
     </div>

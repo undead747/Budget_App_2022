@@ -112,7 +112,9 @@ export function TaskChart({ tasks, ...rest }) {
           </div>
         </div>
 
-        <Pie data={data} options={options} />
+        <div className="chart-wrapper">
+          <Pie data={data} options={options} />
+        </div>
       </div>
     );
   else
@@ -196,8 +198,10 @@ export function BudgetsChart({ budgets, ...rest }) {
             </h5>
           </div>
         </div>
-
-        <Pie data={data} options={options} />
+        
+        <div className="chart-wrapper">
+          <Pie data={data} options={options} />
+        </div>
       </div>
     );
   else

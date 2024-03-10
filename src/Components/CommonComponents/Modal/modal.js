@@ -5,15 +5,14 @@ import { CustomButton } from "../Button/Button";
 import "./modal.css";
 
 /**
- * Custom React-Bootstrap modal component. Use when display success messages modal.  
+ * Custom React-Bootstrap modal component. Use when display success messages modal.
  * Returns open, close, set message content Func and modal component.
  */
 export function useSuccessModal() {
-  // #region State 
+  // #region State
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
   // #endregion State
-
 
   // #region Function
   const handleShow = () => setShow(true);
@@ -31,8 +30,7 @@ export function useSuccessModal() {
         centered={true}
         className={"default-mode"}
       >
-        <Modal.Header closeButton>
-        </Modal.Header>
+        <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <div className="modal-body__content">
             <i className="modal-body__icon far fa-check-circle"></i>
@@ -56,22 +54,22 @@ export function useSuccessModal() {
 }
 
 /**
- * Custom React-Bootstrap modal component. Use when display error messages modal.  
+ * Custom React-Bootstrap modal component. Use when display error messages modal.
  * Returns open, close, set message content Func and modal component.
  */
 export function useErrorModal() {
-  // #region State 
+  // #region State
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
-  // #endregion State 
+  // #endregion State
 
-  // #region Function 
+  // #region Function
   const handleShow = () => setShow(true);
 
   const handleClose = () => setShow(false);
 
   const setErrorModalContent = (content) => setContent(content);
-  // #endregion Function 
+  // #endregion Function
 
   const ErrorModal = () => {
     return (
@@ -81,8 +79,7 @@ export function useErrorModal() {
         centered={true}
         className={"default-mode"}
       >
-        <Modal.Header closeButton>
-        </Modal.Header>
+        <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <div className="modal-body__content">
             <i className="modal-body__icon fas fa-exclamation-triangle"></i>
@@ -106,28 +103,28 @@ export function useErrorModal() {
 }
 
 /**
- * Custom React-Bootstrap modal component. Use when display confirm messages modal.  
+ * Custom React-Bootstrap modal component. Use when display confirm messages modal.
  * Returns open, close, set message content Func and modal component.
  */
 export function useConfirmModal() {
-  // #region State 
+  // #region State
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
   const [callback, setCallback] = useState();
-  // #endregion State 
+  // #endregion State
 
-  // #region Func 
+  // #region Func
   const handleShow = (callback) => {
     setShow(true);
     setCallback(() => callback);
-  }
+  };
 
   const handleClose = () => setShow(false);
 
   const submit = () => {
     if (callback) callback();
     handleClose();
-  }
+  };
 
   const setConfirmModalContent = (content) => setContent(content);
   // #endregion Func
@@ -140,8 +137,7 @@ export function useConfirmModal() {
         centered={true}
         className={"default-mode"}
       >
-        <Modal.Header closeButton>
-        </Modal.Header>
+        <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           <div className="modal-body__content">
             <i className="modal-body__icon fas fa-exclamation-triangle"></i>
@@ -149,7 +145,9 @@ export function useConfirmModal() {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <BorderButton border={{ size: 2 }} onClick={handleClose}>Cancel</BorderButton>
+          <BorderButton border={{ size: 2 }} onClick={handleClose}>
+            Cancel
+          </BorderButton>
           <CustomButton onClick={submit}>Yes</CustomButton>
         </Modal.Footer>
       </Modal>
@@ -165,3 +163,68 @@ export function useConfirmModal() {
   };
 }
 
+export function useConfirmMailSyncModal() {
+  // #region State
+  const [show, setShow] = useState(false);
+  const [content, setContent] = useState();
+  const [callback, setCallback] = useState();
+  // #endregion State
+
+  // #region Func
+  const handleShow = (callback) => {
+    setShow(true);
+    setCallback(() => callback);
+  };
+
+  const handleClose = () => setShow(false);
+
+  const submit = () => {
+    if (callback) callback();
+    handleClose();
+  };
+
+  const setConfirmMailSyncModalContent = (content) => setContent(content);
+  // #endregion Func
+
+  const ConfirmMailSyncModal = () => {
+    return (
+      <Modal
+        show={show}
+        onHide={handleClose}
+        centered={true}
+        className={"default-mode"}
+      >
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>
+          <div className="modal-body__content">
+            <i className="modal-body__icon fas fa-exclamation-triangle"></i>
+            <p className="modal-body__p">
+              {content &&
+                content.map((mail) => {
+                  return <p>
+                    Store: {mail.Store}
+                    <br/>
+                    Amount: {mail.amount}
+                  </p>;
+                })}
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <BorderButton border={{ size: 2 }} onClick={handleClose}>
+            Cancel
+          </BorderButton>
+          <CustomButton onClick={submit}>Yes</CustomButton>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  return {
+    show,
+    handleShow,
+    handleClose,
+    ConfirmMailSyncModal,
+    setConfirmMailSyncModalContent,
+  };
+}

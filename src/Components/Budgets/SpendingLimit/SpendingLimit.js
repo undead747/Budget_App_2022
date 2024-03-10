@@ -6,7 +6,7 @@ import {
   useFirestore,
 } from "../../../Database/useFirestore";
 import { convertNumberToCurrency, getCurrencyRateByCode } from "../../../Helpers/CurrencyHelper";
-import { getFirstDayOfMonth, getLastDayOfMonth } from "../../../Helpers/DateHelper";
+import { getCurrentDisplayMonth, getFirstDayOfMonth, getLastDayOfMonth } from "../../../Helpers/DateHelper";
 import EclipseButton from "../../CommonComponents/Button/EclipseButton";
 import { useHomeController } from "../../HomeContext";
 
@@ -30,6 +30,8 @@ export default function SpendingLimit() {
     setErrorModalContent,
     localCountryInfo,
     setLoading,
+    spendLimitAlert, 
+    debtAlert
   } = useHomeController();
 
   useEffect(() => {
@@ -84,6 +86,22 @@ export default function SpendingLimit() {
       handleErrorShow();
     }
   };
+
+  const decorAddButton = () => {
+    let count = 0;
+
+    if(spendLimitAlert) count += 1;
+    if(debtAlert) count += 1;
+
+    if(count === 0) return `container task__add-btn`;
+    if(count === 1) return `container task__add-btn task__add-btn--1-alert`;
+    if(count === 2) return `container task__add-btn task__add-btn--2-alert`;
+  }
+
+  const redirectToMonthTasks = () =>{
+      const date = new Date();
+      history.push(`/monthly?month=${date.getMonth() + 1}&year=${date.getFullYear()}`);
+  } 
 
   const loadTaskByMonthAsync = async (month, year) => {
     try {
@@ -166,10 +184,10 @@ export default function SpendingLimit() {
             {total && convertNumberToCurrency(localCountryInfo.currency, total)}
           </h5>
         </div>
-        <div className="summary__item">
+        <div className="summary__item" onClick={redirectToMonthTasks}>
           <h5 className="summary__title">
             <box-icon name="coin-stack" type="solid"></box-icon>
-            <span>Expended</span>
+            <span>{getCurrentDisplayMonth()} Expended</span>
           </h5>
           <h5 className="summary__val summary__val--danger text-danger">
             {total && convertNumberToCurrency(localCountryInfo.currency, expenseTotal)}
@@ -204,7 +222,7 @@ export default function SpendingLimit() {
         </table>
       </div>
 
-      <div className="container task__add-btn">
+      <div className={decorAddButton()}>
         <EclipseButton customClass="btn--task-add" callback={handleAddDemand}>
           <i className="fas fa-plus"></i>
         </EclipseButton>
