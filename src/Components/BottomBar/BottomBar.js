@@ -92,7 +92,7 @@ export default function BottomBar() {
 
     lastDate = "2024/02/28";
 
-   
+    const payServiceMail = "yuchodebit@jp-bank.japanpost.jp";
     const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${lastDate} from:${payServiceMail}`;
     const headers = {
       Authorization: `Bearer ${gmailUser.access_token}`,
