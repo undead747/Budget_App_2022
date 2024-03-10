@@ -10,18 +10,6 @@ import { DatabaseCollections, useFirestore } from "../../Database/useFirestore";
 import { sendRequest } from "../../Helpers/APIHelper";
 import { Modal } from "react-bootstrap";
 
-const config = {
-  client_id:
-    "408641556052-4sbuh43oc06dhr7g71j0o0qkn7t4i3uu.apps.googleusercontent.com",
-  project_id: "budgetapp-416707",
-  auth_uri: "https://accounts.google.com/o/oauth2/auth",
-  token_uri: "https://oauth2.googleapis.com/token",
-  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-  client_secret: "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",
-  redirect_uris: ["http://localhost:3000"],
-  javascript_origins: ["http://localhost:3000"],
-};
-
 export default function BottomBar() {
   const {
     gmailUser,
@@ -112,28 +100,51 @@ export default function BottomBar() {
 
     var response = await axios.get(apiUrl, { headers });
     if (response && response.data && response.data.messages) {
-      response.data.messages.forEach((mail) => {
+      for (const mail of response.data.messages) {
         const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${mail.id}`;
         const headers = {
           Authorization: `Bearer ${gmailUser.access_token}`,
         };
-        axios.get(apiUrl, { headers }).then((response) => {
-          const inputString = response.data.snippet;
+  
+        const response = await axios.get(apiUrl, { headers });
+        const inputString = response.data.snippet;
+  
+        // Extract shop name using regex
+        const shopNameMatch = inputString.match(/店舗 (\S+) 利用金額/);
+        const shopName = shopNameMatch ? shopNameMatch[1] : null;
+  
+        // Extract amount using regex
+        const amountMatch = inputString.match(/利用金額 (\d+)円/);
+        const amount = amountMatch ? amountMatch[1] : null;
+  
+        listMail.push({
+          shop: shopName,
+          amount: amount
+        })
+      }
+    }
 
-          // Extract shop name using regex
-          const shopNameMatch = inputString.match(/店舗 (\S+) 利用金額/);
-          const shopName = shopNameMatch ? shopNameMatch[1] : null;
+    for (const mail of response.data.messages) {
+      const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${mail.id}`;
+      const headers = {
+        Authorization: `Bearer ${gmailUser.access_token}`,
+      };
 
-          // Extract amount using regex
-          const amountMatch = inputString.match(/利用金額 (\d+)円/);
-          const amount = amountMatch ? amountMatch[1] : null;
+      const response = await axios.get(apiUrl, { headers });
+      const inputString = response.data.snippet;
 
-          listMail.push({
-            shop: shopName,
-            amount: amount
-          })
-        });
-      });
+      // Extract shop name using regex
+      const shopNameMatch = inputString.match(/店舗 (\S+) 利用金額/);
+      const shopName = shopNameMatch ? shopNameMatch[1] : null;
+
+      // Extract amount using regex
+      const amountMatch = inputString.match(/利用金額 (\d+)円/);
+      const amount = amountMatch ? amountMatch[1] : null;
+
+      listMail.push({
+        shop: shopName,
+        amount: amount
+      })
     }
 
     debugger;
