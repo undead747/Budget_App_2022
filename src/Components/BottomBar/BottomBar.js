@@ -28,6 +28,8 @@ export default function BottomBar() {
     handleConfirmMailSyncModalShow,
     handleConfirmMailSyncModalClose,
     setConfirmMailSyncModalContent,
+    expenseCategories,
+    accountCategories,
   } = useHomeController();
 
   const history = useHistory();
@@ -90,7 +92,7 @@ export default function BottomBar() {
       addSyncMailDate({ date: lastDate });
     }
 
-    lastDate = "2024/02/28";
+    lastDate = lastDate[0].data.date;
 
     const payServiceMail = "yuchodebit@jp-bank.japanpost.jp";
     const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${lastDate} from:${payServiceMail}`;
@@ -105,55 +107,43 @@ export default function BottomBar() {
         const headers = {
           Authorization: `Bearer ${gmailUser.access_token}`,
         };
-  
+
         const response = await axios.get(apiUrl, { headers });
         const inputString = response.data.snippet;
-  
+
         // Extract shop name using regex
-        const shopNameMatch = inputString.match(/店舗 (\S+) 利用金額/);
-        const shopName = shopNameMatch ? shopNameMatch[1] : null;
-  
+        let regex = /利用店舗\s(.*?)\s/;
+        let match = regex.exec(inputString);
+        let shopName = !match ? null : match[1];
+
         // Extract amount using regex
-        const amountMatch = inputString.match(/利用金額 (\d+)円/);
-        const amount = amountMatch ? amountMatch[1] : null;
-  
-        listMail.push({
-          shop: shopName,
-          amount: amount
-        })
+        regex = /利用金額\s(\d+)円/;
+        match = regex.exec(inputString);
+        const amount = !match ? null : match[1];
+
+        regex = /\d{4}\/\d{2}\/\d{2}/;
+        match = regex.exec(inputString);
+        const date = !match ? null : match[0];
+
+        if (amount && date)
+          listMail.push({
+            title: shopName,
+            amount: amount,
+            date: date,
+          });
       }
     }
-
-    for (const mail of response.data.messages) {
-      const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${mail.id}`;
-      const headers = {
-        Authorization: `Bearer ${gmailUser.access_token}`,
-      };
-
-      const response = await axios.get(apiUrl, { headers });
-      const inputString = response.data.snippet;
-
-      // Extract shop name using regex
-      const shopNameMatch = inputString.match(/店舗 (\S+) 利用金額/);
-      const shopName = shopNameMatch ? shopNameMatch[1] : null;
-
-      // Extract amount using regex
-      const amountMatch = inputString.match(/利用金額 (\d+)円/);
-      const amount = amountMatch ? amountMatch[1] : null;
-
-      listMail.push({
-        shop: shopName,
-        amount: amount
-      })
-    }
-
-    debugger;
 
     if (listMail.length === 0) {
       setSucessModalContent("Your Account is up to date");
       handleSuccessShow();
     } else {
-      setConfirmMailSyncModalContent(listMail);
+      setConfirmMailSyncModalContent(
+        listMail,
+        expenseCategories,
+        accountCategories,
+        setLoading
+      );
       handleConfirmMailSyncModalShow(true);
     }
 

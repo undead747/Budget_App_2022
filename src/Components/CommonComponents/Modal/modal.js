@@ -3,6 +3,9 @@ import { Modal } from "react-bootstrap";
 import BorderButton from "../Button/BorderButton";
 import { CustomButton } from "../Button/Button";
 import "./modal.css";
+import { DatabaseCollections, useFirestore } from "../../../Database/useFirestore";
+import { useHomeController } from "../../HomeContext";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 
 /**
  * Custom React-Bootstrap modal component. Use when display success messages modal.
@@ -167,26 +170,82 @@ export function useConfirmMailSyncModal() {
   // #region State
   const [show, setShow] = useState(false);
   const [content, setContent] = useState();
-  const [callback, setCallback] = useState();
+  const [expenseCategories, setExpenseCategories] = useState();
+  const [accountCategories, setAccountCategories] = useState();
+  const setLoadingRef = useRef(null);
+  const history = useHistory();
+
+  const {
+    getDocumentById: getBudgetById,
+    addDocumentWithId: addBudget,
+    updateDocument: updateBudgetById,
+  } = useFirestore(DatabaseCollections.Budgets);
+
+  const { addDocument: addTask } = useFirestore(DatabaseCollections.Tasks);
+
   // #endregion State
 
   // #region Func
   const handleShow = (callback) => {
     setShow(true);
-    setCallback(() => callback);
   };
 
   const handleClose = () => setShow(false);
+  
+  const submit = async() => {
+    setLoadingRef.current(true);
+    
+    for (var task of content) {
+      await addTask(task);
 
-  const submit = () => {
-    if (callback) callback();
+      let amount = parseFloat(task.amount);
+      let budget = await getBudgetById(task.accountCate.id);
+
+      if (budget && budget.data) {
+        let calAmount = parseFloat(budget.data.amount) - amount;
+        await updateBudgetById({ ...budget.data, amount: calAmount }, budget.id);
+      }
+    }
+
+    setLoadingRef.current(false);
+
     handleClose();
+    history.push('/budgets');
   };
 
-  const setConfirmMailSyncModalContent = (content) => setContent(content);
+  const setConfirmMailSyncModalContent = (
+    content,
+    expenseCategories,
+    accountCategories,
+    setLoading,
+  ) => {
+    content.forEach(task => {
+      task.taskCate = expenseCategories[0];
+      task.accountCate = accountCategories[0];
+      task.type = {id: 0, name: 'Expense', type: 'expense'};
+      task.currency = "JPY";
+      task.note = "";
+      task.date = task.date.replace(/\//g, '-');
+    });
+
+    setAccountCategories(accountCategories);
+    setExpenseCategories(expenseCategories);
+    setLoadingRef.current = setLoading;
+    setContent(content);
+  };
   // #endregion Func
 
   const ConfirmMailSyncModal = () => {
+    const onChangeExpenseCate = (cate, arrIdx) => {
+         const taskCate = expenseCategories.find(e => e.id === cate);
+         content[arrIdx].taskCate = taskCate;
+    };
+  
+    const onChangeAccountCate = (cate, arrIdx) => {
+         const accountCate = accountCategories.find(e => e.id === cate);
+         content[arrIdx].accountCate = accountCate;
+    };
+
     return (
       <Modal
         show={show}
@@ -199,15 +258,54 @@ export function useConfirmMailSyncModal() {
           <div className="modal-body__content">
             <i className="modal-body__icon fas fa-exclamation-triangle"></i>
             <p className="modal-body__p">
-              {content &&
-                content.map((mail) => {
-                  return <p>
-                    Store: {mail.Store}
-                    <br/>
-                    Amount: {mail.amount}
-                  </p>;
-                })}
+              This following task have not sync to app :
             </p>
+          </div>
+          <div style={{overflow: 'auto'}}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th scope="col">Expense Categories</th>
+                  <th scope="col">Account Categories</th>
+                  <th scope="col">Shop</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {content.map(function (mail, idx, arr) {
+                  return (
+                    <tr key={idx}>
+                      <td>
+                        <select
+                          className="form-select"
+                          aria-label="Default select example"
+                          onChange={(e) => onChangeExpenseCate(e.target.value, idx)}
+                        >
+                          {expenseCategories.map((cate) => (
+                            <option value={cate.id} key={cate.id}>{cate.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <select
+                          className="form-select"
+                          aria-label="Default select example"
+                          onChange={(e) => onChangeAccountCate(e.target.value, idx)}
+                        >
+                          {accountCategories.map((cate) => (
+                            <option value={cate.id} key={cate.id}>{cate.name}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td scope="row">{mail.shop}</td>
+                      <td>{mail.amount}</td>
+                      <td>{mail.date}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </Modal.Body>
         <Modal.Footer>
