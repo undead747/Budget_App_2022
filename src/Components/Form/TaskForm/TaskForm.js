@@ -131,7 +131,6 @@ function TaskForm(props) {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-
       let firebaseDate = Timestamp.fromDate(new Date(dateRef.current.value));
 
       let task = {
@@ -305,29 +304,27 @@ function TaskForm(props) {
       }
     }
 
-    oldTaskBudget = await getBudgetById(oldTask.accountCate.id);
+    let newTaskBudget = await getBudgetById(newTask.accountCate.id);
 
     if (newTask.type.id === taskModes.Income.id) {
-      if (oldTaskBudget && oldTaskBudget.data) {
-        let calAmount = parseFloat(oldTaskBudget.data.amount) + newAmmount;
+      if (newTaskBudget && newTaskBudget.data) {
+        let calAmount = parseFloat(newTaskBudget.data.amount) + newAmmount;
         await updateBudget(
-          { ...oldTaskBudget.data, amount: calAmount },
-          oldTaskBudget.id
+          { ...newTaskBudget.data, amount: calAmount },
+          newTaskBudget.id
         );
       }
     }
 
     if (newTask.type.id === taskModes.Expense.id) {
-      if (oldTaskBudget && oldTaskBudget.data) {
-        let calAmount = parseFloat(oldTaskBudget.data.amount) - newAmmount;
+      if (newTaskBudget && newTaskBudget.data) {
+        let calAmount = parseFloat(newTaskBudget.data.amount) - newAmmount;
         await updateBudget(
-          { ...oldTaskBudget.data, amount: calAmount },
-          oldTaskBudget.id
+          { ...newTaskBudget.data, amount: calAmount },
+          newTaskBudget.id
         );
       }
     }
-
-    await updateDocument(newTask, taskId);
 
     await updateDocument(newTask, taskId);
   };

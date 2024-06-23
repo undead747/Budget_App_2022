@@ -68,7 +68,6 @@ export default function MonthlyTasks() {
 
       let firstDayOfMonth = getFirstDayOfMonth(month, year);
       let lastDayOfMonth = getLastDayOfMonth(month, year);
-
       setLoading(true);
       let tasks = await getDocumentsByPagination({
         params: [

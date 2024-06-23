@@ -28,14 +28,22 @@ export default function BottomBar() {
     handleConfirmMailSyncModalShow,
     handleConfirmMailSyncModalClose,
     setConfirmMailSyncModalContent,
+    handleConfirmSyncStartDateModalShow,
+    handleConfirmSyncStartDateModalClose,
+    setConfirmSyncStartDate,
     expenseCategories,
     accountCategories,
   } = useHomeController();
 
+  const [startSyncDate, setStartSyncDate] = useState();
+
   const history = useHistory();
 
-  const { getDocuments: getLastSyncMailDate, addDocument: addSyncMailDate } =
-    useFirestore(DatabaseCollections.MailSyncDate);
+  const {
+    getDocuments: getLastSyncMailDate,
+    addDocument: addSyncMailDate,
+    updateDocument: updateSyncMailDate,
+  } = useFirestore(DatabaseCollections.MailSyncDate);
 
   const handleSelectedTab = (tab) => {
     if (tab.id === bottombarData.Sync.id) {
@@ -77,25 +85,29 @@ export default function BottomBar() {
 
   const syncMail = async () => {
     let lastDate = await getLastSyncMailDate();
+    let lastDateinVal = null;
     const listMail = [];
 
     setLoading(true);
 
     if (lastDate.length === 0) {
-      const currentDate = new Date();
+      handleConfirmSyncStartDateModalShow();
+      setConfirmSyncStartDate(async function (date) {
+        setLoading(true);
+        addSyncMailDate(date);
+        setLoading(false);
 
-      const year = currentDate.getFullYear();
-      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 to the month because months are zero-based
-      const day = currentDate.getDate().toString().padStart(2, "0");
+        syncMail();
+      });
 
-      lastDate = `${year}/${month}/${day}`;
-      addSyncMailDate({ date: lastDate });
+      setLoading(false);
+      return;
+    } else {
+      lastDateinVal = lastDate[0].data.date;
     }
 
-    lastDate = lastDate[0].data.date;
-
     const payServiceMail = "yuchodebit@jp-bank.japanpost.jp";
-    const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${lastDate} from:${payServiceMail}`;
+    const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${lastDateinVal} from:${payServiceMail}`;
     const headers = {
       Authorization: `Bearer ${gmailUser.access_token}`,
     };
@@ -142,11 +154,13 @@ export default function BottomBar() {
         listMail,
         expenseCategories,
         accountCategories,
-        setLoading
+        setLoading,
+        lastDate[0]
       );
       handleConfirmMailSyncModalShow(true);
     }
 
+    setGmailUser(null);
     setLoading(false);
   };
 
@@ -172,33 +186,6 @@ export default function BottomBar() {
       syncMail();
     }
   }, [gmailUser]);
-
-  // useEffect(() => {
-  //   console.log(gmailUser);
-  //   if (gmailUser) {
-  //     const apiUrl =
-  //       "https://www.googleapis.com/gmail/v1/users/me/messages?q=after:2024/02/29 from:yuchodebit@jp-bank.japanpost.jp";
-  //     const headers = {
-  //       Authorization: `Bearer ${gmailUser.access_token}`,
-  //     };
-
-  //     axios
-  //       .get(apiUrl, { headers })
-  //       .then((response) => {
-  //         response.data.messages.forEach((mail) => {
-  //           console.log(mail);
-  //           const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages/${mail.id}`;
-  //           const headers = {
-  //             Authorization: `Bearer ${gmailUser.access_token}`,
-  //           };
-  //           axios.get(apiUrl, { headers }).then((response) => {
-  //             console.log(response.data.snippet);
-  //           });
-  //         });
-  //       })
-  //       .catch((error) => {});
-  //   }
-  // }, [gmailUser]);
 
   return (
     <div className="bottom-bar">

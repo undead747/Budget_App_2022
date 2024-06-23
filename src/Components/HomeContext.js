@@ -15,6 +15,7 @@ import {
   useConfirmModal,
   useErrorModal,
   useSuccessModal,
+  useConfirmSyncStartDateModal
 } from "./CommonComponents/Modal/modal";
 
 const HomeControllerContext = React.createContext();
@@ -79,6 +80,14 @@ export default function HomeProvider({ children }) {
     ConfirmMailSyncModal,
     setConfirmMailSyncModalContent,
   } = useConfirmMailSyncModal();
+
+  const {
+    show: confirmSyncStartDateModalShow,
+    handleShow: handleConfirmSyncStartDateModalShow,
+    handleClose: handleConfirmSyncStartDateModalClose,
+    ConfirmSyncStartDateModal,
+    setConfirmSyncStartDate,
+  } = useConfirmSyncStartDateModal();
   // #endregion State
 
   // #region Function
@@ -129,7 +138,10 @@ export default function HomeProvider({ children }) {
     spendLimitAlert,
     setSpendLimitAlert,
     debtAlert,
-    setDebtAlert
+    setDebtAlert,
+    handleConfirmSyncStartDateModalShow,
+    handleConfirmSyncStartDateModalClose,
+    setConfirmSyncStartDate,
   };
 
   return (
@@ -150,6 +162,7 @@ export default function HomeProvider({ children }) {
       {errorShow && <ErrorModal />}
       {confirmShow && <ConfirmModal />}
       {confirmMailSyncModalShow && <ConfirmMailSyncModal />}
+      {confirmSyncStartDateModalShow && <ConfirmSyncStartDateModal />}
     </HomeControllerContext.Provider>
   );
 }

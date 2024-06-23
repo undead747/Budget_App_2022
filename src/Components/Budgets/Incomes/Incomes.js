@@ -46,6 +46,10 @@ export default function Incomes() {
     } 
   }
 
+  const handleEditBudget = () => {
+
+  }
+
   if(!incomes || incomes.length === 0) return <>
      <div className="alert alert-warning" role="alert">
       don't have any data to display
@@ -65,6 +69,7 @@ export default function Incomes() {
                     <tr
                     className="task-table__row"
                     key={cate.id}
+                    onClick={() => handleEditBudget()}
                   >
                     <td className="text-start">
                       {budget.name}
