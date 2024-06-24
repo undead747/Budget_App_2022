@@ -15,6 +15,7 @@ import Home from "./Components/Home";
 import HomeProvider from "./Components/HomeContext";
 import Login from "./Components/Login/Login";
 import Signup from "./Components/Login/Signup";
+import BudgetForm from "./Components/Form/TaskForm/BudgetForm";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <PrivateRoute path={'/task/:mode/:id?'} component={TaskForm} />
               <PrivateRoute path={'/debt/:mode/:id?'} component={DebtForm} />
               <PrivateRoute path={'/demand/:mode/:id?'} component={DemandForm} />
+              <PrivateRoute path={'/budget/:mode/:id?'} component={BudgetForm} />
               <PrivateRoute path="/" component={Home} />
               <Redirect to={"/"} />
             </Switch>

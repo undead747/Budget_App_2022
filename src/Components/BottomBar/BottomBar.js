@@ -90,6 +90,7 @@ export default function BottomBar() {
 
     setLoading(true);
 
+    debugger;
     if (lastDate.length === 0) {
       handleConfirmSyncStartDateModalShow();
       setConfirmSyncStartDate(async function (date) {
