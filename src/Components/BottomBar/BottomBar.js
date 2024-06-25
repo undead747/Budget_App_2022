@@ -83,29 +83,32 @@ export default function BottomBar() {
     }
   }, [window.location.href]);
 
-  const syncMail = async () => {
+  const confirmSyncMail = async() => {
     let lastDate = await getLastSyncMailDate();
     let lastDateinVal = null;
     const listMail = [];
 
     setLoading(true);
 
-    debugger;
-    if (lastDate.length === 0) {
-      handleConfirmSyncStartDateModalShow();
-      setConfirmSyncStartDate(async function (date) {
-        setLoading(true);
-        addSyncMailDate(date);
-        setLoading(false);
-
-        syncMail();
-      });
-
+    const paramDate = lastDate.length === 0 ? null : lastDate[0].data.date;
+    handleConfirmSyncStartDateModalShow();
+    setConfirmSyncStartDate(paramDate, async function (date) {
+      setLoading(true);
+      addSyncMailDate(date);
       setLoading(false);
-      return;
-    } else {
-      lastDateinVal = lastDate[0].data.date;
-    }
+
+      syncMail();
+    });
+
+    setLoading(false);
+  };
+
+  const syncMail = async () => {
+    let lastDate = await getLastSyncMailDate();
+    let lastDateinVal = null;
+    const listMail = [];
+
+    setLoading(true);
 
     const payServiceMail = "yuchodebit@jp-bank.japanpost.jp";
     const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${lastDateinVal} from:${payServiceMail}`;
@@ -184,7 +187,7 @@ export default function BottomBar() {
 
   useEffect(() => {
     if (gmailUser) {
-      syncMail();
+      confirmSyncMail();
     }
   }, [gmailUser]);
 

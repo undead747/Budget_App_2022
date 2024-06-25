@@ -256,7 +256,8 @@ export function useConfirmSyncStartDateModal() {
     handleClose();
   };
 
-  const setConfirmSyncStartDate = (callback) => {
+  const setConfirmSyncStartDate = (date, callback) => {
+    if(date) datePickerRef.current = date;
     setCallbackRef.current = callback;
   };
 
@@ -455,7 +456,6 @@ export function useConfirmMailSyncModal() {
     const checkAllRef = useRef(null);
 
     function handleSelect(value, id) {
-      debugger;
       if (value) {
         setSelected([...selected, id]);
       } else {

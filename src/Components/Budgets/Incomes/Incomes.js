@@ -4,10 +4,12 @@ import { convertNumberToCurrency } from "../../../Helpers/CurrencyHelper";
 import { useHomeController } from "../../HomeContext";
 import "./income.css";
 import IncomeHeader from "./IncomeHeader";
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 
 export default function Incomes() {
   const [incomes, setIncomes] = useState();
   const [budgets, setBudgets] = useState();
+  const history = useHistory();
 
   const { getDocuments } = useFirestore(DatabaseCollections.Budgets);
 
@@ -46,8 +48,8 @@ export default function Incomes() {
     } 
   }
 
-  const handleEditBudget = () => {
-
+  const handleEditBudget = (taskId) => {
+    history.push(`/budget/edit/${taskId}`);  
   }
 
   if(!incomes || incomes.length === 0) return <>
@@ -69,7 +71,7 @@ export default function Incomes() {
                     <tr
                     className="task-table__row"
                     key={cate.id}
-                    onClick={() => handleEditBudget()}
+                    onClick={() => handleEditBudget(cate.id)}
                   >
                     <td className="text-start">
                       {budget.name}

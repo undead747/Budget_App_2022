@@ -85,7 +85,7 @@ export default function BudgetForm(props) {
 
       setLoading(false);
 
-      history.push(`/budgets/spendinglimit`);
+      history.push(`/budgets`);
     } catch (error) {
       console.log(error);
       setErrorModalContent(error.message);
@@ -167,7 +167,7 @@ export default function BudgetForm(props) {
 
       // Init Form Refs values.
       amountRef.current.value = convertNumberWithCommas(Number(Budget.amount));
-      titleRef.current.value = Budget.title;
+      titleRef.current.value = Budget.name;
 
     } catch (error) {
       setErrorModalContent(error.message);
