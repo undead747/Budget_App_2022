@@ -88,34 +88,30 @@ export default function BottomBar() {
     let lastDateinVal = null;
     const listMail = [];
 
-    setLoading(true);
-
     const paramDate = lastDate.length === 0 ? null : lastDate[0].data.date;
     handleConfirmSyncStartDateModalShow();
+
     setConfirmSyncStartDate(paramDate, async function (date) {
       setLoading(true);
-      addSyncMailDate(date);
+      await syncMail(date);
+      if(!paramDate) await addSyncMailDate({date: date});
+      else await updateSyncMailDate({date: date}, lastDate[0].id);
       setLoading(false);
-
-      syncMail();
     });
-
-    setLoading(false);
   };
 
-  const syncMail = async () => {
-    let lastDate = await getLastSyncMailDate();
-    let lastDateinVal = null;
+  const syncMail = async (selectedDate) => {
     const listMail = [];
 
     setLoading(true);
 
     const payServiceMail = "yuchodebit@jp-bank.japanpost.jp";
-    const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${lastDateinVal} from:${payServiceMail}`;
+    const apiUrl = `https://www.googleapis.com/gmail/v1/users/me/messages?q=after:${selectedDate} from:${payServiceMail}`;
     const headers = {
       Authorization: `Bearer ${gmailUser.access_token}`,
     };
-
+   
+    debugger
     var response = await axios.get(apiUrl, { headers });
     if (response && response.data && response.data.messages) {
       for (const mail of response.data.messages) {
@@ -159,7 +155,7 @@ export default function BottomBar() {
         expenseCategories,
         accountCategories,
         setLoading,
-        lastDate[0]
+        selectedDate
       );
       handleConfirmMailSyncModalShow(true);
     }

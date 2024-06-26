@@ -199,7 +199,7 @@ export function useEditBudgetModal() {
   const setEditBudgetModalContent = (budget) => {
 
   };
-  
+
   // #endregion Func
 
   const EditBudgetModal = () => {
@@ -241,6 +241,7 @@ export function useConfirmSyncStartDateModal() {
   const [show, setShow] = useState(false);
   const setCallbackRef = useRef(null);
   const datePickerRef = useRef();
+  const inputDateRef = useRef(null);
   // #endregion State
 
   // #region Func
@@ -257,17 +258,20 @@ export function useConfirmSyncStartDateModal() {
   };
 
   const setConfirmSyncStartDate = (date, callback) => {
-    if(date) datePickerRef.current = date;
+    inputDateRef.current = date;
     setCallbackRef.current = callback;
   };
 
   // #endregion Func
 
   const ConfirmSyncStartDateModal = () => {
-    useEffect(() => {
-      let currDate = new Date();
-      datePickerRef.current.value = currDate.toISOString().split("T")[0];
-    }, []);
+    useEffect(()=> {
+      if (inputDateRef.current) datePickerRef.current.value = inputDateRef.current;
+      else {
+        let currDate = new Date();
+        datePickerRef.current.value = currDate.toISOString().split("T")[0];
+      }
+    },[])
 
     return (
       <Modal
@@ -310,7 +314,7 @@ export function useConfirmSyncStartDateModal() {
   };
 }
 
-function ListItem({ name, value = false, updateValue = () => {}, children }) {
+function ListItem({ name, value = false, updateValue = () => { }, children }) {
   // handle checkbox change
   const handleChange = () => {
     updateValue(!value, name);
@@ -387,11 +391,6 @@ export function useConfirmMailSyncModal() {
     const month = (currentDate.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 to the month because months are zero-based
     const day = currentDate.getDate().toString().padStart(2, "0");
     const lastDate = `${year}/${month}/${day}`;
-   
-    await updateSyncMailDate(
-      { ...dateRef.current.data, date: lastDate },
-      dateRef.current.id
-    );
 
     setLoadingRef.current(false);
 
